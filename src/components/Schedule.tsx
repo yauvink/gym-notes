@@ -332,8 +332,8 @@ function Schedule() {
             label="Enter start date"
             value={soberSelectedDate}
             onChange={(newValue) => {
-              if (newValue === null) {
-                setSoberSelectedDate(newValue);
+              if (newValue === null || newValue?.toJSON() === undefined) {
+                setSoberSelectedDate(null);
                 setSoberDialogOpen(false);
                 window.localStorage.removeItem(SOBER_DATE_STORAGE_KEY);
               } else {
