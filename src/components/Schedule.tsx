@@ -250,7 +250,7 @@ function Schedule() {
 
       <Box sx={{ display: 'flex', gap: '20px' }}>
         <Button variant="contained" onClick={() => setAddTrainingDialogOpen(true)}>
-          + Add training
+          + Add training day
         </Button>
 
         {deleteButtonDate && (

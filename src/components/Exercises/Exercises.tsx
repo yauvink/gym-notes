@@ -1,68 +1,20 @@
 import { Box, Button, Typography } from '@mui/material';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import EditIcon from '@mui/icons-material/Edit';
 import ExercisesDialog from './ExercisesDialog';
-
-export type TrainingType = {
-  name: string;
-  exercises: Array<{
-    name: string;
-    sets: number;
-    weight: number;
-  }>;
-};
+import { useAppContext } from '../../providers/AppProvider/AppProvider.hook';
+import { TrainingType } from '../../providers/AppProvider/AppProvider';
 
 function Exercises() {
   const [isDialogOpen, setDialogOpen] = useState(false);
+  const { trainings } = useAppContext();
+  const [editTrainingId, setEditTrainingId] = useState<string | null>(null);
 
-  const [trainings, setTrainings] = useState<TrainingType[]>([
-    {
-      name: 'Monday',
-      exercises: [
-        {
-          name: 'жим лежа',
-          sets: 4,
-          weight: 70,
-        },
-        {
-          name: 'жим стоя',
-          sets: 4,
-          weight: 20,
-        },
-        {
-          name: 'жим сидя',
-          sets: 8,
-          weight: 170,
-        },
-      ],
-    },
-    {
-      name: 'Wednesday',
-      exercises: [
-        {
-          name: 'жим лежа',
-          sets: 4,
-          weight: 70,
-        },
-        {
-          name: 'жим стоя',
-          sets: 4,
-          weight: 20,
-        },
-        {
-          name: 'жим сидя',
-          sets: 8,
-          weight: 170,
-        },
-      ],
-    },
-  ]);
-
-  const handleSaveTraining = useCallback(() => {
-    console.log('save!');
-    setDialogOpen(false);
-  }, []);
-
+  const calcTrainingTotalWeight = (training: TrainingType) => {
+    return training.exercises.reduce((prev, curr) => {
+      return prev + curr.sets * curr.weight;
+    }, 0);
+  };
   return (
     <Box
       sx={{
@@ -85,7 +37,7 @@ function Exercises() {
         }}
       >
         <Button variant="contained" onClick={() => setDialogOpen(true)}>
-          Add training
+          Add new training
         </Button>
       </Box>
 
@@ -98,24 +50,33 @@ function Exercises() {
         }}
       >
         {trainings.map((el, i) => (
-          <Box key={i} sx={{ border: '1px solid gray', borderRadius: '12px', padding: '20px' }}>
+          <Box key={i} sx={{ border: '1px solid gray', borderRadius: '12px', padding: '10px' }}>
             <Box
               sx={{
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                margin: '10px 0',
+                margin: '0px 0 10px',
               }}
             >
               <Typography
                 sx={{
                   fontSize: '20px',
                   fontWeight: 600,
+                  span: {
+                    fontSize: '14px',
+                    fontWeight: 400,
+                    opacity: 0.5,
+                  },
                 }}
               >
-                {el.name}
+                {el.name} <span>({calcTrainingTotalWeight(el)}kg)</span>
               </Typography>
               <Box
+                onClick={() => {
+                  setEditTrainingId(el.id);
+                  setDialogOpen(true);
+                }}
                 sx={{
                   cursor: 'pointer',
                   '&:hover': {
@@ -166,7 +127,7 @@ function Exercises() {
                 <Box key={i} className={i !== arr.length - 1 ? 'wrapper border' : 'wrapper'}>
                   <Typography className="name">{exercise.name}</Typography>
                   <Typography className="sets">{exercise.sets}</Typography>
-                  <Typography className="weight">{exercise.weight}</Typography>
+                  <Typography className="weight">{exercise.weight} kg</Typography>
                 </Box>
               ))}
             </Box>
@@ -174,7 +135,15 @@ function Exercises() {
         ))}
       </Box>
 
-      <ExercisesDialog isDialogOpen={isDialogOpen} setDialogOpen={setDialogOpen} />
+      {isDialogOpen && (
+        <ExercisesDialog
+          closeDialog={() => {
+            setDialogOpen(false);
+            setEditTrainingId(null);
+          }}
+          editTrainingId={editTrainingId}
+        />
+      )}
     </Box>
   );
 }
