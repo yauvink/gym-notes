@@ -36,7 +36,9 @@ function App() {
           {value === 1 && <Sets />}
           {value === 2 && <Stats />}
         </Box>
-        <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }} elevation={3}>
+        <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0,
+          height: '76px',
+           }} elevation={3}>
           <BottomNavigation
             showLabels
             value={value}

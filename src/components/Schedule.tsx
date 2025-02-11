@@ -11,15 +11,33 @@ type Training = {
 };
 
 const STORAGE_KEY = 'key1231231123';
+const SOBER_DATE_STORAGE_KEY = 'date_key_21313';
 
 function Schedule() {
-  const [open, setOpen] = useState(false);
+  const [isAddTrainingDialogOpen, setAddTrainingDialogOpen] = useState(false);
+  const [isSoberDialogOpen, setSoberDialogOpen] = useState(false);
   const [deleteButtonDate, setDeleteButtonDate] = useState<Dayjs | null>(null);
   const [selectedDate, setSelectedDate] = React.useState<Dayjs | null | undefined>(null);
+  const savedSoberDate = window.localStorage.getItem(SOBER_DATE_STORAGE_KEY);
+  console.log('savedSoberDate', savedSoberDate);
+
+  const [soberSelectedDate, setSoberSelectedDate] = React.useState<Dayjs | null | undefined>(
+    savedSoberDate !== null ? dayjs(JSON.parse(savedSoberDate)) : null
+  );
+  console.log('soberSelectedDate', soberSelectedDate);
   const [viewedYear, setViewedYear] = useState(dayjs(new Date()).year());
   const storage = window.localStorage.getItem(STORAGE_KEY);
   const data: Training[] = storage ? JSON.parse(storage) : [];
   const [trainings, setTrainings] = useState<Training[]>(data);
+
+  const soberDays = useMemo(() => {
+    if (soberSelectedDate !== null) {
+      console.log('ytty', soberSelectedDate);
+      const daysDiff = dayjs(new Date()).diff(soberSelectedDate, 'day', true);
+      return daysDiff.toFixed();
+    }
+    return '+';
+  }, [soberSelectedDate]);
 
   const handleAddTraining = useCallback(() => {
     if (selectedDate) {
@@ -30,8 +48,18 @@ function Schedule() {
       });
     }
 
-    setOpen(false);
+    setAddTrainingDialogOpen(false);
   }, [selectedDate]);
+
+  // const handleAddSoberDate = useCallback(() => {
+  //   console.log('add sober date', soberSelectedDate);
+  //   if(soberSelectedDate){
+  //     window.localStorage.setItem(SOBER_DATE_STORAGE_KEY, JSON.stringify(soberSelectedDate));
+
+  //     setSoberDialogOpen(false)
+  //   }
+
+  // },[soberSelectedDate])
 
   const isTrainingDay = (date: Dayjs) => trainings.some((t) => dayjs(t.date).isSame(date, 'day'));
 
@@ -61,32 +89,111 @@ function Schedule() {
   return (
     <Box
       sx={{
-        padding: '20px',
+        padding: '20px 20px 60px',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
       }}
     >
-      <Typography
+      <Box
         sx={{
-          textAlign: 'center',
-          span: {
-            fontWeight: 600,
-            color: 'green',
-          },
+          display: 'flex',
+          width: '100%',
+          justifyContent: 'space-between',
+          alignItems: 'center',
         }}
       >
-        Trainings in <span>{viewedYear}</span>:
-        <br />
-        <span>{trainCount.trainings}</span> out of <span>{trainCount.days}</span>
-      </Typography>
+        <Typography sx={{ fontSize: '20px' }}>Sober days:</Typography>
+        <Box
+          onClick={() => setSoberDialogOpen(true)}
+          sx={{
+            position: 'relative',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            margin: '-30px 0',
+            img: {
+              width: '150px',
+            },
+          }}
+        >
+          <img src="gym-notes/images/badge_2.svg" alt="badge"></img>
+          <Typography
+            sx={{
+              position: 'absolute',
+              fontSize: '28px',
+              fontWeight: 600,
+              marginTop: '5px',
+              textShadow: '#c4a316 0px 0 10px',
+            }}
+          >
+            {soberDays}
+          </Typography>
+        </Box>
+      </Box>
+      <Box
+        sx={{
+          display: 'flex',
+          width: '100%',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}
+      >
+        <Typography
+          sx={{
+            fontSize: '20px',
+            span: {
+              fontWeight: 600,
+              color: 'green',
+            },
+          }}
+        >
+          Trainings in <span>{viewedYear}</span>:
+        </Typography>
+        <Box
+          sx={{
+            position: 'relative',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            margin: '-0px 0',
+            img: {
+              width: '150px',
+            },
+          }}
+        >
+          <img src="gym-notes/images/badge_1.svg" alt="badge"></img>
+          <Typography
+            sx={{
+              position: 'absolute',
+              fontSize: '24px',
+              fontWeight: 600,
+              marginTop: '5px',
+              textShadow: '#c4a316 0px 0 10px',
+              textAlign: 'center',
+              display: 'flex',
+              flexDirection: 'column',
+              span: {
+                fontSize: '10px',
+                fontWeight: 400,
+                margin: '-8px 0',
+              },
+            }}
+          >
+            {trainCount.trainings}
+            <span>out of</span>
+            {trainCount.days}
+          </Typography>
+        </Box>
+      </Box>
+
       <DateCalendar
         disableFuture
         readOnly
-        onChange={(a, b, c) => {
-          console.log('aa', a, b, c);
-        }}
+        // onChange={(a, b, c) => {
+        //   console.log('aa', a, b, c);
+        // }}
         // defaultValue={dayjs('2022-02-02')}
         // value={viewedMonth}
         onMonthChange={(newMonth) => {
@@ -120,7 +227,7 @@ function Schedule() {
       />
 
       <Box sx={{ display: 'flex', gap: '20px' }}>
-        <Button variant="contained" onClick={() => setOpen(true)}>
+        <Button variant="contained" onClick={() => setAddTrainingDialogOpen(true)}>
           + Add training
         </Button>
 
@@ -131,7 +238,7 @@ function Schedule() {
         )}
       </Box>
 
-      <Dialog open={open}>
+      <Dialog open={isAddTrainingDialogOpen}>
         <Box
           sx={{
             padding: '60px 20px 20px',
@@ -141,7 +248,7 @@ function Schedule() {
           }}
         >
           <Box
-            onClick={() => setOpen(false)}
+            onClick={() => setAddTrainingDialogOpen(false)}
             sx={{
               position: 'absolute',
               top: '20px',
@@ -171,6 +278,54 @@ function Schedule() {
           >
             ADD
           </Button>
+        </Box>
+      </Dialog>
+
+      <Dialog open={isSoberDialogOpen}>
+        <Box
+          sx={{
+            padding: '60px 20px 20px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '20px',
+          }}
+        >
+          <Box
+            onClick={() => setSoberDialogOpen(false)}
+            sx={{
+              position: 'absolute',
+              top: '20px',
+              right: '20px',
+              cursor: 'pointer',
+              '&:hover': {
+                opacity: 0.8,
+              },
+            }}
+          >
+            <CloseIcon />
+          </Box>
+          <DatePicker
+            disableFuture
+            format="DD-MM-YYYY"
+            label="Enter start date"
+            value={soberSelectedDate}
+            onChange={(newValue) => {
+              if (newValue === null) {
+                setSoberSelectedDate(newValue);
+                setSoberDialogOpen(false);
+                window.localStorage.removeItem(SOBER_DATE_STORAGE_KEY);
+              } else {
+                setSoberSelectedDate(newValue);
+                setSoberDialogOpen(false);
+                window.localStorage.setItem(SOBER_DATE_STORAGE_KEY, JSON.stringify(newValue));
+              }
+            }}
+            slotProps={{
+              actionBar: {
+                actions: ['today', 'clear', 'accept'],
+              },
+            }}
+          />
         </Box>
       </Dialog>
     </Box>
