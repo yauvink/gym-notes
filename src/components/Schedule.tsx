@@ -4,6 +4,8 @@ import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 import { DatePicker, PickersDay } from '@mui/x-date-pickers';
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { ReactComponent as Badge1 } from '../assets/images/badge_1.svg';
+import { ReactComponent as Badge2 } from '../assets/images/badge_2.svg';
 import dayjs, { Dayjs } from 'dayjs';
 
 type Training = {
@@ -19,12 +21,11 @@ function Schedule() {
   const [deleteButtonDate, setDeleteButtonDate] = useState<Dayjs | null>(null);
   const [selectedDate, setSelectedDate] = React.useState<Dayjs | null | undefined>(null);
   const savedSoberDate = window.localStorage.getItem(SOBER_DATE_STORAGE_KEY);
-  console.log('savedSoberDate', savedSoberDate);
 
   const [soberSelectedDate, setSoberSelectedDate] = React.useState<Dayjs | null | undefined>(
     savedSoberDate !== null ? dayjs(JSON.parse(savedSoberDate)) : null
   );
-  console.log('soberSelectedDate', soberSelectedDate);
+
   const [viewedYear, setViewedYear] = useState(dayjs(new Date()).year());
   const storage = window.localStorage.getItem(STORAGE_KEY);
   const data: Training[] = storage ? JSON.parse(storage) : [];
@@ -32,7 +33,6 @@ function Schedule() {
 
   const soberDays = useMemo(() => {
     if (soberSelectedDate !== null) {
-      console.log('ytty', soberSelectedDate);
       const daysDiff = dayjs(new Date()).diff(soberSelectedDate, 'day', true);
       return daysDiff.toFixed();
     }
@@ -50,16 +50,6 @@ function Schedule() {
 
     setAddTrainingDialogOpen(false);
   }, [selectedDate]);
-
-  // const handleAddSoberDate = useCallback(() => {
-  //   console.log('add sober date', soberSelectedDate);
-  //   if(soberSelectedDate){
-  //     window.localStorage.setItem(SOBER_DATE_STORAGE_KEY, JSON.stringify(soberSelectedDate));
-
-  //     setSoberDialogOpen(false)
-  //   }
-
-  // },[soberSelectedDate])
 
   const isTrainingDay = (date: Dayjs) => trainings.some((t) => dayjs(t.date).isSame(date, 'day'));
 
@@ -89,7 +79,7 @@ function Schedule() {
   return (
     <Box
       sx={{
-        padding: '20px 20px 60px',
+        padding: '20px 20px 30px',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -99,92 +89,100 @@ function Schedule() {
       <Box
         sx={{
           display: 'flex',
-          width: '100%',
-          justifyContent: 'space-between',
-          alignItems: 'center',
+          gap: '20px',
         }}
       >
-        <Typography sx={{ fontSize: '20px' }}>Sober days:</Typography>
-        <Box
-          onClick={() => setSoberDialogOpen(true)}
-          sx={{
-            position: 'relative',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            margin: '-30px 0',
-            img: {
-              width: '150px',
-            },
-          }}
-        >
-          <img src="gym-notes/images/badge_2.svg" alt="badge"></img>
-          <Typography
-            sx={{
-              position: 'absolute',
-              fontSize: '28px',
-              fontWeight: 600,
-              marginTop: '5px',
-              textShadow: '#c4a316 0px 0 10px',
-            }}
-          >
-            {soberDays}
-          </Typography>
-        </Box>
-      </Box>
-      <Box
-        sx={{
-          display: 'flex',
-          width: '100%',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}
-      >
-        <Typography
-          sx={{
-            fontSize: '20px',
-            span: {
-              fontWeight: 600,
-              color: 'green',
-            },
-          }}
-        >
-          Trainings in <span>{viewedYear}</span>:
-        </Typography>
         <Box
           sx={{
-            position: 'relative',
             display: 'flex',
-            justifyContent: 'center',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
             alignItems: 'center',
-            margin: '-0px 0',
-            img: {
-              width: '150px',
-            },
           }}
         >
-          <img src="gym-notes/images/badge_1.svg" alt="badge"></img>
-          <Typography
+          <Typography sx={{ fontSize: '20px' }}>Sober days:</Typography>
+          <Box
+            onClick={() => setSoberDialogOpen(true)}
             sx={{
-              position: 'absolute',
-              fontSize: '24px',
-              fontWeight: 600,
-              marginTop: '5px',
-              textShadow: '#c4a316 0px 0 10px',
-              textAlign: 'center',
+              position: 'relative',
               display: 'flex',
-              flexDirection: 'column',
-              span: {
-                fontSize: '10px',
-                fontWeight: 400,
-                margin: '-8px 0',
+              justifyContent: 'center',
+              alignItems: 'center',
+              svg: {
+                width: '150px',
+                height: '150px',
               },
             }}
           >
-            {trainCount.trainings}
-            <span>out of</span>
-            {trainCount.days}
+            <Badge2 />
+            <Typography
+              sx={{
+                position: 'absolute',
+                fontSize: '28px',
+                fontWeight: 600,
+                marginTop: '5px',
+                textShadow: '#c4a316 0px 0 10px',
+              }}
+            >
+              {soberDays}
+            </Typography>
+          </Box>
+        </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <Typography
+            sx={{
+              fontSize: '20px',
+              textAlign: 'center',
+              span: {
+                fontWeight: 600,
+                color: 'green',
+              },
+            }}
+          >
+            Trainings in <span>{viewedYear}</span>:
           </Typography>
+          <Box
+            sx={{
+              position: 'relative',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              svg: {
+                width: '150px',
+                height: '150px',
+              },
+            }}
+          >
+            <Badge1 />
+            <Typography
+              sx={{
+                position: 'absolute',
+                fontSize: '24px',
+                fontWeight: 600,
+                marginTop: '5px',
+                textShadow: '#c4a316 0px 0 10px',
+                textAlign: 'center',
+                display: 'flex',
+                flexDirection: 'column',
+                span: {
+                  fontSize: '10px',
+                  fontWeight: 400,
+                  margin: '-8px 0',
+                },
+              }}
+            >
+              {trainCount.trainings}
+              <span>out of</span>
+              {trainCount.days}
+            </Typography>
+          </Box>
         </Box>
       </Box>
 

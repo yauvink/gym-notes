@@ -18,6 +18,8 @@ dayjs.updateLocale('en', {
   weekStart: 1,
 });
 
+const VERSION = '0.01';
+
 function App() {
   const [value, setValue] = React.useState(0);
 
@@ -36,9 +38,7 @@ function App() {
           {value === 1 && <Sets />}
           {value === 2 && <Stats />}
         </Box>
-        <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0,
-          height: '76px',
-           }} elevation={3}>
+        <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }} elevation={3}>
           <BottomNavigation
             showLabels
             value={value}
@@ -51,6 +51,18 @@ function App() {
             <BottomNavigationAction label="Stats" icon={<QueryStatsIcon />} />
           </BottomNavigation>
         </Paper>
+      </Box>
+      <Box
+        sx={{
+          position: 'fixed',
+          top: 2,
+          right: 2,
+          zIndex: 99,
+          fontSize: '8px',
+          color: 'lightgrey',
+        }}
+      >
+        {VERSION}
       </Box>
     </LocalizationProvider>
   );
