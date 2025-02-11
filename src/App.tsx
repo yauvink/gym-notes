@@ -18,7 +18,7 @@ dayjs.updateLocale('en', {
   weekStart: 1,
 });
 
-const VERSION = '0.04';
+const VERSION = '0.05';
 
 function App() {
   const [value, setValue] = React.useState(0);
