@@ -12,16 +12,15 @@ type Training = {
 
 const STORAGE_KEY = 'key1231231123';
 
-function Calendar() {
+function Schedule() {
   const [open, setOpen] = useState(false);
   const [deleteButtonDate, setDeleteButtonDate] = useState<Dayjs | null>(null);
   const [selectedDate, setSelectedDate] = React.useState<Dayjs | null | undefined>(null);
-  // const [viewedMonth, setViewedMonth] = useState(dayjs());
   const [viewedYear, setViewedYear] = useState(dayjs(new Date()).year());
   const storage = window.localStorage.getItem(STORAGE_KEY);
   const data: Training[] = storage ? JSON.parse(storage) : [];
   const [trainings, setTrainings] = useState<Training[]>(data);
-  console.log('trainings', trainings);
+
   const handleAddTraining = useCallback(() => {
     if (selectedDate) {
       setTrainings((prev) => {
@@ -178,4 +177,4 @@ function Calendar() {
   );
 }
 
-export default Calendar;
+export default Schedule;
