@@ -1,6 +1,7 @@
 {
   "name": "gym-notes",
   "version": "0.1.0",
+  "homepage": "https://yauvink.github.io/gym-notes",
   "private": true,
   "dependencies": {
     "@base-ui-components/react": "^1.0.0-alpha.6",
