@@ -156,6 +156,7 @@ function Calendar() {
             <CloseIcon />
           </Box>
           <DatePicker
+            disableFuture
             format="DD-MM-YYYY"
             shouldDisableDate={(date) => {
               return isTrainingDay(date);
