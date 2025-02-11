@@ -32,11 +32,23 @@ function Schedule() {
   const [trainings, setTrainings] = useState<Training[]>(data);
 
   const soberDays = useMemo(() => {
-    if (soberSelectedDate !== null) {
+    if (soberSelectedDate !== null && soberSelectedDate !== undefined) {
       const daysDiff = dayjs(new Date()).diff(soberSelectedDate, 'day', true);
-      return daysDiff.toFixed();
+
+      let weekendCount = 0;
+
+      for (let i = 0; i <= daysDiff; i++) {
+        const currentDate = soberSelectedDate.add(i, 'day');
+        const dayOfWeek = currentDate.day(); // 0 = Sunday, 6 = Saturday
+
+        if (dayOfWeek === 0 || dayOfWeek === 6) {
+          weekendCount++;
+        }
+      }
+
+      return { total: daysDiff.toFixed(), real: weekendCount };
     }
-    return '+';
+    return { total: '+', real: null };
   }, [soberSelectedDate]);
 
   const handleAddTraining = useCallback(() => {
@@ -124,7 +136,18 @@ function Schedule() {
                 textShadow: '#c4a316 0px 0 10px',
               }}
             >
-              {soberDays}
+              {soberDays.total}
+            </Typography>
+            <Typography
+              sx={{
+                position: 'absolute',
+                fontSize: '10px',
+                fontWeight: 600,
+                marginTop: '105px',
+                opacity: 0.5,
+              }}
+            >
+              {soberDays.real !== null && `(Real: ${soberDays.real})`}
             </Typography>
           </Box>
         </Box>
