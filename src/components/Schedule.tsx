@@ -120,6 +120,7 @@ function Schedule() {
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
+              cursor: 'pointer',
               svg: {
                 width: '150px',
                 height: '150px',
