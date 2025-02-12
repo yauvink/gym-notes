@@ -1,8 +1,7 @@
-import { Autocomplete, Box, styled, TextField, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import { NumberField } from '@base-ui-components/react/number-field';
 import styles from './index.module.css';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { ExerciseOptionType, EXERCISES } from '../../providers/AppProvider/AppProvider.constants';
 
 function PlusIcon(props: React.ComponentProps<'svg'>) {
   return (
@@ -38,57 +37,67 @@ function MinusIcon(props: React.ComponentProps<'svg'>) {
   );
 }
 
-const GroupHeader = styled('div')(({ theme }) => ({
-  position: 'sticky',
-  top: '-8px',
-  padding: '4px 10px',
-  color: 'blue',
-  backgroundColor: 'lightgrey',
-}));
-
 function Set({
-  sets,
-  setSets,
+  index,
+  repeats,
+  setRepeats,
   weight,
   setWeight,
+  handleDeleteRow,
 }: {
-  sets: number;
-  setSets: (v: number) => void;
+  index: number;
+  repeats: number;
+  setRepeats: (v: number) => void;
   weight: number;
   setWeight: (v: number) => void;
+  handleDeleteRow: (v: number) => void;
 }) {
-  // const value = EXERCISES.find((el) => el.id === exerciseId);
-
   return (
     <Box
       sx={{
         display: 'flex',
-        justifyContent: 'flex-end',
-        border: '1px solid red',
+        justifyContent: 'space-between',
+        gap: '10px',
+        background: '#fff',
+        borderRadius: '5px',
+        padding: '5px 10px',
       }}
     >
       <Box
         sx={{
-          marginRight: '10px',
+          color: index === 0 ? 'green' : undefined,
+          fontSize: index === 0 ? '12px' : '18px',
+          minWidth: '30px',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          textAlign: 'center',
+          lineHeight: '10px',
         }}
       >
-        <Typography textAlign={'center'} margin={'5px'}>
-          Reps:
-        </Typography>
-
+        {index === 0 ? (
+          <>
+            warm
+            <br />
+            up
+          </>
+        ) : (
+          `#${index}`
+        )}
+      </Box>
+      <Box>
         <NumberField.Root
-          inputMode="numeric"
           className={styles.Field}
-          value={sets}
+          value={repeats}
           onValueChange={(value) => {
             if (value && value >= 1) {
-              if (value > 10) {
-                setSets(10);
+              if (value > 50) {
+                setRepeats(50);
               } else {
-                setSets(value);
+                setRepeats(value);
               }
             } else {
-              setSets(1);
+              setRepeats(1);
             }
           }}
         >
@@ -96,7 +105,7 @@ function Set({
             <NumberField.Decrement className={styles.Decrement}>
               <MinusIcon />
             </NumberField.Decrement>
-            <NumberField.Input className={styles.Input} inputMode="numeric" />
+            <NumberField.Input className={styles.Input} inputMode="decimal" />
             <NumberField.Increment className={styles.Increment}>
               <PlusIcon />
             </NumberField.Increment>
@@ -104,12 +113,7 @@ function Set({
         </NumberField.Root>
       </Box>
       <Box>
-        <Typography textAlign={'center'} margin={'5px'}>
-          Weight:
-        </Typography>
-
         <NumberField.Root
-          inputMode="numeric"
           className={styles.Field}
           value={weight}
           onValueChange={(value) => {
@@ -128,12 +132,28 @@ function Set({
             <NumberField.Decrement className={styles.Decrement}>
               <MinusIcon />
             </NumberField.Decrement>
-            <NumberField.Input className={styles.Input} inputMode="numeric" />
+            <NumberField.Input className={styles.Input} inputMode="decimal" />
             <NumberField.Increment className={styles.Increment}>
               <PlusIcon />
             </NumberField.Increment>
           </NumberField.Group>
         </NumberField.Root>
+      </Box>
+      <Box
+        onClick={() => {
+          if (index > 1) {
+            handleDeleteRow(index);
+          }
+        }}
+        sx={{
+          color: 'red',
+          minWidth: '24px',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        {index > 1 && <DeleteIcon />}
       </Box>
     </Box>
   );

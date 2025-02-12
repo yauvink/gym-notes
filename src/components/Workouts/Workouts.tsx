@@ -12,8 +12,11 @@ function Workouts() {
   const [editTrainingId, setEditTrainingId] = useState<string | null>(null);
 
   const calcTrainingTotalWeight = (training: TrainingType) => {
-    return training.exercises.reduce((prev, curr) => {
-      return prev + curr.repeats * curr.weight;
+    return training.exercises.reduce((prev, currEl) => {
+      const setsTotalWeight = currEl.sets.reduce((prev, curr) => {
+        return prev + curr.repeats * curr.weight;
+      }, 0);
+      return prev + setsTotalWeight
     }, 0);
   };
   return (
@@ -57,15 +60,14 @@ function Workouts() {
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                margin: '0px 0 10px',
               }}
             >
               <Typography
                 sx={{
-                  fontSize: '20px',
+                  fontSize: '24px',
                   fontWeight: 600,
                   span: {
-                    fontSize: '14px',
+                    fontSize: '16px',
                     fontWeight: 400,
                     opacity: 0.5,
                   },
@@ -92,46 +94,87 @@ function Workouts() {
               sx={{
                 display: 'flex',
                 flexDirection: 'column',
-                '& .border': {
-                  borderBottom: '1px solid lightgrey',
-                },
-                '& .wrapper': {
-                  display: 'flex',
-                  width: '100%',
-                  padding: '5px 5px',
-                  alignItems: 'center',
-
-                  '& .name': {
-                    width: '100%',
-                    fontSize: '14px',
-                    lineHeight: 'normal',
-                  },
-                  '& .sets': {
-                    width: '100px',
-                    textAlign: 'center',
-                  },
-                  '& .weight': {
-                    width: '100px',
-                    textAlign: 'center',
-                  },
-                },
               }}
             >
-              <Box
-                className="wrapper"
-                sx={{
-                  background: 'lightgrey',
-                }}
-              >
-                <Typography className="name">Name****</Typography>
-                <Typography className="sets">Sets****</Typography>
-                <Typography className="weight">Weight****</Typography>
-              </Box>
               {el.exercises.map((exercise, i, arr) => (
-                <Box key={i} className={i !== arr.length - 1 ? 'wrapper border' : 'wrapper'}>
-                  <Typography className="name">{getExerciseName(exercise.exercise_id)}</Typography>
-                  <Typography className="sets">{exercise.repeats}</Typography>
-                  <Typography className="weight">{exercise.weight} kg</Typography>
+                <Box
+                  key={i}
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    width: '100%',
+                    padding: '5px 5px',
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      margin: '5px 0',
+                      fontSize: '18px',
+                      lineHeight: 'normal',
+                    }}
+                  >
+                    {getExerciseName(exercise.exercise_id)}
+                  </Typography>
+
+                  <Box
+                    sx={{
+                      padding: '0 20px',
+                      display: 'flex',
+                      gap: '40px',
+                      justifyContent: 'flex-end',
+                      fontSize: '14px',
+                      background: 'rgba(0,0,0,0.05)',
+                      div: {
+                        width: '50px',
+                        textAlign: 'center',
+                      },
+                    }}
+                  >
+                    <Box>#</Box>
+                    <Box>Repeats</Box>
+                    <Box>Weight</Box>
+                  </Box>
+                  {exercise.sets.map((set, i) => (
+                    <Box
+                      key={i}
+                      sx={{
+                        padding: '0 20px',
+                        display: 'flex',
+                        gap: '40px',
+                        justifyContent: 'flex-end',
+                        fontSize: '14px',
+                        opacity: 0.6,
+                        borderBottom: '1px solid rgba(0,0,0,0.07)',
+                        div: {
+                          width: '50px',
+                          textAlign: 'center',
+                          color: i === 0 ? 'green' : undefined,
+                        },
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          lineHeight: i === 0 ? '6px' : undefined,
+                          fontSize: i === 0 ? '10px' : undefined,
+                          display: 'flex',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                        }}
+                      >
+                        {i === 0 ? (
+                          <>
+                            warm
+                            <br />
+                            up
+                          </>
+                        ) : (
+                          i
+                        )}
+                      </Box>
+                      <Box>{set.repeats}</Box>
+                      <Box>{set.weight} kg</Box>
+                    </Box>
+                  ))}
                 </Box>
               ))}
             </Box>

@@ -1,42 +1,8 @@
-import { Autocomplete, Box, styled, TextField, Typography } from '@mui/material';
-import { NumberField } from '@base-ui-components/react/number-field';
-import styles from './index.module.css';
+import { Autocomplete, Box, Button, styled, TextField, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { ExerciseOptionType, EXERCISES } from '../../providers/AppProvider/AppProvider.constants';
-
-function PlusIcon(props: React.ComponentProps<'svg'>) {
-  return (
-    <svg
-      width="10"
-      height="10"
-      viewBox="0 0 10 10"
-      fill="none"
-      stroke="currentcolor"
-      strokeWidth="1.6"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
-      <path d="M0 5H5M10 5H5M5 5V0M5 5V10" />
-    </svg>
-  );
-}
-
-function MinusIcon(props: React.ComponentProps<'svg'>) {
-  return (
-    <svg
-      width="10"
-      height="10"
-      viewBox="0 0 10 10"
-      fill="none"
-      stroke="currentcolor"
-      strokeWidth="1.6"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
-      <path d="M0 5H10" />
-    </svg>
-  );
-}
+import { INITIAL_EXERCISE_DATA, SetType } from '../../providers/AppProvider/AppProvider';
+import Set from './Set';
 
 const GroupHeader = styled('div')(({ theme }) => ({
   position: 'sticky',
@@ -51,17 +17,13 @@ function Exercise({
   setExerciseId,
   sets,
   setSets,
-  weight,
-  setWeight,
   handleDeleteExercise,
   showDelete,
 }: {
   exerciseId: string;
   setExerciseId: (v: string) => void;
-  sets: number;
-  setSets: (v: number) => void;
-  weight: number;
-  setWeight: (v: number) => void;
+  sets: Array<SetType>;
+  setSets: (v: Array<SetType>) => void;
   handleDeleteExercise: () => void;
   showDelete: boolean;
 }) {
@@ -137,77 +99,93 @@ function Exercise({
       <Box
         sx={{
           display: 'flex',
-          justifyContent: 'flex-end',
+          gap: '10px',
+          justifyContent: 'space-between',
+          margin: '5px 0',
         }}
       >
-        <Box
+        <Box minWidth={30} />
+        <Typography
           sx={{
-            marginRight: '10px',
+            width: '115px',
+            minWidth: '115px',
+            textAlign: 'center',
           }}
         >
-          <Typography textAlign={'center'} margin={'5px'}>
-            Reps:
-          </Typography>
-
-          <NumberField.Root
-            inputMode="numeric"
-            className={styles.Field}
-            value={sets}
-            onValueChange={(value) => {
-              if (value && value >= 1) {
-                if (value > 10) {
-                  setSets(10);
-                } else {
-                  setSets(value);
-                }
-              } else {
-                setSets(1);
-              }
+          Reps.
+        </Typography>
+        <Typography
+          sx={{
+            width: '115px',
+            minWidth: '115px',
+            textAlign: 'center',
+          }}
+        >
+          kg
+        </Typography>
+        <Box minWidth={24} />
+      </Box>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '5px',
+        }}
+      >
+        {sets.map((set, setRowIndex) => (
+          <Set
+            key={setRowIndex}
+            index={setRowIndex}
+            weight={set.weight}
+            setWeight={(newValue) => {
+              setSets(
+                sets.map((el, i) => {
+                  if (i === setRowIndex) {
+                    return {
+                      ...el,
+                      weight: newValue,
+                    };
+                  }
+                  return el;
+                })
+              );
             }}
-          >
-            <NumberField.Group className={styles.Group}>
-              <NumberField.Decrement className={styles.Decrement}>
-                <MinusIcon />
-              </NumberField.Decrement>
-              <NumberField.Input className={styles.Input} inputMode="numeric" />
-              <NumberField.Increment className={styles.Increment}>
-                <PlusIcon />
-              </NumberField.Increment>
-            </NumberField.Group>
-          </NumberField.Root>
-        </Box>
-        <Box>
-          <Typography textAlign={'center'} margin={'5px'}>
-            Weight:
-          </Typography>
-
-          <NumberField.Root
-            inputMode="numeric"
-            className={styles.Field}
-            value={weight}
-            onValueChange={(value) => {
-              if (value && value >= 5) {
-                if (value > 300) {
-                  setWeight(300);
-                } else {
-                  setWeight(value);
-                }
-              } else {
-                setWeight(5);
-              }
+            repeats={set.repeats}
+            setRepeats={(newValue) => {
+              setSets(
+                sets.map((el, i) => {
+                  if (i === setRowIndex) {
+                    return {
+                      ...el,
+                      repeats: newValue,
+                    };
+                  }
+                  return el;
+                })
+              );
             }}
-          >
-            <NumberField.Group className={styles.Group}>
-              <NumberField.Decrement className={styles.Decrement}>
-                <MinusIcon />
-              </NumberField.Decrement>
-              <NumberField.Input className={styles.Input} inputMode="numeric" />
-              <NumberField.Increment className={styles.Increment}>
-                <PlusIcon />
-              </NumberField.Increment>
-            </NumberField.Group>
-          </NumberField.Root>
-        </Box>
+            handleDeleteRow={(rowIndex) => {
+              setSets([...sets].filter((_, i) => i !== rowIndex));
+            }}
+          />
+        ))}
+        <Button
+          variant="contained"
+          color="inherit"
+          onClick={() => {
+            setSets([
+              ...sets,
+              { repeats: INITIAL_EXERCISE_DATA.sets[1].repeats, weight: INITIAL_EXERCISE_DATA.sets[1].weight },
+            ]);
+          }}
+          sx={{
+            height: '20px',
+            fontSize: '12px',
+            marginTop: '10px',
+          }}
+        >
+          + Add set
+        </Button>
       </Box>
     </Box>
   );

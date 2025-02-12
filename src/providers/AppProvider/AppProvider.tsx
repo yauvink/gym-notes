@@ -7,8 +7,6 @@ export interface IApp {
 
 export const INITIAL_EXERCISE_DATA: ExerciseType = {
   exercise_id: '',
-  repeats: 8,
-  weight: 50,
   sets: [
     { repeats: 8, weight: 50 },
     { repeats: 8, weight: 70 },
@@ -19,12 +17,11 @@ export type SetType = {
   repeats: number;
   weight: number;
 };
-  export type ExerciseType = {
-    exercise_id: string;
-    repeats: number;
-    weight: number;
-    sets: Array<SetType>;
-  };
+
+export type ExerciseType = {
+  exercise_id: string;
+  sets: Array<SetType>;
+};
 
 export type TrainingType = {
   id: string;
@@ -36,7 +33,7 @@ export const AppContext = createContext<null | IApp>(null);
 
 AppContext.displayName = 'AppContext';
 
-const TRAININGS_STORAGE_KEY = 'dsadasdsadas1';
+const TRAININGS_STORAGE_KEY = 'dsadasdsadas12';
 
 function AppProvider({ children }: { children: ReactNode }) {
   const storageTrainingData = window.localStorage.getItem(TRAININGS_STORAGE_KEY);
