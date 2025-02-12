@@ -1,19 +1,19 @@
 import { Box, Button, Typography } from '@mui/material';
 import { useState } from 'react';
 import EditIcon from '@mui/icons-material/Edit';
-import ExercisesDialog from './ExercisesDialog';
+import TrainingDialog from './TrainingDialog';
 import { useAppContext } from '../../providers/AppProvider/AppProvider.hook';
 import { TrainingType } from '../../providers/AppProvider/AppProvider';
 import { getExerciseName } from '../../providers/AppProvider/utils';
 
-function Exercises() {
+function Workouts() {
   const [isDialogOpen, setDialogOpen] = useState(false);
   const { trainings } = useAppContext();
   const [editTrainingId, setEditTrainingId] = useState<string | null>(null);
 
   const calcTrainingTotalWeight = (training: TrainingType) => {
     return training.exercises.reduce((prev, curr) => {
-      return prev + curr.sets * curr.weight;
+      return prev + curr.repeats * curr.weight;
     }, 0);
   };
   return (
@@ -38,7 +38,7 @@ function Exercises() {
         }}
       >
         <Button variant="contained" onClick={() => setDialogOpen(true)}>
-          Add new training
+          Add new workout
         </Button>
       </Box>
 
@@ -123,14 +123,14 @@ function Exercises() {
                   background: 'lightgrey',
                 }}
               >
-                <Typography className="name">Name</Typography>
-                <Typography className="sets">Sets</Typography>
-                <Typography className="weight">Weight</Typography>
+                <Typography className="name">Name****</Typography>
+                <Typography className="sets">Sets****</Typography>
+                <Typography className="weight">Weight****</Typography>
               </Box>
               {el.exercises.map((exercise, i, arr) => (
                 <Box key={i} className={i !== arr.length - 1 ? 'wrapper border' : 'wrapper'}>
                   <Typography className="name">{getExerciseName(exercise.exercise_id)}</Typography>
-                  <Typography className="sets">{exercise.sets}</Typography>
+                  <Typography className="sets">{exercise.repeats}</Typography>
                   <Typography className="weight">{exercise.weight} kg</Typography>
                 </Box>
               ))}
@@ -140,7 +140,7 @@ function Exercises() {
       </Box>
 
       {isDialogOpen && (
-        <ExercisesDialog
+        <TrainingDialog
           closeDialog={() => {
             setDialogOpen(false);
             setEditTrainingId(null);
@@ -152,4 +152,4 @@ function Exercises() {
   );
 }
 
-export default Exercises;
+export default Workouts;

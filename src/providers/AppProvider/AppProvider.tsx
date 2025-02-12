@@ -5,22 +5,31 @@ export interface IApp {
   setTrainings: (trainings: TrainingType[]) => void;
 }
 
-export const INITIAL_EXERCISE_DATA: TrainingExerciseType = {
+export const INITIAL_EXERCISE_DATA: ExerciseType = {
   exercise_id: '',
-  sets: 4,
+  repeats: 8,
   weight: 50,
+  sets: [
+    { repeats: 8, weight: 50 },
+    { repeats: 8, weight: 70 },
+  ],
 };
 
-export type TrainingExerciseType = {
-  exercise_id: string;
-  sets: number;
+export type SetType = {
+  repeats: number;
   weight: number;
 };
+  export type ExerciseType = {
+    exercise_id: string;
+    repeats: number;
+    weight: number;
+    sets: Array<SetType>;
+  };
 
 export type TrainingType = {
   id: string;
   name: string;
-  exercises: TrainingExerciseType[];
+  exercises: ExerciseType[];
 };
 
 export const AppContext = createContext<null | IApp>(null);

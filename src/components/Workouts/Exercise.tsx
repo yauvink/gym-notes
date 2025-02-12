@@ -46,7 +46,7 @@ const GroupHeader = styled('div')(({ theme }) => ({
   backgroundColor: 'lightgrey',
 }));
 
-function ExerciseInputRow({
+function Exercise({
   exerciseId,
   setExerciseId,
   sets,
@@ -134,7 +134,6 @@ function ExerciseInputRow({
           </Box>
         )}
       </Box>
-      <Box></Box>
       <Box
         sx={{
           display: 'flex',
@@ -214,4 +213,4 @@ function ExerciseInputRow({
   );
 }
 
-export default ExerciseInputRow;
+export default Exercise;

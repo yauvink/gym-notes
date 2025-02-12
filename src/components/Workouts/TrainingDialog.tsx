@@ -1,16 +1,16 @@
 import { Box, Button, Dialog, TextField, Typography } from '@mui/material';
 import { useCallback, useMemo, useState } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
-import { TrainingExerciseType, INITIAL_EXERCISE_DATA, TrainingType } from '../../providers/AppProvider/AppProvider';
+import { ExerciseType, INITIAL_EXERCISE_DATA, TrainingType } from '../../providers/AppProvider/AppProvider';
 import { useAppContext } from '../../providers/AppProvider/AppProvider.hook';
-import ExerciseInputRow from './ExerciseInputRow';
+import Exercise from './Exercise';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-function ExercisesDialog({ closeDialog, editTrainingId }: { closeDialog: () => void; editTrainingId: string | null }) {
+function TrainingDialog({ closeDialog, editTrainingId }: { closeDialog: () => void; editTrainingId: string | null }) {
   const { trainings, setTrainings } = useAppContext();
   const editInitialData = trainings.find((el) => el.id === editTrainingId);
   const [trainingName, setTrainingName] = useState(editInitialData?.name ?? '');
-  const [exercises, setExercises] = useState<TrainingExerciseType[]>(
+  const [exercises, setExercises] = useState<ExerciseType[]>(
     editInitialData?.exercises ?? [INITIAL_EXERCISE_DATA]
   );
 
@@ -118,8 +118,8 @@ function ExercisesDialog({ closeDialog, editTrainingId }: { closeDialog: () => v
             sx={{
               width: '100%',
             }}
-            placeholder="Training name"
-            label="Training name"
+            placeholder="Workout name"
+            label="Workout name"
             error={trainingName === ''}
             value={trainingName}
             onChange={(e) => setTrainingName(e.target.value)}
@@ -163,13 +163,13 @@ function ExercisesDialog({ closeDialog, editTrainingId }: { closeDialog: () => v
         >
           <Typography>Exercises:</Typography>
           {exercises.map((exercise, rowIndex, arr) => (
-            <ExerciseInputRow
+            <Exercise
               key={rowIndex}
               showDelete={arr.length > 1}
               exerciseId={exercise.exercise_id}
               setExerciseId={(newValue) => {
                 setExercises((prev) => {
-                  return prev.map((el, i) => {
+                  return prev.map((el, i): ExerciseType => {
                     if (i === rowIndex) {
                       return {
                         ...el,
@@ -180,14 +180,14 @@ function ExercisesDialog({ closeDialog, editTrainingId }: { closeDialog: () => v
                   });
                 });
               }}
-              sets={exercise.sets}
+              sets={exercise.repeats}
               setSets={(newValue) => {
                 setExercises((prev) => {
-                  return prev.map((el, i) => {
+                  return prev.map((el, i): ExerciseType => {
                     if (i === rowIndex) {
                       return {
                         ...el,
-                        sets: newValue,
+                        repeats: newValue,
                       };
                     }
                     return el;
@@ -197,7 +197,7 @@ function ExercisesDialog({ closeDialog, editTrainingId }: { closeDialog: () => v
               weight={exercise.weight}
               setWeight={(newValue) => {
                 setExercises((prev) => {
-                  return prev.map((el, i) => {
+                  return prev.map((el, i): ExerciseType => {
                     if (i === rowIndex) {
                       return {
                         ...el,
@@ -227,4 +227,4 @@ function ExercisesDialog({ closeDialog, editTrainingId }: { closeDialog: () => v
   );
 }
 
-export default ExercisesDialog;
+export default TrainingDialog;

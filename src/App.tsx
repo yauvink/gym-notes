@@ -9,7 +9,7 @@ import { BottomNavigation, BottomNavigationAction, Box, CssBaseline, Paper } fro
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import QueryStatsIcon from '@mui/icons-material/QueryStats';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
-import Exercises from './components/Exercises/Exercises';
+import Workouts from './components/Workouts/Workouts';
 import Stats from './components/Stats';
 
 dayjs.extend(isLeapYear);
@@ -18,10 +18,10 @@ dayjs.updateLocale('en', {
   weekStart: 1,
 });
 
-const VERSION = '0.08';
+const VERSION = '0.09';
 
 function App() {
-  const [value, setValue] = React.useState(0);
+  const [value, setValue] = React.useState(1);
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -35,7 +35,7 @@ function App() {
           }
         >
           {value === 0 && <Schedule />}
-          {value === 1 && <Exercises />}
+          {value === 1 && <Workouts />}
           {value === 2 && <Stats />}
         </Box>
         <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }} elevation={3}>
@@ -47,7 +47,7 @@ function App() {
             }}
           >
             <BottomNavigationAction label="Schedule" icon={<CalendarMonthIcon />} />
-            <BottomNavigationAction label="Exercises" icon={<FitnessCenterIcon />} />
+            <BottomNavigationAction label="Workouts" icon={<FitnessCenterIcon />} />
             <BottomNavigationAction label="Stats" icon={<QueryStatsIcon />} />
           </BottomNavigation>
         </Paper>

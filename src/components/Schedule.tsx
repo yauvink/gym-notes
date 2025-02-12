@@ -8,7 +8,7 @@ import { ReactComponent as Badge1 } from '../assets/images/badge_1.svg';
 import { ReactComponent as Badge2 } from '../assets/images/badge_2.svg';
 import dayjs, { Dayjs } from 'dayjs';
 
-type Training = {
+type TrainingDayType = {
   date: string;
 };
 
@@ -28,8 +28,8 @@ function Schedule() {
 
   const [viewedYear, setViewedYear] = useState(dayjs(new Date()).year());
   const storage = window.localStorage.getItem(STORAGE_KEY);
-  const data: Training[] = storage ? JSON.parse(storage) : [];
-  const [trainings, setTrainings] = useState<Training[]>(data);
+  const data: TrainingDayType[] = storage ? JSON.parse(storage) : [];
+  const [userTrainings, setUserTrainings] = useState<TrainingDayType[]>(data);
 
   const soberDays = useMemo(() => {
     if (soberSelectedDate !== null && soberSelectedDate !== undefined) {
@@ -53,7 +53,7 @@ function Schedule() {
 
   const handleAddTraining = useCallback(() => {
     if (selectedDate) {
-      setTrainings((prev) => {
+      setUserTrainings((prev) => {
         const newTrainings = [...prev, { date: selectedDate.toJSON() }];
         window.localStorage.setItem(STORAGE_KEY, JSON.stringify(newTrainings));
         return newTrainings;
@@ -63,22 +63,22 @@ function Schedule() {
     setAddTrainingDialogOpen(false);
   }, [selectedDate]);
 
-  const isTrainingDay = (date: Dayjs) => trainings.some((t) => dayjs(t.date).isSame(date, 'day'));
+  const isTrainingDay = (date: Dayjs) => userTrainings.some((t) => dayjs(t.date).isSame(date, 'day'));
 
   const trainCount = useMemo(() => {
-    const thisYearTrainings = trainings.filter((el) => {
+    const thisYearTrainings = userTrainings.filter((el) => {
       const trainingYear = dayjs(el.date).year();
 
       return trainingYear === viewedYear;
     });
     const daysInYear = dayjs().year(viewedYear).isLeapYear() ? 366 : 365;
     return { trainings: thisYearTrainings.length, days: daysInYear };
-  }, [trainings, viewedYear]);
+  }, [userTrainings, viewedYear]);
 
   const handleDeleteTrain = () => {
     if (window.confirm('Are you sure want to delete training day?')) {
       if (deleteButtonDate) {
-        setTrainings((prev) => {
+        setUserTrainings((prev) => {
           const newTrainings = prev.filter((el) => el.date !== deleteButtonDate.toJSON());
           window.localStorage.setItem(STORAGE_KEY, JSON.stringify(newTrainings));
           return newTrainings;
