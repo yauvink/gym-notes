@@ -1,7 +1,7 @@
 import { Box, Button, Dialog, TextField, Typography } from '@mui/material';
 import { useCallback, useMemo, useState } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
-import { ExerciseType, INITIAL_EXERCISE_DATA, TrainingType } from '../../providers/AppProvider/AppProvider';
+import { TrainingExerciseType, INITIAL_EXERCISE_DATA, TrainingType } from '../../providers/AppProvider/AppProvider';
 import { useAppContext } from '../../providers/AppProvider/AppProvider.hook';
 import ExerciseInputRow from './ExerciseInputRow';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -10,7 +10,9 @@ function ExercisesDialog({ closeDialog, editTrainingId }: { closeDialog: () => v
   const { trainings, setTrainings } = useAppContext();
   const editInitialData = trainings.find((el) => el.id === editTrainingId);
   const [trainingName, setTrainingName] = useState(editInitialData?.name ?? '');
-  const [exercises, setExercises] = useState<ExerciseType[]>(editInitialData?.exercises ?? [INITIAL_EXERCISE_DATA]);
+  const [exercises, setExercises] = useState<TrainingExerciseType[]>(
+    editInitialData?.exercises ?? [INITIAL_EXERCISE_DATA]
+  );
 
   const handleSaveTraining = useCallback(() => {
     const newTrainings: TrainingType[] = editTrainingId
@@ -55,7 +57,7 @@ function ExercisesDialog({ closeDialog, editTrainingId }: { closeDialog: () => v
   };
 
   const isDisabled = useMemo(() => {
-    return trainingName === '' || exercises.some((el) => el.name === '');
+    return trainingName === '' || exercises.some((el) => el.exercise_id === '');
   }, [trainingName, exercises]);
 
   return (
@@ -64,6 +66,7 @@ function ExercisesDialog({ closeDialog, editTrainingId }: { closeDialog: () => v
       sx={{
         '& .MuiPaper-root': {
           margin: '5px',
+          width: '100%',
         },
       }}
     >
@@ -116,6 +119,7 @@ function ExercisesDialog({ closeDialog, editTrainingId }: { closeDialog: () => v
               width: '100%',
             }}
             placeholder="Training name"
+            label="Training name"
             error={trainingName === ''}
             value={trainingName}
             onChange={(e) => setTrainingName(e.target.value)}
@@ -157,30 +161,19 @@ function ExercisesDialog({ closeDialog, editTrainingId }: { closeDialog: () => v
             },
           }}
         >
-          <Box
-            className="wrapper"
-            sx={{
-              paddingLeft: '10px!important',
-              background: 'lightgrey',
-            }}
-          >
-            <Typography className="name">Name</Typography>
-            <Typography className="sets">Sets</Typography>
-            <Typography className="weight">Weight</Typography>
-            {exercises.length > 1 && <Typography className="remove"></Typography>}
-          </Box>
+          <Typography>Exercises:</Typography>
           {exercises.map((exercise, rowIndex, arr) => (
             <ExerciseInputRow
               key={rowIndex}
               showDelete={arr.length > 1}
-              exerciseName={exercise.name}
-              setExerciseName={(newValue) => {
+              exerciseId={exercise.exercise_id}
+              setExerciseId={(newValue) => {
                 setExercises((prev) => {
                   return prev.map((el, i) => {
                     if (i === rowIndex) {
                       return {
                         ...el,
-                        name: newValue,
+                        exercise_id: newValue,
                       };
                     }
                     return el;

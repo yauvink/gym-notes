@@ -5,14 +5,14 @@ export interface IApp {
   setTrainings: (trainings: TrainingType[]) => void;
 }
 
-export const INITIAL_EXERCISE_DATA: ExerciseType = {
-  name: '',
+export const INITIAL_EXERCISE_DATA: TrainingExerciseType = {
+  exercise_id: '',
   sets: 4,
   weight: 50,
 };
 
-export type ExerciseType = {
-  name: string;
+export type TrainingExerciseType = {
+  exercise_id: string;
   sets: number;
   weight: number;
 };
@@ -20,14 +20,14 @@ export type ExerciseType = {
 export type TrainingType = {
   id: string;
   name: string;
-  exercises: ExerciseType[];
+  exercises: TrainingExerciseType[];
 };
 
 export const AppContext = createContext<null | IApp>(null);
 
 AppContext.displayName = 'AppContext';
 
-const TRAININGS_STORAGE_KEY = 'dsadasdsadas';
+const TRAININGS_STORAGE_KEY = 'dsadasdsadas1';
 
 function AppProvider({ children }: { children: ReactNode }) {
   const storageTrainingData = window.localStorage.getItem(TRAININGS_STORAGE_KEY);

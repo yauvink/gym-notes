@@ -4,6 +4,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import ExercisesDialog from './ExercisesDialog';
 import { useAppContext } from '../../providers/AppProvider/AppProvider.hook';
 import { TrainingType } from '../../providers/AppProvider/AppProvider';
+import { getExerciseName } from '../../providers/AppProvider/utils';
 
 function Exercises() {
   const [isDialogOpen, setDialogOpen] = useState(false);
@@ -97,10 +98,13 @@ function Exercises() {
                 '& .wrapper': {
                   display: 'flex',
                   width: '100%',
-                  padding: '5px 10px',
+                  padding: '5px 5px',
+                  alignItems: 'center',
 
                   '& .name': {
                     width: '100%',
+                    fontSize: '14px',
+                    lineHeight: 'normal',
                   },
                   '& .sets': {
                     width: '100px',
@@ -125,7 +129,7 @@ function Exercises() {
               </Box>
               {el.exercises.map((exercise, i, arr) => (
                 <Box key={i} className={i !== arr.length - 1 ? 'wrapper border' : 'wrapper'}>
-                  <Typography className="name">{exercise.name}</Typography>
+                  <Typography className="name">{getExerciseName(exercise.exercise_id)}</Typography>
                   <Typography className="sets">{exercise.sets}</Typography>
                   <Typography className="weight">{exercise.weight} kg</Typography>
                 </Box>
