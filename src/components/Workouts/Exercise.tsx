@@ -60,9 +60,6 @@ function Exercise({
             getOptionKey={(option) => option.id}
             fullWidth
             sx={{
-              // width: '300px',
-              // background: '#fff',
-              // background: getExerciseColor(value?.id)
               background: `${getExerciseColorById(value?.id)}20`,
             }}
             renderInput={(params) => (
@@ -72,6 +69,9 @@ function Exercise({
                 label="Choose exercise"
                 placeholder="Choose exercise"
                 error={exerciseId === ''}
+                onFocus={(event) => {
+                  event.target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }}
               />
             )}
             renderGroup={(params) => {
