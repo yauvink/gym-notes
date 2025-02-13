@@ -1,21 +1,25 @@
 import { createContext, ReactNode, useState } from 'react';
+import {
+  DEFAULT_REPEATS,
+  DEFAULT_REPEATS_STORAGE_KEY,
+  DEFAULT_WEIGHT,
+  DEFAULT_WEIGHT_STORAGE_KEY,
+  TRAININGS_STORAGE_KEY,
+} from './AppProvider.constants';
 
 export interface IApp {
   trainings: TrainingType[];
   setTrainings: (trainings: TrainingType[]) => void;
+
+  defaultRepeats: number;
+  setDefaultRepeats: (v: number) => void;
+  defaultWeight: number;
+  setDefaultWeight: (v: number) => void;
 }
 
-export const INITIAL_EXERCISE_DATA: ExerciseType = {
-  exercise_id: '',
-  sets: [
-    { repeats: 8, weight: 50 },
-    { repeats: 8, weight: 70 },
-  ],
-};
-
 export type SetType = {
-  repeats: number;
-  weight: number;
+  reps: number;
+  kg: number;
 };
 
 export type ExerciseType = {
@@ -33,8 +37,6 @@ export const AppContext = createContext<null | IApp>(null);
 
 AppContext.displayName = 'AppContext';
 
-const TRAININGS_STORAGE_KEY = 'dsadasdsadas12';
-
 function AppProvider({ children }: { children: ReactNode }) {
   const storageTrainingData = window.localStorage.getItem(TRAININGS_STORAGE_KEY);
   const initialTrainingData: TrainingType[] = storageTrainingData ? JSON.parse(storageTrainingData) : [];
@@ -44,9 +46,31 @@ function AppProvider({ children }: { children: ReactNode }) {
     window.localStorage.setItem(TRAININGS_STORAGE_KEY, JSON.stringify(newTrainings));
   };
 
+  const storageDefaultWeight = window.localStorage.getItem(DEFAULT_WEIGHT_STORAGE_KEY);
+  const initialDefaultWeight: number = storageDefaultWeight ? JSON.parse(storageDefaultWeight) : DEFAULT_WEIGHT;
+  const [defaultWeight, setDefaultWeightLocal] = useState(initialDefaultWeight);
+
+  const storageDefaultRepeats = window.localStorage.getItem(DEFAULT_REPEATS_STORAGE_KEY);
+  const initialDefaultRepeats: number = storageDefaultRepeats ? JSON.parse(storageDefaultRepeats) : DEFAULT_REPEATS;
+  const [defaultRepeats, setDefaultRepeatsLocal] = useState(initialDefaultRepeats);
+
+  const setDefaultWeight = (newValue: number) => {
+    setDefaultWeightLocal(newValue);
+    window.localStorage.setItem(DEFAULT_WEIGHT_STORAGE_KEY, JSON.stringify(newValue));
+  };
+
+  const setDefaultRepeats = (newValue: number) => {
+    setDefaultRepeatsLocal(newValue);
+    window.localStorage.setItem(DEFAULT_REPEATS_STORAGE_KEY, JSON.stringify(newValue));
+  };
+
   const value = {
     trainings,
     setTrainings,
+    defaultRepeats,
+    setDefaultRepeats,
+    defaultWeight,
+    setDefaultWeight,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

@@ -1,16 +1,9 @@
-import { Autocomplete, Box, Button, Paper, styled, TextField, Typography } from '@mui/material';
+import { Autocomplete, Box, Button, Paper, TextField, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { ExerciseOptionType, EXERCISES } from '../../providers/AppProvider/AppProvider.constants';
+import { ExerciseOptionType, EXERCISES, MuscleGroup } from '../../providers/AppProvider/AppProvider.constants';
 import { SetType } from '../../providers/AppProvider/AppProvider';
 import Set from './Set';
-
-const GroupHeader = styled('div')(({ theme }) => ({
-  position: 'sticky',
-  top: '-8px',
-  padding: '4px 10px',
-  color: 'blue',
-  backgroundColor: 'lightgrey',
-}));
+import { getExerciseColorByCategory, getExerciseColorById } from '../../utils';
 
 function Exercise({
   exerciseId,
@@ -68,7 +61,9 @@ function Exercise({
             fullWidth
             sx={{
               // width: '300px',
-              background: '#fff',
+              // background: '#fff',
+              // background: getExerciseColor(value?.id)
+              background: `${getExerciseColorById(value?.id)}20`,
             }}
             renderInput={(params) => (
               <TextField
@@ -79,12 +74,25 @@ function Exercise({
                 error={exerciseId === ''}
               />
             )}
-            renderGroup={(params) => (
-              <li key={params.key}>
-                <GroupHeader>{params.group}</GroupHeader>
-                <ul>{params.children}</ul>
-              </li>
-            )}
+            renderGroup={(params) => {
+              console.log('params', params);
+              return (
+                <li key={params.key}>
+                  <Box
+                    sx={{
+                      position: 'sticky',
+                      top: '-8px',
+                      padding: '4px 10px',
+                      fontWeight: 600,
+                      backgroundColor: getExerciseColorByCategory(params.group as MuscleGroup),
+                    }}
+                  >
+                    {params.group}
+                  </Box>
+                  <ul>{params.children}</ul>
+                </li>
+              );
+            }}
           />
           {showDelete && (
             <Box
@@ -144,28 +152,28 @@ function Exercise({
               key={setRowIndex}
               index={setRowIndex}
               exerciseIndex={exerciseIndex}
-              weight={set.weight}
+              weight={set.kg}
               setWeight={(newValue) => {
                 setSets(
-                  sets.map((el, i) => {
+                  sets.map((el, i): SetType => {
                     if (i === setRowIndex) {
                       return {
                         ...el,
-                        weight: newValue,
+                        kg: newValue,
                       };
                     }
                     return el;
                   })
                 );
               }}
-              repeats={set.repeats}
+              repeats={set.reps}
               setRepeats={(newValue) => {
                 setSets(
-                  sets.map((el, i) => {
+                  sets.map((el, i): SetType => {
                     if (i === setRowIndex) {
                       return {
                         ...el,
-                        repeats: newValue,
+                        reps: newValue,
                       };
                     }
                     return el;
@@ -181,15 +189,15 @@ function Exercise({
             variant="contained"
             onClick={() => {
               const prevSet = sets[sets.length - 1];
-              setSets([...sets, { repeats: prevSet.repeats, weight: prevSet.weight }]);
+              setSets([...sets, { reps: prevSet.reps, kg: prevSet.kg }]);
 
               setTimeout(() => {
                 const target = document.getElementById(`last_input_element_${exerciseIndex}`);
-                console.log('target ', target);
                 if (target) {
                   target.focus();
+                  target.scrollIntoView({ behavior: 'smooth' });
                 }
-              }, 100);
+              }, 200);
             }}
             sx={{
               background: '#fff',

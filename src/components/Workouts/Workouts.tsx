@@ -4,7 +4,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import TrainingDialog from './TrainingDialog';
 import { useAppContext } from '../../providers/AppProvider/AppProvider.hook';
 import { TrainingType } from '../../providers/AppProvider/AppProvider';
-import { getExerciseName } from '../../providers/AppProvider/utils';
+import { getExerciseColorById, getExerciseName } from '../../utils';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 function Workouts() {
@@ -15,7 +15,7 @@ function Workouts() {
   const calcTrainingTotalWeight = (training: TrainingType) => {
     return training.exercises.reduce((prev, currEl) => {
       const setsTotalWeight = currEl.sets.reduce((prev, curr) => {
-        return prev + curr.repeats * curr.weight;
+        return prev + curr.reps * curr.kg;
       }, 0);
       return prev + setsTotalWeight;
     }, 0);
@@ -100,15 +100,13 @@ function Workouts() {
               }}
             >
               {el.exercises.map((exercise, i, arr) => (
-                <Accordion key={i}>
-                  <AccordionSummary
-                    expandIcon={<ArrowDropDownIcon />}
-                    sx={
-                      {
-                        // color: 'red',
-                      }
-                    }
-                  >
+                <Accordion
+                  key={i}
+                  sx={{
+                    background: `${getExerciseColorById(exercise.exercise_id)}70`,
+                  }}
+                >
+                  <AccordionSummary expandIcon={<ArrowDropDownIcon />}>
                     <Typography
                       sx={{
                         fontSize: '18px',
@@ -118,7 +116,11 @@ function Workouts() {
                       {getExerciseName(exercise.exercise_id)}
                     </Typography>
                   </AccordionSummary>
-                  <AccordionDetails>
+                  <AccordionDetails
+                    sx={{
+                      background: '#fff',
+                    }}
+                  >
                     <Box
                       sx={{
                         padding: '0 20px',
@@ -174,8 +176,8 @@ function Workouts() {
                             i
                           )}
                         </Box>
-                        <Box>{set.repeats}</Box>
-                        <Box>{set.weight} kg</Box>
+                        <Box>{set.reps}</Box>
+                        <Box>{set.kg} kg</Box>
                       </Box>
                     ))}
                   </AccordionDetails>

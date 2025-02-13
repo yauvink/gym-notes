@@ -1,3 +1,14 @@
+export const TRAININGS_STORAGE_KEY = 'trainings_d1';
+export const DEFAULT_WEIGHT_STORAGE_KEY = 'default_weight';
+export const DEFAULT_REPEATS_STORAGE_KEY = 'default_repeats';
+
+export const DEFAULT_WEIGHT = 50;
+export const DEFAULT_REPEATS = 8;
+export const MAX_WEIGHT = 300;
+export const MIN_WEIGHT = 5;
+export const MAX_REPEATS = 50;
+export const MIN_REPEATS = 1;
+
 export enum MuscleGroup {
   Chest = 'Chest',
   Back = 'Back',

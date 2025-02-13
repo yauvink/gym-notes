@@ -1,41 +1,9 @@
 import { Box } from '@mui/material';
 import { NumberField } from '@base-ui-components/react/number-field';
-import styles from './index.module.css';
+import styles from '../common/buttons.module.css';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
-
-function PlusIcon(props: React.ComponentProps<'svg'>) {
-  return (
-    <svg
-      width="10"
-      height="10"
-      viewBox="0 0 10 10"
-      fill="none"
-      stroke="currentcolor"
-      strokeWidth="1.6"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
-      <path d="M0 5H5M10 5H5M5 5V0M5 5V10" />
-    </svg>
-  );
-}
-
-function MinusIcon(props: React.ComponentProps<'svg'>) {
-  return (
-    <svg
-      width="10"
-      height="10"
-      viewBox="0 0 10 10"
-      fill="none"
-      stroke="currentcolor"
-      strokeWidth="1.6"
-      xmlns="http://www.w3.org/2000/svg"
-      {...props}
-    >
-      <path d="M0 5H10" />
-    </svg>
-  );
-}
+import { MinusIcon, PlusIcon } from '../common/Icons';
+import { MAX_REPEATS, MAX_WEIGHT, MIN_REPEATS, MIN_WEIGHT } from '../../providers/AppProvider/AppProvider.constants';
 
 function Set({
   index,
@@ -94,14 +62,14 @@ function Set({
           className={styles.Field}
           value={repeats}
           onValueChange={(value) => {
-            if (value && value >= 1) {
-              if (value > 50) {
-                setRepeats(50);
+            if (value && value >= MIN_REPEATS) {
+              if (value > MAX_REPEATS) {
+                setRepeats(MAX_REPEATS);
               } else {
                 setRepeats(value);
               }
             } else {
-              setRepeats(1);
+              setRepeats(MIN_REPEATS);
             }
           }}
         >
@@ -121,14 +89,14 @@ function Set({
           className={styles.Field}
           value={weight}
           onValueChange={(value) => {
-            if (value && value >= 5) {
-              if (value > 300) {
-                setWeight(300);
+            if (value && value >= MIN_WEIGHT) {
+              if (value > MAX_WEIGHT) {
+                setWeight(MAX_WEIGHT);
               } else {
                 setWeight(value);
               }
             } else {
-              setWeight(5);
+              setWeight(MIN_WEIGHT);
             }
           }}
         >

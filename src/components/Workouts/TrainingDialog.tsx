@@ -1,15 +1,22 @@
 import { Box, Button, Dialog, TextField } from '@mui/material';
 import { useCallback, useMemo, useState } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
-import { ExerciseType, INITIAL_EXERCISE_DATA, TrainingType } from '../../providers/AppProvider/AppProvider';
+import { ExerciseType, TrainingType } from '../../providers/AppProvider/AppProvider';
 import { useAppContext } from '../../providers/AppProvider/AppProvider.hook';
 import Exercise from './Exercise';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 function TrainingDialog({ closeDialog, editTrainingId }: { closeDialog: () => void; editTrainingId: string | null }) {
-  const { trainings, setTrainings } = useAppContext();
+  const { trainings, setTrainings, defaultRepeats, defaultWeight } = useAppContext();
   const editInitialData = trainings.find((el) => el.id === editTrainingId);
   const [trainingName, setTrainingName] = useState(editInitialData?.name ?? '');
+  const INITIAL_EXERCISE_DATA: ExerciseType = {
+    exercise_id: '',
+    sets: [
+      { reps: defaultRepeats, kg: defaultWeight / 2 },
+      { reps: defaultRepeats, kg: defaultWeight },
+    ],
+  };
   const [exercises, setExercises] = useState<ExerciseType[]>(editInitialData?.exercises ?? [INITIAL_EXERCISE_DATA]);
 
   const handleSaveTraining = useCallback(() => {
@@ -71,7 +78,7 @@ function TrainingDialog({ closeDialog, editTrainingId }: { closeDialog: () => vo
           maxWidth: '600px',
         },
       }}
-      >
+    >
       <Box
         sx={{
           // backgroundColor: 'grey',
@@ -132,36 +139,6 @@ function TrainingDialog({ closeDialog, editTrainingId }: { closeDialog: () => vo
           sx={{
             display: 'flex',
             flexDirection: 'column',
-            '& .border': {
-              borderBottom: '1px solid lightgrey',
-            },
-            '& .wrapper': {
-              display: 'flex',
-              width: '100%',
-              padding: '5px 0px',
-              gap: '10px',
-              '& .name': {
-                width: '100%',
-              },
-              '& .sets': {
-                width: '90px',
-                minWidth: '90px',
-                textAlign: 'center',
-              },
-              '& .weight': {
-                minWidth: '90px',
-                width: '90px',
-                textAlign: 'center',
-              },
-              '& .remove': {
-                width: '24px',
-                minWidth: '24px',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                color: 'red',
-              },
-            },
           }}
         >
           {exercises.map((exercise, rowIndex, arr) => (

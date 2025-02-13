@@ -11,6 +11,8 @@ import QueryStatsIcon from '@mui/icons-material/QueryStats';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import Workouts from './components/Workouts/Workouts';
 import Stats from './components/Stats';
+import Settings from './components/Settings';
+import SettingsSuggestIcon from '@mui/icons-material/SettingsSuggest';
 
 dayjs.extend(isLeapYear);
 dayjs.extend(updateLocale);
@@ -18,10 +20,8 @@ dayjs.updateLocale('en', {
   weekStart: 1,
 });
 
-const VERSION = '0.10';
-
 function App() {
-  const [value, setValue] = React.useState(1);
+  const [value, setValue] = React.useState(0);
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -37,6 +37,7 @@ function App() {
           {value === 0 && <Schedule />}
           {value === 1 && <Workouts />}
           {value === 2 && <Stats />}
+          {value === 3 && <Settings />}
         </Box>
         <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }} elevation={3}>
           <BottomNavigation
@@ -49,21 +50,11 @@ function App() {
             <BottomNavigationAction label="Schedule" icon={<CalendarMonthIcon />} />
             <BottomNavigationAction label="Workouts" icon={<FitnessCenterIcon />} />
             <BottomNavigationAction label="Stats" icon={<QueryStatsIcon />} />
+            <BottomNavigationAction label="Settings" icon={<SettingsSuggestIcon />} />
           </BottomNavigation>
         </Paper>
       </Box>
-      <Box
-        sx={{
-          position: 'fixed',
-          top: 2,
-          right: 2,
-          zIndex: 99,
-          fontSize: '8px',
-          color: 'lightgrey',
-        }}
-      >
-        {VERSION}
-      </Box>
+
     </LocalizationProvider>
   );
 }
