@@ -40,6 +40,7 @@ export type WorkoutType = {
 
 export type UserTrainingDayType = {
   date: string;
+  workout?: WorkoutType;
 };
 
 export const AppContext = createContext<null | IApp>(null);

@@ -3,24 +3,13 @@ import { useState } from 'react';
 import EditIcon from '@mui/icons-material/Edit';
 import WorkoutDialog from './WorkoutDialog';
 import { useAppContext } from '../../providers/AppProvider/AppProvider.hook';
-import { WorkoutType } from '../../providers/AppProvider/AppProvider';
-import { getExerciseColorById, getExerciseName } from '../../utils';
+import { calcTrainingTotalWeight, getExerciseColorById, getExerciseName } from '../../utils';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 function Workouts() {
   const [isDialogOpen, setDialogOpen] = useState(false);
   const { workouts } = useAppContext();
   const [editTrainingId, setEditTrainingId] = useState<string | null>(null);
-
-  const calcTrainingTotalWeight = (training: WorkoutType) => {
-    const result = training.exercises.reduce((prev, currEl) => {
-      const setsTotalWeight = currEl.sets.reduce((prev, curr) => {
-        return prev + curr.reps * curr.kg;
-      }, 0);
-      return prev + setsTotalWeight;
-    }, 0);
-    return result.toLocaleString();
-  };
 
   return (
     <Box

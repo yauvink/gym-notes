@@ -18,6 +18,8 @@ import { ReactComponent as Badge1 } from '../assets/images/badge_1.svg';
 import { ReactComponent as Badge2 } from '../assets/images/badge_2.svg';
 import dayjs, { Dayjs } from 'dayjs';
 import { useAppContext } from '../providers/AppProvider/AppProvider.hook';
+import { UserTrainingDayType } from '../providers/AppProvider/AppProvider';
+import { calcTrainingTotalWeight, getExerciseColorById, getExerciseName } from '../utils';
 
 const SOBER_DATE_STORAGE_KEY = 'date_key_21313';
 
@@ -25,14 +27,13 @@ function Schedule() {
   const { userTrainingDays, setUserTrainingDays, workouts } = useAppContext();
   const [isAddTrainingDialogOpen, setAddTrainingDialogOpen] = useState(false);
   const [isSoberDialogOpen, setSoberDialogOpen] = useState(false);
-  const [deleteButtonDate, setDeleteButtonDate] = useState<Dayjs | null>(null);
-  const [selectedDate, setSelectedDate] = React.useState<Dayjs | null | undefined>(null);
+  const [selectedDate, setSelectedDate] = React.useState<Dayjs | null | undefined>(dayjs(new Date()));
   const savedSoberDate = window.localStorage.getItem(SOBER_DATE_STORAGE_KEY);
   const [soberSelectedDate, setSoberSelectedDate] = React.useState<Dayjs | null | undefined>(
     savedSoberDate !== null ? dayjs(JSON.parse(savedSoberDate)) : null
   );
   const [viewedYear, setViewedYear] = useState(dayjs(new Date()).year());
-  const [selectedWorkout, setSelectedWorkout] = React.useState('');
+  const [selectedWorkoutId, setSelectedWorkoutId] = React.useState('');
 
   const soberDays = useMemo(() => {
     if (soberSelectedDate !== null && soberSelectedDate !== undefined) {
@@ -56,14 +57,25 @@ function Schedule() {
 
   const handleAddTraining = useCallback(() => {
     if (selectedDate) {
-      console.log('selectedWorkout', selectedWorkout, workouts);
-      const newTrainingDays = [...userTrainingDays, { date: selectedDate.toJSON() }];
+      const workout = workouts.find((el) => el.id === selectedWorkoutId);
+      const newTrainingDays: UserTrainingDayType[] = [
+        ...userTrainingDays,
+        {
+          date: selectedDate.toJSON(),
+          ...(workout && { workout }),
+        },
+      ];
       setUserTrainingDays(newTrainingDays);
-      setAddTrainingDialogOpen(false);
+      handleCloseAddTrainDayDialog();
     }
-  }, [userTrainingDays, setUserTrainingDays, selectedDate, selectedWorkout, workouts]);
+  }, [userTrainingDays, setUserTrainingDays, selectedDate, selectedWorkoutId, workouts]);
 
   const isTrainingDay = (date: Dayjs) => userTrainingDays.some((t) => dayjs(t.date).isSame(date, 'day'));
+
+  const handleCloseAddTrainDayDialog = () => {
+    setSelectedWorkoutId('');
+    setAddTrainingDialogOpen(false);
+  };
 
   const trainCount = useMemo(() => {
     const thisYearTrainings = userTrainingDays.filter((el) => {
@@ -77,16 +89,23 @@ function Schedule() {
 
   const handleDeleteTrainingDay = () => {
     if (window.confirm('Are you sure want to delete training day? This action cannot be undone.')) {
-      if (deleteButtonDate) {
-        const newTrainingDays = userTrainingDays.filter((el) => el.date !== deleteButtonDate.toJSON());
+      if (selectedDate) {
+        const newTrainingDays = userTrainingDays.filter((el) => !dayjs(el.date).isSame(selectedDate, 'day'));
         setUserTrainingDays(newTrainingDays);
-        setDeleteButtonDate(null);
       }
     }
   };
 
+  const selectedDayData = useMemo(() => {
+    if (selectedDate) {
+      const result = userTrainingDays.find((el) => dayjs(el.date).isSame(selectedDate, 'day'));
+      return result;
+    }
+  }, [selectedDate, userTrainingDays]);
+  console.log('selectedDayData', selectedDayData);
+
   const handleChange = (event: SelectChangeEvent) => {
-    setSelectedWorkout(event.target.value as string);
+    setSelectedWorkoutId(event.target.value as string);
   };
 
   return (
@@ -231,12 +250,7 @@ function Schedule() {
               <PickersDay
                 {...props}
                 onClick={() => {
-                  if (isTrainingDay(props.day)) {
-                    setDeleteButtonDate(props.day);
-                  } else {
-                    setDeleteButtonDate(null);
-                    setSelectedDate(props.day);
-                  }
+                  setSelectedDate(dayjs(props.day).startOf('day'));
                 }}
                 sx={{
                   backgroundColor: isTraining ? 'lightblue' : 'transparent',
@@ -249,14 +263,132 @@ function Schedule() {
         }}
       />
 
-      <Box sx={{ display: 'flex', gap: '20px' }}>
-        <Button variant="contained" onClick={() => setAddTrainingDialogOpen(true)}>
-          + Add training day
-        </Button>
+      <Box sx={{ display: 'flex', gap: '20px', width: '100%', maxWidth: '500px', marginTop: '-50px' }}>
+        {selectedDayData ? (
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              width: '100%',
+            }}
+          >
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'flex-end',
+                width: '100%',
+              }}
+            >
+              <DeleteIcon sx={{ color: 'red', cursor: 'pointer' }} onClick={() => handleDeleteTrainingDay()} />
+            </Box>
 
-        {deleteButtonDate && (
-          <Button variant="contained" color="error" onClick={() => handleDeleteTrainingDay()}>
-            <DeleteIcon />
+            {selectedDayData.workout ? (
+              <Box
+                sx={
+                  {
+                    // border: '1px solid green',
+                  }
+                }
+              >
+                <Typography
+                  sx={{
+                    lineHeight: 'normal',
+                    marginBottom: '5px',
+                    fontSize: '20px',
+                    span: {
+                      fontSize: '16px',
+                      fontWeight: 400,
+                      opacity: 0.5,
+                    },
+                  }}
+                >
+                  {selectedDayData.workout.name} <span>({calcTrainingTotalWeight(selectedDayData.workout)}kg)</span>
+                </Typography>
+
+                {selectedDayData.workout.exercises.map((exercise, i) => (
+                  <Box
+                    key={i}
+                    sx={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        padding: '5px 20px',
+                        display: 'flex',
+                        gap: '40px',
+                        justifyContent: 'flex-end',
+                        fontSize: '14px',
+                        background: `${getExerciseColorById(exercise.exercise_id)}20`,
+                      }}
+                    >
+                      {getExerciseName(exercise.exercise_id)}
+                    </Box>
+                    {exercise.sets.map((set, i, arr) => (
+                      <Box
+                        key={i}
+                        sx={{
+                          padding: '0 20px',
+                          display: 'flex',
+                          gap: '40px',
+                          justifyContent: 'flex-end',
+                          fontSize: '14px',
+                          opacity: 0.6,
+                          borderBottom: i !== arr.length - 1 ? '1px solid rgba(0,0,0,0.07)' : undefined,
+                          div: {
+                            width: '50px',
+                            textAlign: 'center',
+                            color: set.wu ? 'green' : undefined,
+                            textWrap: 'nowrap',
+                          },
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            lineHeight: set.wu ? '6px' : undefined,
+                            fontSize: set.wu ? '10px' : undefined,
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                          }}
+                        >
+                          {set.wu ? (
+                            <>
+                              warm
+                              <br />
+                              up
+                            </>
+                          ) : arr[0].wu ? (
+                            i
+                          ) : (
+                            i + 1
+                          )}
+                        </Box>
+                        <Box>{set.reps}</Box>
+                        <Box>{set.kg} kg</Box>
+                      </Box>
+                    ))}
+                  </Box>
+                ))}
+              </Box>
+            ) : (
+              <Typography sx={{ textAlign: 'center', margin: '20px 0' }}>
+                No workout data
+                <br />
+                for this day
+              </Typography>
+            )}
+          </Box>
+        ) : (
+          <Button
+            variant="contained"
+            onClick={() => setAddTrainingDialogOpen(true)}
+            sx={{
+              margin: '20px auto',
+            }}
+          >
+            + Add training day
           </Button>
         )}
       </Box>
@@ -271,7 +403,7 @@ function Schedule() {
           }}
         >
           <Box
-            onClick={() => setAddTrainingDialogOpen(false)}
+            onClick={handleCloseAddTrainDayDialog}
             sx={{
               position: 'absolute',
               top: '20px',
@@ -292,14 +424,18 @@ function Schedule() {
             }}
             label="Date"
             value={selectedDate}
-            onChange={(newValue) => setSelectedDate(newValue)}
+            onChange={(newValue) => {
+              setSelectedDate(dayjs(newValue).startOf('day'));
+            }}
           />
           <FormControl fullWidth>
             <InputLabel>Select workout</InputLabel>
-            <Select value={selectedWorkout} label="Select workout" onChange={handleChange}>
-              <MenuItem value={10}>Ten</MenuItem>
-              <MenuItem value={20}>Twenty</MenuItem>
-              <MenuItem value={30}>Thirty</MenuItem>
+            <Select value={selectedWorkoutId} label="Select workout" onChange={handleChange}>
+              {workouts.map((el, i) => (
+                <MenuItem key={i} value={el.id}>
+                  {el.name}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
           <Button

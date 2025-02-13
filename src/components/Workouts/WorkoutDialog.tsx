@@ -55,7 +55,7 @@ function WorkoutDialog({ closeDialog, editTrainingId }: { closeDialog: () => voi
 
   const handleDeleteTraining = () => {
     if (editTrainingId) {
-      if (window.confirm('Are you sure want to delete this training? This action cannot be undone.')) {
+      if (window.confirm('Are you sure want to delete this workout? This action cannot be undone.')) {
         const newWorkouts = workouts.filter((el) => el.id !== editTrainingId);
         setWorkouts(newWorkouts);
         closeDialog();
