@@ -41,12 +41,14 @@ function TrainingDialog({ closeDialog, editTrainingId }: { closeDialog: () => vo
   };
 
   const handleDeleteExercise = (rowIndex: number) => {
-    setExercises((prev) => [...prev.slice(0, rowIndex), ...prev.slice(rowIndex + 1, prev.length)]);
+    if (window.confirm('Remove this exercise?')) {
+      setExercises((prev) => [...prev.slice(0, rowIndex), ...prev.slice(rowIndex + 1, prev.length)]);
+    }
   };
 
   const handleDeleteTraining = () => {
     if (editTrainingId) {
-      if (window.confirm('Are you sure want to delete this training?')) {
+      if (window.confirm('Are you sure want to delete this training? This action cannot be undone.')) {
         const newTrainings = trainings.filter((el) => el.id !== editTrainingId);
         setTrainings(newTrainings);
         closeDialog();
@@ -60,16 +62,19 @@ function TrainingDialog({ closeDialog, editTrainingId }: { closeDialog: () => vo
 
   return (
     <Dialog
+      fullScreen
       open
       sx={{
         '& .MuiPaper-root': {
-          margin: '0px',
-          width: '100%',
+          // margin: '0px',
+          // width: '100%',
+          maxWidth: '600px',
         },
       }}
-    >
+      >
       <Box
         sx={{
+          // backgroundColor: 'grey',
           padding: '60px 5px 120px',
           display: 'flex',
           flexDirection: 'column',
@@ -162,6 +167,7 @@ function TrainingDialog({ closeDialog, editTrainingId }: { closeDialog: () => vo
           {exercises.map((exercise, rowIndex, arr) => (
             <Exercise
               key={rowIndex}
+              exerciseIndex={rowIndex}
               showDelete={arr.length > 1}
               exerciseId={exercise.exercise_id}
               setExerciseId={(newValue) => {
@@ -198,7 +204,7 @@ function TrainingDialog({ closeDialog, editTrainingId }: { closeDialog: () => vo
           ))}
         </Box>
 
-        <Button variant="contained" color="secondary" onClick={() => handleAddExercise()}>
+        <Button variant="contained" color="inherit" onClick={() => handleAddExercise()}>
           + Add exercise
         </Button>
 

@@ -1,7 +1,7 @@
 import { Box } from '@mui/material';
 import { NumberField } from '@base-ui-components/react/number-field';
 import styles from './index.module.css';
-import DeleteIcon from '@mui/icons-material/Delete';
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 
 function PlusIcon(props: React.ComponentProps<'svg'>) {
   return (
@@ -44,6 +44,8 @@ function Set({
   weight,
   setWeight,
   handleDeleteRow,
+  isLast,
+  exerciseIndex
 }: {
   index: number;
   repeats: number;
@@ -51,6 +53,8 @@ function Set({
   weight: number;
   setWeight: (v: number) => void;
   handleDeleteRow: (v: number) => void;
+  isLast: boolean;
+  exerciseIndex: number
 }) {
   return (
     <Box
@@ -132,7 +136,11 @@ function Set({
             <NumberField.Decrement className={styles.Decrement}>
               <MinusIcon />
             </NumberField.Decrement>
-            <NumberField.Input className={styles.Input} inputMode="decimal" />
+            <NumberField.Input
+              className={styles.Input}
+              inputMode="decimal"
+              id={isLast ? `last_input_element_${exerciseIndex}` : undefined}
+            />
             <NumberField.Increment className={styles.Increment}>
               <PlusIcon />
             </NumberField.Increment>
@@ -146,14 +154,15 @@ function Set({
           }
         }}
         sx={{
-          color: 'red',
+          cursor: 'pointer',
+          color: 'grey',
           minWidth: '24px',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
         }}
       >
-        {index > 1 && <DeleteIcon />}
+        {index > 1 && <RemoveCircleOutlineIcon />}
       </Box>
     </Box>
   );

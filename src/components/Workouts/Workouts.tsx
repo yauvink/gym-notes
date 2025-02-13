@@ -1,10 +1,11 @@
-import { Box, Button, Typography } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Typography } from '@mui/material';
 import { useState } from 'react';
 import EditIcon from '@mui/icons-material/Edit';
 import TrainingDialog from './TrainingDialog';
 import { useAppContext } from '../../providers/AppProvider/AppProvider.hook';
 import { TrainingType } from '../../providers/AppProvider/AppProvider';
 import { getExerciseName } from '../../providers/AppProvider/utils';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 function Workouts() {
   const [isDialogOpen, setDialogOpen] = useState(false);
@@ -16,7 +17,7 @@ function Workouts() {
       const setsTotalWeight = currEl.sets.reduce((prev, curr) => {
         return prev + curr.repeats * curr.weight;
       }, 0);
-      return prev + setsTotalWeight
+      return prev + setsTotalWeight;
     }, 0);
   };
   return (
@@ -90,92 +91,95 @@ function Workouts() {
                 <EditIcon />
               </Box>
             </Box>
+
             <Box
               sx={{
                 display: 'flex',
                 flexDirection: 'column',
+                marginTop: '10px',
               }}
             >
               {el.exercises.map((exercise, i, arr) => (
-                <Box
-                  key={i}
-                  sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    width: '100%',
-                    padding: '5px 5px',
-                  }}
-                >
-                  <Typography
-                    sx={{
-                      margin: '5px 0',
-                      fontSize: '18px',
-                      lineHeight: 'normal',
-                    }}
+                <Accordion key={i}>
+                  <AccordionSummary
+                    expandIcon={<ArrowDropDownIcon />}
+                    sx={
+                      {
+                        // color: 'red',
+                      }
+                    }
                   >
-                    {getExerciseName(exercise.exercise_id)}
-                  </Typography>
-
-                  <Box
-                    sx={{
-                      padding: '0 20px',
-                      display: 'flex',
-                      gap: '40px',
-                      justifyContent: 'flex-end',
-                      fontSize: '14px',
-                      background: 'rgba(0,0,0,0.05)',
-                      div: {
-                        width: '50px',
-                        textAlign: 'center',
-                      },
-                    }}
-                  >
-                    <Box>#</Box>
-                    <Box>Repeats</Box>
-                    <Box>Weight</Box>
-                  </Box>
-                  {exercise.sets.map((set, i) => (
+                    <Typography
+                      sx={{
+                        fontSize: '18px',
+                        lineHeight: 'normal',
+                      }}
+                    >
+                      {getExerciseName(exercise.exercise_id)}
+                    </Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
                     <Box
-                      key={i}
                       sx={{
                         padding: '0 20px',
                         display: 'flex',
                         gap: '40px',
                         justifyContent: 'flex-end',
                         fontSize: '14px',
-                        opacity: 0.6,
-                        borderBottom: '1px solid rgba(0,0,0,0.07)',
+                        background: 'rgba(0,0,0,0.05)',
                         div: {
                           width: '50px',
                           textAlign: 'center',
-                          color: i === 0 ? 'green' : undefined,
                         },
                       }}
                     >
+                      <Box>#</Box>
+                      <Box>Repeats</Box>
+                      <Box>Weight</Box>
+                    </Box>
+                    {exercise.sets.map((set, i) => (
                       <Box
+                        key={i}
                         sx={{
-                          lineHeight: i === 0 ? '6px' : undefined,
-                          fontSize: i === 0 ? '10px' : undefined,
+                          padding: '0 20px',
                           display: 'flex',
-                          justifyContent: 'center',
-                          alignItems: 'center',
+                          gap: '40px',
+                          justifyContent: 'flex-end',
+                          fontSize: '14px',
+                          opacity: 0.6,
+                          borderBottom: '1px solid rgba(0,0,0,0.07)',
+                          div: {
+                            width: '50px',
+                            textAlign: 'center',
+                            color: i === 0 ? 'green' : undefined,
+                          },
                         }}
                       >
-                        {i === 0 ? (
-                          <>
-                            warm
-                            <br />
-                            up
-                          </>
-                        ) : (
-                          i
-                        )}
+                        <Box
+                          sx={{
+                            lineHeight: i === 0 ? '6px' : undefined,
+                            fontSize: i === 0 ? '10px' : undefined,
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                          }}
+                        >
+                          {i === 0 ? (
+                            <>
+                              warm
+                              <br />
+                              up
+                            </>
+                          ) : (
+                            i
+                          )}
+                        </Box>
+                        <Box>{set.repeats}</Box>
+                        <Box>{set.weight} kg</Box>
                       </Box>
-                      <Box>{set.repeats}</Box>
-                      <Box>{set.weight} kg</Box>
-                    </Box>
-                  ))}
-                </Box>
+                    ))}
+                  </AccordionDetails>
+                </Accordion>
               ))}
             </Box>
           </Box>

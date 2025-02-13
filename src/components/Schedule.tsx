@@ -76,7 +76,7 @@ function Schedule() {
   }, [userTrainings, viewedYear]);
 
   const handleDeleteTrain = () => {
-    if (window.confirm('Are you sure want to delete training day?')) {
+    if (window.confirm('Are you sure want to delete training day? This action cannot be undone.')) {
       if (deleteButtonDate) {
         setUserTrainings((prev) => {
           const newTrainings = prev.filter((el) => el.date !== deleteButtonDate.toJSON());
