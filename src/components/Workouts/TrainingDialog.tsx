@@ -13,7 +13,7 @@ function TrainingDialog({ closeDialog, editTrainingId }: { closeDialog: () => vo
   const INITIAL_EXERCISE_DATA: ExerciseType = {
     exercise_id: '',
     sets: [
-      { reps: defaultRepeats, kg: defaultWeight / 2 },
+      { wu: true, reps: defaultRepeats, kg: defaultWeight / 2 },
       { reps: defaultRepeats, kg: defaultWeight },
     ],
   };

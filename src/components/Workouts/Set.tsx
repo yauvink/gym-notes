@@ -13,7 +13,10 @@ function Set({
   setWeight,
   handleDeleteRow,
   isLast,
-  exerciseIndex
+  exerciseIndex,
+  isWarmup,
+  isExerciseHasWarmup,
+  showDelete,
 }: {
   index: number;
   repeats: number;
@@ -22,7 +25,10 @@ function Set({
   setWeight: (v: number) => void;
   handleDeleteRow: (v: number) => void;
   isLast: boolean;
-  exerciseIndex: number
+  exerciseIndex: number;
+  isWarmup: boolean;
+  isExerciseHasWarmup: boolean;
+  showDelete: boolean;
 }) {
   return (
     <Box
@@ -37,8 +43,8 @@ function Set({
     >
       <Box
         sx={{
-          color: index === 0 ? 'green' : undefined,
-          fontSize: index === 0 ? '12px' : '18px',
+          color: isWarmup ? 'green' : undefined,
+          fontSize: isWarmup ? '12px' : '18px',
           minWidth: '30px',
           display: 'flex',
           justifyContent: 'center',
@@ -47,14 +53,14 @@ function Set({
           lineHeight: '10px',
         }}
       >
-        {index === 0 ? (
+        {isWarmup ? (
           <>
             warm
             <br />
             up
           </>
         ) : (
-          `#${index}`
+          `#${isExerciseHasWarmup ? index : index + 1}`
         )}
       </Box>
       <Box>
@@ -117,12 +123,12 @@ function Set({
       </Box>
       <Box
         onClick={() => {
-          if (index > 1) {
+          if (showDelete) {
             handleDeleteRow(index);
           }
         }}
         sx={{
-          cursor: 'pointer',
+          cursor: showDelete ? 'pointer' : undefined,
           color: 'grey',
           minWidth: '24px',
           display: 'flex',
@@ -130,7 +136,14 @@ function Set({
           alignItems: 'center',
         }}
       >
-        {index > 1 && <RemoveCircleOutlineIcon />}
+        {showDelete && (
+          <RemoveCircleOutlineIcon
+            sx={{
+              color: isExerciseHasWarmup && index === 0 ? 'green' : undefined,
+              opacity: 0.7,
+            }}
+          />
+        )}
       </Box>
     </Box>
   );

@@ -13,13 +13,15 @@ function Workouts() {
   const [editTrainingId, setEditTrainingId] = useState<string | null>(null);
 
   const calcTrainingTotalWeight = (training: TrainingType) => {
-    return training.exercises.reduce((prev, currEl) => {
+    const result = training.exercises.reduce((prev, currEl) => {
       const setsTotalWeight = currEl.sets.reduce((prev, curr) => {
         return prev + curr.reps * curr.kg;
       }, 0);
       return prev + setsTotalWeight;
     }, 0);
+    return result.toLocaleString();
   };
+
   return (
     <Box
       sx={{
@@ -119,6 +121,7 @@ function Workouts() {
                   <AccordionDetails
                     sx={{
                       background: '#fff',
+                      padding: '0px 0px 10px',
                     }}
                   >
                     <Box
@@ -139,7 +142,7 @@ function Workouts() {
                       <Box>Repeats</Box>
                       <Box>Weight</Box>
                     </Box>
-                    {exercise.sets.map((set, i) => (
+                    {exercise.sets.map((set, i, arr) => (
                       <Box
                         key={i}
                         sx={{
@@ -149,31 +152,34 @@ function Workouts() {
                           justifyContent: 'flex-end',
                           fontSize: '14px',
                           opacity: 0.6,
-                          borderBottom: '1px solid rgba(0,0,0,0.07)',
+                          borderBottom: i !== arr.length - 1 ? '1px solid rgba(0,0,0,0.07)' : undefined,
                           div: {
                             width: '50px',
                             textAlign: 'center',
-                            color: i === 0 ? 'green' : undefined,
+                            color: set.wu ? 'green' : undefined,
+                            textWrap: 'nowrap',
                           },
                         }}
                       >
                         <Box
                           sx={{
-                            lineHeight: i === 0 ? '6px' : undefined,
-                            fontSize: i === 0 ? '10px' : undefined,
+                            lineHeight: set.wu ? '6px' : undefined,
+                            fontSize: set.wu ? '10px' : undefined,
                             display: 'flex',
                             justifyContent: 'center',
                             alignItems: 'center',
                           }}
                         >
-                          {i === 0 ? (
+                          {set.wu ? (
                             <>
                               warm
                               <br />
                               up
                             </>
-                          ) : (
+                          ) : arr[0].wu ? (
                             i
+                          ) : (
+                            i + 1
                           )}
                         </Box>
                         <Box>{set.reps}</Box>

@@ -23,6 +23,7 @@ function Exercise({
   exerciseIndex: number;
 }) {
   const value = EXERCISES.find((el) => el.id === exerciseId);
+  const isExerciseHasWarmup = Boolean(sets[0].wu);
 
   return (
     <Paper
@@ -151,8 +152,28 @@ function Exercise({
             gap: '5px',
           }}
         >
+          {!isExerciseHasWarmup && (
+            <Button
+              variant="contained"
+              onClick={() => {
+                setSets([{ wu: true, reps: sets[0].reps, kg: sets[0].kg }, ...sets]);
+              }}
+              sx={{
+                background: 'rgba(0,255,0,0.1)',
+                height: '20px',
+                fontSize: '12px',
+                marginTop: '10px',
+                color: 'black',
+              }}
+            >
+              + Add warmup
+            </Button>
+          )}
           {sets.map((set, setRowIndex, arr) => (
             <Set
+              showDelete={arr.length > 1}
+              isWarmup={Boolean(set.wu)}
+              isExerciseHasWarmup={isExerciseHasWarmup}
               isLast={setRowIndex === arr.length - 1}
               key={setRowIndex}
               index={setRowIndex}
@@ -206,7 +227,7 @@ function Exercise({
             }}
             sx={{
               background: '#fff',
-              height: '20px',
+              height: '30px',
               fontSize: '12px',
               marginTop: '10px',
               color: 'black',
