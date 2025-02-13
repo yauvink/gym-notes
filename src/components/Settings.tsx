@@ -6,7 +6,7 @@ import { useAppContext } from '../providers/AppProvider/AppProvider.hook';
 import { MAX_REPEATS, MAX_WEIGHT, MIN_REPEATS, MIN_WEIGHT } from '../providers/AppProvider/AppProvider.constants';
 
 function Settings() {
-  const { defaultWeight, setDefaultWeight, defaultRepeats, setDefaultRepeats } = useAppContext();
+  const { defaultWeight, setDefaultWeight, defaultRepeats, setDefaultRepeats, localStorageUsage } = useAppContext();
   return (
     <Box
       sx={{
@@ -24,13 +24,22 @@ function Settings() {
           position: 'fixed',
           top: 5,
           right: 10,
+          left: 10,
           zIndex: 99,
           fontSize: '16px',
           color: 'grey',
+          display: 'flex',
+          justifyContent: 'space-between',
         }}
       >
-        {0.015}
+        <Box> {localStorageUsage} </Box>
+        {0.016}
       </Box>
+      <Typography
+        sx={{
+          margin: '20px 0 10px',
+        }}
+      ></Typography>
 
       <Box>
         <Typography

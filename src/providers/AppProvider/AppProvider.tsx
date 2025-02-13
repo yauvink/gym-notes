@@ -10,7 +10,7 @@ import {
 export interface IApp {
   trainings: TrainingType[];
   setTrainings: (trainings: TrainingType[]) => void;
-
+  localStorageUsage: string;
   defaultRepeats: number;
   setDefaultRepeats: (v: number) => void;
   defaultWeight: number;
@@ -18,6 +18,8 @@ export interface IApp {
 }
 
 export type SetType = {
+  // is warm up
+  wu?: boolean;
   reps: number;
   kg: number;
 };
@@ -64,6 +66,16 @@ function AppProvider({ children }: { children: ReactNode }) {
     window.localStorage.setItem(DEFAULT_REPEATS_STORAGE_KEY, JSON.stringify(newValue));
   };
 
+  function getLocalStorageSize() {
+    let total = 0;
+    for (let key in localStorage) {
+      if (localStorage.hasOwnProperty(key)) {
+        total += localStorage[key].length;
+      }
+    }
+    return `Local Storage Usage: ${(total / 1024).toFixed(2)} KB`;
+  }
+
   const value = {
     trainings,
     setTrainings,
@@ -71,6 +83,7 @@ function AppProvider({ children }: { children: ReactNode }) {
     setDefaultRepeats,
     defaultWeight,
     setDefaultWeight,
+    localStorageUsage: getLocalStorageSize(),
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
