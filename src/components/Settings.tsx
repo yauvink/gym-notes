@@ -29,7 +29,7 @@ function Settings() {
           color: 'grey',
         }}
       >
-        {0.014}
+        {0.015}
       </Box>
 
       <Box>

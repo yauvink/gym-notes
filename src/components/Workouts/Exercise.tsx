@@ -47,6 +47,7 @@ function Exercise({
           }}
         >
           <Autocomplete
+            id={`input_element_${exerciseIndex}`}
             value={value}
             onChange={(event: any, newValue: ExerciseOptionType | null) => {
               if (newValue?.id) {
@@ -70,12 +71,16 @@ function Exercise({
                 placeholder="Choose exercise"
                 error={exerciseId === ''}
                 onFocus={(event) => {
-                  event.target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  setTimeout(() => {
+                    const target = document.getElementById(`input_element_${exerciseIndex}`);
+                    if (target) {
+                      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                  }, 100);
                 }}
               />
             )}
             renderGroup={(params) => {
-              console.log('params', params);
               return (
                 <li key={params.key}>
                   <Box
