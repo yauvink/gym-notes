@@ -1,18 +1,18 @@
 import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Typography } from '@mui/material';
 import { useState } from 'react';
 import EditIcon from '@mui/icons-material/Edit';
-import TrainingDialog from './TrainingDialog';
+import WorkoutDialog from './WorkoutDialog';
 import { useAppContext } from '../../providers/AppProvider/AppProvider.hook';
-import { TrainingType } from '../../providers/AppProvider/AppProvider';
+import { WorkoutType } from '../../providers/AppProvider/AppProvider';
 import { getExerciseColorById, getExerciseName } from '../../utils';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 function Workouts() {
   const [isDialogOpen, setDialogOpen] = useState(false);
-  const { trainings } = useAppContext();
+  const { workouts } = useAppContext();
   const [editTrainingId, setEditTrainingId] = useState<string | null>(null);
 
-  const calcTrainingTotalWeight = (training: TrainingType) => {
+  const calcTrainingTotalWeight = (training: WorkoutType) => {
     const result = training.exercises.reduce((prev, currEl) => {
       const setsTotalWeight = currEl.sets.reduce((prev, curr) => {
         return prev + curr.reps * curr.kg;
@@ -56,7 +56,7 @@ function Workouts() {
           width: '100%',
         }}
       >
-        {trainings.map((el, i) => (
+        {workouts.map((el, i) => (
           <Box key={i} sx={{ border: '1px solid gray', borderRadius: '12px', padding: '10px' }}>
             <Box
               sx={{
@@ -195,7 +195,7 @@ function Workouts() {
       </Box>
 
       {isDialogOpen && (
-        <TrainingDialog
+        <WorkoutDialog
           closeDialog={() => {
             setDialogOpen(false);
             setEditTrainingId(null);

@@ -1,50 +1,50 @@
 import { Box, Button, Dialog, TextField } from '@mui/material';
 import { useCallback, useMemo, useState } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
-import { ExerciseType, TrainingType } from '../../providers/AppProvider/AppProvider';
+import { ExerciseType, WorkoutType } from '../../providers/AppProvider/AppProvider';
 import { useAppContext } from '../../providers/AppProvider/AppProvider.hook';
 import Exercise from './Exercise';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-function TrainingDialog({ closeDialog, editTrainingId }: { closeDialog: () => void; editTrainingId: string | null }) {
-  const { trainings, setTrainings, defaultRepeats, defaultWeight } = useAppContext();
-  const editInitialData = trainings.find((el) => el.id === editTrainingId);
-  const [trainingName, setTrainingName] = useState(editInitialData?.name ?? '');
-  const INITIAL_EXERCISE_DATA: ExerciseType = {
+function WorkoutDialog({ closeDialog, editTrainingId }: { closeDialog: () => void; editTrainingId: string | null }) {
+  const { workouts, setWorkouts, defaultRepeats, defaultWeight } = useAppContext();
+  const editInitialData = workouts.find((el) => el.id === editTrainingId);
+  const [workoutName, setWorkoutName] = useState(editInitialData?.name ?? '');
+  const INITIAL_WORKOUT_DATA: ExerciseType = {
     exercise_id: '',
     sets: [
       { wu: true, reps: defaultRepeats, kg: defaultWeight / 2 },
       { reps: defaultRepeats, kg: defaultWeight },
     ],
   };
-  const [exercises, setExercises] = useState<ExerciseType[]>(editInitialData?.exercises ?? [INITIAL_EXERCISE_DATA]);
+  const [exercises, setExercises] = useState<ExerciseType[]>(editInitialData?.exercises ?? [INITIAL_WORKOUT_DATA]);
 
   const handleSaveTraining = useCallback(() => {
-    const newTrainings: TrainingType[] = editTrainingId
-      ? trainings.map((el) => {
+    const newWorkouts: WorkoutType[] = editTrainingId
+      ? workouts.map((el) => {
           if (el.id === editTrainingId) {
             return {
               ...el,
-              name: trainingName,
+              name: workoutName,
               exercises,
             };
           }
           return el;
         })
       : [
-          ...trainings,
+          ...workouts,
           {
             id: crypto.randomUUID(),
-            name: trainingName,
+            name: workoutName,
             exercises,
           },
         ];
-    setTrainings(newTrainings);
+    setWorkouts(newWorkouts);
     closeDialog();
-  }, [setTrainings, trainings, trainingName, exercises, closeDialog, editTrainingId]);
+  }, [setWorkouts, workouts, workoutName, exercises, closeDialog, editTrainingId]);
 
   const handleAddExercise = () => {
-    setExercises((prev) => [...prev, INITIAL_EXERCISE_DATA]);
+    setExercises((prev) => [...prev, INITIAL_WORKOUT_DATA]);
   };
 
   const handleDeleteExercise = (rowIndex: number) => {
@@ -56,16 +56,16 @@ function TrainingDialog({ closeDialog, editTrainingId }: { closeDialog: () => vo
   const handleDeleteTraining = () => {
     if (editTrainingId) {
       if (window.confirm('Are you sure want to delete this training? This action cannot be undone.')) {
-        const newTrainings = trainings.filter((el) => el.id !== editTrainingId);
-        setTrainings(newTrainings);
+        const newWorkouts = workouts.filter((el) => el.id !== editTrainingId);
+        setWorkouts(newWorkouts);
         closeDialog();
       }
     }
   };
 
   const isDisabled = useMemo(() => {
-    return trainingName === '' || exercises.some((el) => el.exercise_id === '');
-  }, [trainingName, exercises]);
+    return workoutName === '' || exercises.some((el) => el.exercise_id === '');
+  }, [workoutName, exercises]);
 
   return (
     <Dialog
@@ -130,9 +130,9 @@ function TrainingDialog({ closeDialog, editTrainingId }: { closeDialog: () => vo
             }}
             placeholder="Workout name"
             label="Workout name"
-            error={trainingName === ''}
-            value={trainingName}
-            onChange={(e) => setTrainingName(e.target.value)}
+            error={workoutName === ''}
+            value={workoutName}
+            onChange={(e) => setWorkoutName(e.target.value)}
           ></TextField>
         </Box>
         <Box
@@ -193,4 +193,4 @@ function TrainingDialog({ closeDialog, editTrainingId }: { closeDialog: () => vo
   );
 }
 
-export default TrainingDialog;
+export default WorkoutDialog;

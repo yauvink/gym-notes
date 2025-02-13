@@ -1,4 +1,14 @@
-import { Box, Button, Dialog, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  Dialog,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  Typography,
+} from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 import { DatePicker, PickersDay } from '@mui/x-date-pickers';
@@ -7,29 +17,22 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { ReactComponent as Badge1 } from '../assets/images/badge_1.svg';
 import { ReactComponent as Badge2 } from '../assets/images/badge_2.svg';
 import dayjs, { Dayjs } from 'dayjs';
+import { useAppContext } from '../providers/AppProvider/AppProvider.hook';
 
-type TrainingDayType = {
-  date: string;
-};
-
-const STORAGE_KEY = 'key1231231123';
 const SOBER_DATE_STORAGE_KEY = 'date_key_21313';
 
 function Schedule() {
+  const { userTrainingDays, setUserTrainingDays, workouts } = useAppContext();
   const [isAddTrainingDialogOpen, setAddTrainingDialogOpen] = useState(false);
   const [isSoberDialogOpen, setSoberDialogOpen] = useState(false);
   const [deleteButtonDate, setDeleteButtonDate] = useState<Dayjs | null>(null);
   const [selectedDate, setSelectedDate] = React.useState<Dayjs | null | undefined>(null);
   const savedSoberDate = window.localStorage.getItem(SOBER_DATE_STORAGE_KEY);
-
   const [soberSelectedDate, setSoberSelectedDate] = React.useState<Dayjs | null | undefined>(
     savedSoberDate !== null ? dayjs(JSON.parse(savedSoberDate)) : null
   );
-
   const [viewedYear, setViewedYear] = useState(dayjs(new Date()).year());
-  const storage = window.localStorage.getItem(STORAGE_KEY);
-  const data: TrainingDayType[] = storage ? JSON.parse(storage) : [];
-  const [userTrainings, setUserTrainings] = useState<TrainingDayType[]>(data);
+  const [selectedWorkout, setSelectedWorkout] = React.useState('');
 
   const soberDays = useMemo(() => {
     if (soberSelectedDate !== null && soberSelectedDate !== undefined) {
@@ -53,39 +56,37 @@ function Schedule() {
 
   const handleAddTraining = useCallback(() => {
     if (selectedDate) {
-      setUserTrainings((prev) => {
-        const newTrainings = [...prev, { date: selectedDate.toJSON() }];
-        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(newTrainings));
-        return newTrainings;
-      });
+      console.log('selectedWorkout', selectedWorkout, workouts);
+      const newTrainingDays = [...userTrainingDays, { date: selectedDate.toJSON() }];
+      setUserTrainingDays(newTrainingDays);
+      setAddTrainingDialogOpen(false);
     }
+  }, [userTrainingDays, setUserTrainingDays, selectedDate, selectedWorkout, workouts]);
 
-    setAddTrainingDialogOpen(false);
-  }, [selectedDate]);
-
-  const isTrainingDay = (date: Dayjs) => userTrainings.some((t) => dayjs(t.date).isSame(date, 'day'));
+  const isTrainingDay = (date: Dayjs) => userTrainingDays.some((t) => dayjs(t.date).isSame(date, 'day'));
 
   const trainCount = useMemo(() => {
-    const thisYearTrainings = userTrainings.filter((el) => {
+    const thisYearTrainings = userTrainingDays.filter((el) => {
       const trainingYear = dayjs(el.date).year();
 
       return trainingYear === viewedYear;
     });
     const daysInYear = dayjs().year(viewedYear).isLeapYear() ? 366 : 365;
     return { trainings: thisYearTrainings.length, days: daysInYear };
-  }, [userTrainings, viewedYear]);
+  }, [userTrainingDays, viewedYear]);
 
-  const handleDeleteTrain = () => {
+  const handleDeleteTrainingDay = () => {
     if (window.confirm('Are you sure want to delete training day? This action cannot be undone.')) {
       if (deleteButtonDate) {
-        setUserTrainings((prev) => {
-          const newTrainings = prev.filter((el) => el.date !== deleteButtonDate.toJSON());
-          window.localStorage.setItem(STORAGE_KEY, JSON.stringify(newTrainings));
-          return newTrainings;
-        });
+        const newTrainingDays = userTrainingDays.filter((el) => el.date !== deleteButtonDate.toJSON());
+        setUserTrainingDays(newTrainingDays);
         setDeleteButtonDate(null);
       }
     }
+  };
+
+  const handleChange = (event: SelectChangeEvent) => {
+    setSelectedWorkout(event.target.value as string);
   };
 
   return (
@@ -254,7 +255,7 @@ function Schedule() {
         </Button>
 
         {deleteButtonDate && (
-          <Button variant="contained" color="error" onClick={() => handleDeleteTrain()}>
+          <Button variant="contained" color="error" onClick={() => handleDeleteTrainingDay()}>
             <DeleteIcon />
           </Button>
         )}
@@ -293,8 +294,16 @@ function Schedule() {
             value={selectedDate}
             onChange={(newValue) => setSelectedDate(newValue)}
           />
+          <FormControl fullWidth>
+            <InputLabel>Select workout</InputLabel>
+            <Select value={selectedWorkout} label="Select workout" onChange={handleChange}>
+              <MenuItem value={10}>Ten</MenuItem>
+              <MenuItem value={20}>Twenty</MenuItem>
+              <MenuItem value={30}>Thirty</MenuItem>
+            </Select>
+          </FormControl>
           <Button
-            disabled={selectedDate ? isTrainingDay(selectedDate) : false}
+            disabled={selectedDate ? isTrainingDay(selectedDate) : true}
             variant="contained"
             onClick={() => handleAddTraining()}
           >

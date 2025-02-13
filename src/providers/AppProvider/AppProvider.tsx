@@ -4,12 +4,15 @@ import {
   DEFAULT_REPEATS_STORAGE_KEY,
   DEFAULT_WEIGHT,
   DEFAULT_WEIGHT_STORAGE_KEY,
-  TRAININGS_STORAGE_KEY,
+  WORKOUTS_STORAGE_KEY,
+  USER_TRAINING_DAYS_STORAGE_KEY,
 } from './AppProvider.constants';
 
 export interface IApp {
-  trainings: TrainingType[];
-  setTrainings: (trainings: TrainingType[]) => void;
+  workouts: WorkoutType[];
+  setWorkouts: (v: WorkoutType[]) => void;
+  userTrainingDays: UserTrainingDayType[];
+  setUserTrainingDays: (v: UserTrainingDayType[]) => void;
   localStorageUsage: string;
   defaultRepeats: number;
   setDefaultRepeats: (v: number) => void;
@@ -29,10 +32,14 @@ export type ExerciseType = {
   sets: Array<SetType>;
 };
 
-export type TrainingType = {
+export type WorkoutType = {
   id: string;
   name: string;
   exercises: ExerciseType[];
+};
+
+export type UserTrainingDayType = {
+  date: string;
 };
 
 export const AppContext = createContext<null | IApp>(null);
@@ -40,27 +47,35 @@ export const AppContext = createContext<null | IApp>(null);
 AppContext.displayName = 'AppContext';
 
 function AppProvider({ children }: { children: ReactNode }) {
-  const storageTrainingData = window.localStorage.getItem(TRAININGS_STORAGE_KEY);
-  const initialTrainingData: TrainingType[] = storageTrainingData ? JSON.parse(storageTrainingData) : [];
-  const [trainings, setTrainingsLocal] = useState<TrainingType[]>(initialTrainingData);
-  const setTrainings = (newTrainings: TrainingType[]) => {
-    setTrainingsLocal(newTrainings);
-    window.localStorage.setItem(TRAININGS_STORAGE_KEY, JSON.stringify(newTrainings));
+  const storageTrainingData = window.localStorage.getItem(WORKOUTS_STORAGE_KEY);
+  const initialTrainingData: WorkoutType[] = storageTrainingData ? JSON.parse(storageTrainingData) : [];
+  const [workouts, setWorkoutsLocal] = useState<WorkoutType[]>(initialTrainingData);
+  const setWorkouts = (newWorkouts: WorkoutType[]) => {
+    setWorkoutsLocal(newWorkouts);
+    window.localStorage.setItem(WORKOUTS_STORAGE_KEY, JSON.stringify(newWorkouts));
+  };
+
+  const storageUserTrainingDaysData = window.localStorage.getItem(USER_TRAINING_DAYS_STORAGE_KEY);
+  const initialUserTrainingDaysData: UserTrainingDayType[] = storageUserTrainingDaysData
+    ? JSON.parse(storageUserTrainingDaysData)
+    : [];
+  const [userTrainingDays, setUserTrainingDaysLocal] = useState<UserTrainingDayType[]>(initialUserTrainingDaysData);
+  const setUserTrainingDays = (newTrainingDays: UserTrainingDayType[]) => {
+    setUserTrainingDaysLocal(newTrainingDays);
+    window.localStorage.setItem(USER_TRAINING_DAYS_STORAGE_KEY, JSON.stringify(newTrainingDays));
   };
 
   const storageDefaultWeight = window.localStorage.getItem(DEFAULT_WEIGHT_STORAGE_KEY);
   const initialDefaultWeight: number = storageDefaultWeight ? JSON.parse(storageDefaultWeight) : DEFAULT_WEIGHT;
   const [defaultWeight, setDefaultWeightLocal] = useState(initialDefaultWeight);
-
-  const storageDefaultRepeats = window.localStorage.getItem(DEFAULT_REPEATS_STORAGE_KEY);
-  const initialDefaultRepeats: number = storageDefaultRepeats ? JSON.parse(storageDefaultRepeats) : DEFAULT_REPEATS;
-  const [defaultRepeats, setDefaultRepeatsLocal] = useState(initialDefaultRepeats);
-
   const setDefaultWeight = (newValue: number) => {
     setDefaultWeightLocal(newValue);
     window.localStorage.setItem(DEFAULT_WEIGHT_STORAGE_KEY, JSON.stringify(newValue));
   };
 
+  const storageDefaultRepeats = window.localStorage.getItem(DEFAULT_REPEATS_STORAGE_KEY);
+  const initialDefaultRepeats: number = storageDefaultRepeats ? JSON.parse(storageDefaultRepeats) : DEFAULT_REPEATS;
+  const [defaultRepeats, setDefaultRepeatsLocal] = useState(initialDefaultRepeats);
   const setDefaultRepeats = (newValue: number) => {
     setDefaultRepeatsLocal(newValue);
     window.localStorage.setItem(DEFAULT_REPEATS_STORAGE_KEY, JSON.stringify(newValue));
@@ -77,8 +92,10 @@ function AppProvider({ children }: { children: ReactNode }) {
   }
 
   const value = {
-    trainings,
-    setTrainings,
+    workouts,
+    setWorkouts,
+    userTrainingDays,
+    setUserTrainingDays,
     defaultRepeats,
     setDefaultRepeats,
     defaultWeight,

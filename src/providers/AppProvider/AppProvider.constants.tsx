@@ -1,4 +1,5 @@
-export const TRAININGS_STORAGE_KEY = 'trainings_d1';
+export const USER_TRAINING_DAYS_STORAGE_KEY = 'key1231231123';
+export const WORKOUTS_STORAGE_KEY = 'trainings_d1';
 export const DEFAULT_WEIGHT_STORAGE_KEY = 'default_weight';
 export const DEFAULT_REPEATS_STORAGE_KEY = 'default_repeats';
 
