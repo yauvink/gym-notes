@@ -1,8 +1,12 @@
-import { WorkoutType } from "../providers/AppProvider/AppProvider"
+import { ExerciseType, WorkoutType } from "../providers/AppProvider/AppProvider"
 import { EXERCISES, MuscleGroup } from "../providers/AppProvider/AppProvider.constants"
 
 export const getExerciseName = (id: string) => {
   return EXERCISES.find(el => el.id === id)?.name
+}
+
+export const getExerciseData = (id: string) => {
+  return EXERCISES.find(el => el.id === id)
 }
 
 export const getExerciseColorByCategory = (category: MuscleGroup | undefined) => {
@@ -49,3 +53,13 @@ export const calcTrainingTotalWeight = (workout: WorkoutType) => {
   }, 0);
   return result.toLocaleString();
 };
+
+
+export const getExerciseAvarageWeight = (exercise: ExerciseType, withWarmup?: boolean) => {
+  const setsToCalculate = exercise.sets.filter(el => { return withWarmup ? true : !el.wu })
+  const res = setsToCalculate.reduce((prev, currValue, i, arr) => {
+    return prev + (currValue.kg)
+  }, 0)
+  return res / setsToCalculate.length
+
+}
