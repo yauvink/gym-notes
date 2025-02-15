@@ -196,50 +196,49 @@ function WeightChart() {
         ref={canvasRef}
       /> */}
 
-      {userWeightData.length === 0 ? (
-        <Alert
-          sx={{
-            width: '100%',
-          }}
-          severity="warning"
-        >
-          No weight data to show
-        </Alert>
-      ) : (
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            gap: '10px',
-            flexWrap: 'wrap',
-          }}
-        >
-          {userWeightData.map((el, i) => (
-            <Paper
-              elevation={3}
-              key={i}
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          gap: '10px',
+          flexWrap: 'wrap',
+        }}
+      >
+        {userWeightData.length === 0 && (
+          <Alert
+            sx={{
+              width: '100%',
+            }}
+            severity="warning"
+          >
+            No weight data to show
+          </Alert>
+        )}
+        {userWeightData.map((el, i) => (
+          <Paper
+            elevation={3}
+            key={i}
+            sx={{
+              padding: '5px',
+              // border: '1px solid red'
+            }}
+          >
+            <Typography
               sx={{
-                padding: '5px',
-                // border: '1px solid red'
+                fontSize: '10px',
+                textAlign: 'center',
               }}
             >
-              <Typography
-                sx={{
-                  fontSize: '10px',
-                  textAlign: 'center',
-                }}
-              >
-                {dayjs(el.t).format('DD MMM HH:mm')}
-                <br />
-                {el.w} kg
-              </Typography>
-            </Paper>
-          ))}
-          <Button variant="contained" onClick={() => setDialogOpen(true)}>
-            Add weight
-          </Button>
-        </Box>
-      )}
+              {dayjs(el.t).format('DD MMM HH:mm')}
+              <br />
+              {el.w} kg
+            </Typography>
+          </Paper>
+        ))}
+        <Button variant="contained" onClick={() => setDialogOpen(true)}>
+          Add weight
+        </Button>
+      </Box>
 
       <Dialog open={isDialogOpen}>
         <Box
