@@ -98,7 +98,9 @@ function Schedule() {
 
   const selectedDayData = useMemo(() => {
     if (selectedDate) {
-      const result = userTrainingDays.find((el) => dayjs(el.date).isSame(selectedDate, 'day'));
+      const result = userTrainingDays.find((el) => {
+        return dayjs(el.date).isSame(selectedDate, 'day');
+      });
       return result;
     }
   }, [selectedDate, userTrainingDays]);

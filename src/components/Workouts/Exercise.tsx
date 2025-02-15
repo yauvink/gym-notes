@@ -1,11 +1,8 @@
-import { Box, Button, ListSubheader, MenuItem, Paper, Select, Typography } from '@mui/material';
+import { Box, Button, Paper, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { GroupedExerciseOptionType } from '../../providers/AppProvider/AppProvider.constants';
 import { SetType } from '../../providers/AppProvider/AppProvider';
 import Set from './Set';
-import { getExerciseColorByCategory, getExerciseColorById } from '../../utils';
-import { useMemo } from 'react';
-import { useAppContext } from '../../providers/AppProvider/AppProvider.hook';
+import ExerciseSelect from '../common/ExerciseSelect';
 
 function Exercise({
   exerciseId,
@@ -24,45 +21,7 @@ function Exercise({
   showDelete: boolean;
   exerciseIndex: number;
 }) {
-  const { allExercises } = useAppContext();
   const isExerciseHasWarmup = Boolean(sets[0].wu);
-
-  const groupedByCategoryExercises: Array<GroupedExerciseOptionType> = useMemo(() => {
-    const groupedExercises: any = {};
-
-    allExercises.forEach((exercise) => {
-      const category = exercise.optionCategory;
-      if (!groupedExercises[category]) {
-        groupedExercises[category] = {
-          category: category,
-          exercises: [],
-        };
-      }
-      groupedExercises[category].exercises.push(exercise);
-    });
-
-    return Object.values(groupedExercises);
-  }, [allExercises]);
-
-  const renderSelectGroup = (groupedOptions: GroupedExerciseOptionType) => {
-    const items = groupedOptions.exercises.map((p) => {
-      return (
-        <MenuItem key={p.id} value={p.id}>
-          {p.name}
-        </MenuItem>
-      );
-    });
-    return [
-      <ListSubheader
-        sx={{
-          background: `${getExerciseColorByCategory(groupedOptions.category)}`,
-        }}
-      >
-        {groupedOptions.category}
-      </ListSubheader>,
-      items,
-    ];
-  };
 
   return (
     <Paper
@@ -86,20 +45,7 @@ function Exercise({
             width: '100%',
           }}
         >
-          <Select
-            error={exerciseId === ''}
-            // fullWidth
-            value={exerciseId}
-            onChange={(e) => {
-              setExerciseId(e.target.value);
-            }}
-            sx={{
-              width: 'calc(100% - 40px)',
-              background: `${getExerciseColorById(exerciseId, allExercises)}20`,
-            }}
-          >
-            {groupedByCategoryExercises?.map((groupedOptions) => renderSelectGroup(groupedOptions))}
-          </Select>
+          <ExerciseSelect exerciseId={exerciseId} setExerciseId={setExerciseId} />
           {showDelete && (
             <Box
               sx={{

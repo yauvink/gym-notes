@@ -1,52 +1,51 @@
-import { Box, Checkbox, FormControlLabel, Typography } from '@mui/material';
+import { Alert, Box, Checkbox, FormControlLabel } from '@mui/material';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 import { useAppContext } from '../providers/AppProvider/AppProvider.hook';
 import { useMemo, useState } from 'react';
-import { getExerciseAvarageWeight, getExerciseName } from '../utils';
-import { ExerciseType } from '../providers/AppProvider/AppProvider';
+import { getExerciseAvarageWeight } from '../utils';
+import ExerciseSelect from './common/ExerciseSelect';
+import dayjs from 'dayjs';
 
 function Stats() {
-  const { userTrainingDays, allExercises } = useAppContext();
-  // const selectedCathegory = MuscleGroup.Chest
-  const selectedExerciseId = allExercises[0]?.id;
+  const { userTrainingDays } = useAppContext();
   const [includeWarmups, setIncludeWarmups] = useState(false);
+  const [showAverageWeight, setShowAverageWeight] = useState(true);
+  const [selectedExerciseId, setSelectedExerciseId] = useState('bench_press');
 
   const data = useMemo(() => {
-    console.log('userTrainingDays', userTrainingDays);
-    const exerToCalculate: ExerciseType[] = [];
-    const resData: Array<{ date: number | string; weight: number }> = [];
+    const resultData: Array<{ date: number | string; weight: number }> = [];
 
     userTrainingDays
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
       .forEach((el) => {
         if (el.workout) {
           el.workout.exercises.forEach((exercise) => {
-            // const exCategory = getExerciseData(exercise.exercise_id)?.optionCategory;
-            // console.log('exCategory',exCategory);
-            // console.log('selectedExercise',selectedExercise);
-            // if (exCategory === selectedExercise) {
-            //   exerToCalculate.push(exercise)
-            // }
-
             if (selectedExerciseId === exercise.exercise_id) {
-              exerToCalculate.push(exercise);
-
-              const averageWeight = getExerciseAvarageWeight(exercise, includeWarmups);
-
-              resData.push({
-                // date: new Date(el.date).getTime(),
-                date: el.date.slice(5, 10),
-                weight: averageWeight,
-              });
+              if (!showAverageWeight) {
+                exercise.sets.forEach((set) => {
+                  if (includeWarmups || !set.wu) {
+                    resultData.push({
+                      date: dayjs(el.date).format('DD MMM'),
+                      weight: set.kg,
+                    });
+                  }
+                });
+              } else {
+                const averageWeight = getExerciseAvarageWeight(exercise, includeWarmups);
+                resultData.push({
+                  date: dayjs(el.date).format('DD MMM'),
+                  weight: averageWeight,
+                });
+              }
             }
           });
         }
       });
-    console.log('resData', resData);
 
-    return resData;
-  }, [userTrainingDays, selectedExerciseId, includeWarmups]);
+    return resultData;
+  }, [userTrainingDays, selectedExerciseId, includeWarmups, showAverageWeight]);
 
+  console.log('data', data);
   return (
     <Box
       sx={{
@@ -56,19 +55,20 @@ function Stats() {
         alignItems: 'center',
         justifyContent: 'center',
         height: '100%',
+        width: '100%',
       }}
     >
       <Box
         sx={{
-          // border: '1px solid red',
-          marginTop: '100px',
+          marginTop: '20px',
           display: 'flex',
+          alignItems: 'flex-start',
           flexDirection: 'column',
-          alignItems: 'center',
           gap: '20px',
+          width: '100%',
         }}
       >
-        <Typography>{getExerciseName(selectedExerciseId, allExercises)}</Typography>
+        <ExerciseSelect exerciseId={selectedExerciseId} setExerciseId={setSelectedExerciseId} fade={10} />
         <FormControlLabel
           label="Include warmups"
           control={
@@ -81,21 +81,46 @@ function Stats() {
             />
           }
         ></FormControlLabel>
-        <LineChart width={375} height={200} data={data}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="date" />
-          {/* <YAxis yAxisId="left-axis" /> */}
-          <YAxis yAxisId="right-axis" orientation="right" />
-          <Tooltip />
-          {/* <Line
-            yAxisId="left-axis"
-            // 'basis' | 'basisClosed' | 'basisOpen' | 'bumpX' | 'bumpY' | 'bump' | 'linear' | 'linearClosed' | 'natural' | 'monotoneX' | 'monotoneY' | 'monotone' | 'step' | 'stepBefore' | 'stepAfter' | CurveFactory;
-            type="monotone"
-            dataKey="date"
-            stroke="pink"
-          /> */}
-          <Line yAxisId="right-axis" type="monotone" dataKey="weight" stroke="blue" />
-        </LineChart>
+        <FormControlLabel
+          label="Average exercise weight"
+          control={
+            <Checkbox
+              checked={showAverageWeight}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setShowAverageWeight(event.target.checked);
+              }}
+              inputProps={{ 'aria-label': 'controlled' }}
+            />
+          }
+        ></FormControlLabel>
+
+        {data.length === 0 ? (
+          <Alert
+            sx={{
+              width: '100%',
+            }}
+            severity="error"
+          >
+            No data for selected excercise
+          </Alert>
+        ) : (
+          <LineChart
+            width={window.innerWidth - 20}
+            height={300}
+            data={data}
+            style={
+              {
+                // border: '1px solid green',
+              }
+            }
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="date" />
+            <YAxis yAxisId="right-axis" orientation="right" />
+            <Tooltip />
+            <Line yAxisId="right-axis" type="monotone" dataKey="weight" stroke="blue" />
+          </LineChart>
+        )}
       </Box>
     </Box>
   );
