@@ -45,7 +45,6 @@ function Stats() {
     return resultData;
   }, [userTrainingDays, selectedExerciseId, includeWarmups, showAverageWeight]);
 
-  console.log('data', data);
   return (
     <Box
       sx={{

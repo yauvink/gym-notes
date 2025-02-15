@@ -9,6 +9,8 @@ import {
   CUSTOM_EXERCISES_STORAGE_KEY,
   ExerciseOptionType,
   MOCKED_EXERCISES,
+  USER_WEIGHT_STORAGE_KEY,
+  UserWeightDataType,
 } from './AppProvider.constants';
 import { Alert, Box } from '@mui/material';
 
@@ -26,6 +28,8 @@ export interface IApp {
   setCustomExercises: (v: ExerciseOptionType[]) => void;
   handleExportData: (data: WorkoutType[] | UserTrainingDayType[]) => void;
   allExercises: ExerciseOptionType[];
+  userWeightData: UserWeightDataType[];
+  setUserWeightData: (v: UserWeightDataType[]) => void;
 }
 
 export type SetType = {
@@ -55,49 +59,36 @@ export const AppContext = createContext<null | IApp>(null);
 
 AppContext.displayName = 'AppContext';
 
+function useLocalStorageState<T>(key: string, defaultValue: T): [T, (value: T) => void] {
+  const storedValue = window.localStorage.getItem(key);
+  const initial = storedValue ? JSON.parse(storedValue) : defaultValue;
+  const [state, setState] = useState<T>(initial);
+
+  const setStoredValue = (value: T) => {
+    setState(value);
+    window.localStorage.setItem(key, JSON.stringify(value));
+  };
+
+  return [state, setStoredValue];
+}
+
 function AppProvider({ children }: { children: ReactNode }) {
   const [alert, setAlert] = useState<string | null>(null);
-  const storageTrainingData = window.localStorage.getItem(WORKOUTS_STORAGE_KEY);
-  const initialTrainingData: WorkoutType[] = storageTrainingData ? JSON.parse(storageTrainingData) : [];
-  const [workouts, setWorkoutsLocal] = useState<WorkoutType[]>(initialTrainingData);
-  const setWorkouts = (newWorkouts: WorkoutType[]) => {
-    setWorkoutsLocal(newWorkouts);
-    window.localStorage.setItem(WORKOUTS_STORAGE_KEY, JSON.stringify(newWorkouts));
-  };
-
-  const storageUserTrainingDaysData = window.localStorage.getItem(USER_TRAINING_DAYS_STORAGE_KEY);
-  const initialUserTrainingDaysData: UserTrainingDayType[] = storageUserTrainingDaysData
-    ? JSON.parse(storageUserTrainingDaysData)
-    : [];
-  const [userTrainingDays, setUserTrainingDaysLocal] = useState<UserTrainingDayType[]>(initialUserTrainingDaysData);
-  const setUserTrainingDays = (newTrainingDays: UserTrainingDayType[]) => {
-    setUserTrainingDaysLocal(newTrainingDays);
-    window.localStorage.setItem(USER_TRAINING_DAYS_STORAGE_KEY, JSON.stringify(newTrainingDays));
-  };
-
-  const storageDefaultWeight = window.localStorage.getItem(DEFAULT_WEIGHT_STORAGE_KEY);
-  const initialDefaultWeight: number = storageDefaultWeight ? JSON.parse(storageDefaultWeight) : DEFAULT_WEIGHT;
-  const [defaultWeight, setDefaultWeightLocal] = useState(initialDefaultWeight);
-  const setDefaultWeight = (newValue: number) => {
-    setDefaultWeightLocal(newValue);
-    window.localStorage.setItem(DEFAULT_WEIGHT_STORAGE_KEY, JSON.stringify(newValue));
-  };
-
-  const storageDefaultRepeats = window.localStorage.getItem(DEFAULT_REPEATS_STORAGE_KEY);
-  const initialDefaultRepeats: number = storageDefaultRepeats ? JSON.parse(storageDefaultRepeats) : DEFAULT_REPEATS;
-  const [defaultRepeats, setDefaultRepeatsLocal] = useState(initialDefaultRepeats);
-  const setDefaultRepeats = (newValue: number) => {
-    setDefaultRepeatsLocal(newValue);
-    window.localStorage.setItem(DEFAULT_REPEATS_STORAGE_KEY, JSON.stringify(newValue));
-  };
-
-  const storageCustomExercises = window.localStorage.getItem(CUSTOM_EXERCISES_STORAGE_KEY);
-  const initialCustomExercises: ExerciseOptionType[] = storageCustomExercises ? JSON.parse(storageCustomExercises) : [];
-  const [customExercises, setCustomExercisesLocal] = useState(initialCustomExercises);
-  const setCustomExercises = (newValue: ExerciseOptionType[]) => {
-    setCustomExercisesLocal(newValue);
-    window.localStorage.setItem(CUSTOM_EXERCISES_STORAGE_KEY, JSON.stringify(newValue));
-  };
+  const [workouts, setWorkouts] = useLocalStorageState<WorkoutType[]>(WORKOUTS_STORAGE_KEY, []);
+  const [userTrainingDays, setUserTrainingDays] = useLocalStorageState<UserTrainingDayType[]>(
+    USER_TRAINING_DAYS_STORAGE_KEY,
+    []
+  );
+  const [defaultWeight, setDefaultWeight] = useLocalStorageState<number>(DEFAULT_WEIGHT_STORAGE_KEY, DEFAULT_WEIGHT);
+  const [defaultRepeats, setDefaultRepeats] = useLocalStorageState<number>(
+    DEFAULT_REPEATS_STORAGE_KEY,
+    DEFAULT_REPEATS
+  );
+  const [customExercises, setCustomExercises] = useLocalStorageState<ExerciseOptionType[]>(
+    CUSTOM_EXERCISES_STORAGE_KEY,
+    []
+  );
+  const [userWeightData, setUserWeightData] = useLocalStorageState<UserWeightDataType[]>(USER_WEIGHT_STORAGE_KEY, []);
 
   function getLocalStorageSize() {
     let total = 0;
@@ -141,6 +132,8 @@ function AppProvider({ children }: { children: ReactNode }) {
     localStorageUsage: getLocalStorageSize(),
     handleExportData,
     allExercises,
+    userWeightData,
+    setUserWeightData,
   };
 
   return (

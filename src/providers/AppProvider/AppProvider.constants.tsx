@@ -3,6 +3,7 @@ export const WORKOUTS_STORAGE_KEY = 'trainings_d1';
 export const DEFAULT_WEIGHT_STORAGE_KEY = 'default_weight';
 export const DEFAULT_REPEATS_STORAGE_KEY = 'default_repeats';
 export const CUSTOM_EXERCISES_STORAGE_KEY = 'cumstom_exercises';
+export const USER_WEIGHT_STORAGE_KEY = 'user_weight';
 
 export const DEFAULT_WEIGHT = 50;
 export const DEFAULT_REPEATS = 8;
@@ -27,6 +28,13 @@ export type ExerciseOptionType = {
   id: string;
   name: string;
   optionCategory: MuscleGroup;
+};
+
+export type UserWeightDataType = {
+  // timestamp
+  t: number;
+  // weight
+  w: number;
 };
 
 export const MOCKED_EXERCISES: ExerciseOptionType[] = [

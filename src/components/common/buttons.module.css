@@ -6,6 +6,11 @@
   --color-gray-50: oklch(98.42% 0.0034 247.86);
   --color-gray-100: oklch(12% 9.5% 264 / 5%);
   --color-gray-200: oklch(12% 9% 264 / 8%);
+
+  --input-height: 36px;
+  --input-width: 45px;
+  --large-input-height: 76px;
+  --large-input-width: 70px;
 }
 
 .Field {
@@ -37,7 +42,7 @@
   display: flex;
 }
 
-.Input {
+.Input, .LargeInput {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -46,7 +51,7 @@
   border-left: none;
   border-right: none;
   width: 45px;
-  height: 36px;
+  height: var(--input-height);
   font-family: inherit;
   font-size: 18px;
   font-weight: normal;
@@ -64,13 +69,15 @@
 }
 
 .Decrement,
-.Increment {
+.Increment,
+.LargeDecrement,
+.LargeIncrement {
   box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 35px;
-  height: 36px;
+  height: var(--input-height);
   margin: 0;
   outline: 0;
   padding: 0;
@@ -100,4 +107,12 @@
 .Increment {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
+}
+
+
+.LargeDecrement,
+.LargeIncrement,
+.LargeInput {
+  height: var(--large-input-height);
+  width: var(--large-input-width);
 }

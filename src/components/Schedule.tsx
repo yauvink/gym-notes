@@ -20,6 +20,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import { useAppContext } from '../providers/AppProvider/AppProvider.hook';
 import { UserTrainingDayType } from '../providers/AppProvider/AppProvider';
 import { calcTrainingTotalWeight, getExerciseColorById, getExerciseName } from '../utils';
+import WeightChart from './WeightChart';
 
 const SOBER_DATE_STORAGE_KEY = 'date_key_21313';
 
@@ -230,6 +231,8 @@ function Schedule() {
           </Box>
         </Box>
       </Box>
+
+      <WeightChart />
 
       <DateCalendar
         disableFuture
