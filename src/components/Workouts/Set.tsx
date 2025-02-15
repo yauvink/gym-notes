@@ -36,7 +36,7 @@ function Set({
         display: 'flex',
         justifyContent: 'space-between',
         gap: '10px',
-        background: '#fff',
+        background: isWarmup ? 'rgba(0,255,0,0.1)' : '#fff',
         borderRadius: '5px',
         padding: '5px 10px',
       }}

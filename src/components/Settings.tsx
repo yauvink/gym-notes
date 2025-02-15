@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 import { NumberField } from '@base-ui-components/react/number-field';
 import { MinusIcon, PlusIcon } from './common/Icons';
 import styles from './common/buttons.module.css';
@@ -6,7 +6,16 @@ import { useAppContext } from '../providers/AppProvider/AppProvider.hook';
 import { MAX_REPEATS, MAX_WEIGHT, MIN_REPEATS, MIN_WEIGHT } from '../providers/AppProvider/AppProvider.constants';
 
 function Settings() {
-  const { defaultWeight, setDefaultWeight, defaultRepeats, setDefaultRepeats, localStorageUsage } = useAppContext();
+  const {
+    handleExportData,
+    defaultWeight,
+    setDefaultWeight,
+    defaultRepeats,
+    setDefaultRepeats,
+    localStorageUsage,
+    userTrainingDays,
+    workouts,
+  } = useAppContext();
   return (
     <Box
       sx={{
@@ -33,7 +42,7 @@ function Settings() {
         }}
       >
         <Box> {localStorageUsage} </Box>
-        {0.020}
+        {0.021}
       </Box>
       <Typography
         sx={{
@@ -106,6 +115,34 @@ function Settings() {
             </NumberField.Increment>
           </NumberField.Group>
         </NumberField.Root>
+      </Box>
+
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '20px',
+          margin: '50px 0',
+        }}
+      >
+        <Button
+          onClick={() => {
+            handleExportData(userTrainingDays);
+          }}
+          variant="outlined"
+          color="secondary"
+        >
+          export training days data
+        </Button>
+        <Button
+          onClick={() => {
+            handleExportData(workouts);
+          }}
+          variant="outlined"
+          color="secondary"
+        >
+          export workouts data
+        </Button>
       </Box>
     </Box>
   );

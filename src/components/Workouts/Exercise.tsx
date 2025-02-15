@@ -1,4 +1,15 @@
-import { Autocomplete, Box, Button, Paper, TextField, Typography } from '@mui/material';
+import {
+  Autocomplete,
+  Box,
+  Button,
+  ListSubheader,
+  MenuItem,
+  Paper,
+  Select,
+  SelectChangeEvent,
+  TextField,
+  Typography,
+} from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { ExerciseOptionType, EXERCISES, MuscleGroup } from '../../providers/AppProvider/AppProvider.constants';
 import { SetType } from '../../providers/AppProvider/AppProvider';
@@ -31,7 +42,7 @@ function Exercise({
       sx={{
         padding: '15px 10px',
         margin: '10px 0px',
-        background: 'rgba(0,0,0,0.05)',
+        background: 'rgba(0,0,0,0.08)',
       }}
     >
       <Box
@@ -39,6 +50,43 @@ function Exercise({
           width: '100%',
         }}
       >
+        <Select fullWidth defaultValue="" id="grouped-select" label="Grouping">
+          <MenuItem value="">
+            <em>None</em>
+          </MenuItem>
+          <ListSubheader>Category 1</ListSubheader>
+          <MenuItem value={1}>Option 1</MenuItem>
+          <MenuItem value={2}>Option 2</MenuItem>
+          <MenuItem value={2}>Option 2</MenuItem>
+          <MenuItem value={2}>Option 2</MenuItem>
+          <MenuItem value={2}>Option 2</MenuItem>
+          <MenuItem value={2}>Option 2</MenuItem>
+          <MenuItem value={2}>Option 2</MenuItem>
+          <MenuItem value={2}>Option 2</MenuItem>
+          <MenuItem value={2}>Option 2</MenuItem>
+          <MenuItem value={2}>Option 2</MenuItem>
+          <MenuItem value={2}>Option 2</MenuItem>
+          <ListSubheader>Category 2</ListSubheader>
+          <MenuItem value={3}>Option 3</MenuItem>
+          <MenuItem value={4}>Option 4</MenuItem>
+          <MenuItem value={4}>Option 4</MenuItem>
+          <MenuItem value={4}>Option 4</MenuItem>
+          <MenuItem value={4}>Option 4</MenuItem>
+          <MenuItem value={4}>Option 4</MenuItem>
+          <MenuItem value={4}>Option 4</MenuItem>
+          <MenuItem value={4}>Option 4</MenuItem>
+          <MenuItem value={4}>Option 4</MenuItem>
+          <ListSubheader>Category 2</ListSubheader>
+          <MenuItem value={3}>Option 3</MenuItem>
+          <MenuItem value={4}>Option 4</MenuItem>
+          <MenuItem value={4}>Option 4</MenuItem>
+          <MenuItem value={4}>Option 4</MenuItem>
+          <MenuItem value={4}>Option 4</MenuItem>
+          <MenuItem value={4}>Option 4</MenuItem>
+          <MenuItem value={4}>Option 4</MenuItem>
+          <MenuItem value={4}>Option 4</MenuItem>
+          <MenuItem value={4}>Option 4</MenuItem>
+        </Select>
         <Box
           sx={{
             display: 'flex',
@@ -48,7 +96,6 @@ function Exercise({
           }}
         >
           <Autocomplete
-            // id={`input_element_${exerciseIndex}`}
             value={value}
             onChange={(event: any, newValue: ExerciseOptionType | null) => {
               if (newValue?.id) {

@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useState } from 'react';
+import { createContext, ReactNode, useEffect, useState } from 'react';
 import {
   DEFAULT_REPEATS,
   DEFAULT_REPEATS_STORAGE_KEY,
@@ -7,6 +7,7 @@ import {
   WORKOUTS_STORAGE_KEY,
   USER_TRAINING_DAYS_STORAGE_KEY,
 } from './AppProvider.constants';
+import { Alert, Box } from '@mui/material';
 
 export interface IApp {
   workouts: WorkoutType[];
@@ -18,6 +19,7 @@ export interface IApp {
   setDefaultRepeats: (v: number) => void;
   defaultWeight: number;
   setDefaultWeight: (v: number) => void;
+  handleExportData: (data: WorkoutType[] | UserTrainingDayType[]) => void;
 }
 
 export type SetType = {
@@ -48,6 +50,7 @@ export const AppContext = createContext<null | IApp>(null);
 AppContext.displayName = 'AppContext';
 
 function AppProvider({ children }: { children: ReactNode }) {
+  const [alert, setAlert] = useState<string | null>(null);
   const storageTrainingData = window.localStorage.getItem(WORKOUTS_STORAGE_KEY);
   const initialTrainingData: WorkoutType[] = storageTrainingData ? JSON.parse(storageTrainingData) : [];
   const [workouts, setWorkoutsLocal] = useState<WorkoutType[]>(initialTrainingData);
@@ -92,6 +95,21 @@ function AppProvider({ children }: { children: ReactNode }) {
     return `Local Storage Usage: ${(total / 1024).toFixed(2)} KB`;
   }
 
+  useEffect(() => {
+    if (alert) {
+      setTimeout(() => {
+        setAlert(null);
+      }, 500);
+    }
+  }, [alert]);
+
+  const handleExportData = (data: WorkoutType[] | UserTrainingDayType[]) => {
+    const dataToExport = JSON.stringify(data);
+    console.log('dataToExport', dataToExport);
+    navigator.clipboard.writeText(dataToExport);
+    setAlert('Copied to clipboard');
+  };
+
   const value = {
     workouts,
     setWorkouts,
@@ -102,9 +120,36 @@ function AppProvider({ children }: { children: ReactNode }) {
     defaultWeight,
     setDefaultWeight,
     localStorageUsage: getLocalStorageSize(),
+    handleExportData,
   };
 
-  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
+  return (
+    <AppContext.Provider value={value}>
+      <>
+        {alert && (
+          <Box
+            sx={{
+              position: 'fixed',
+              zIndex: 999,
+              top: 0,
+              width: '100%',
+            }}
+          >
+            <Alert
+              sx={{
+                borderRadius: 0,
+              }}
+              severity="success"
+              variant="filled"
+            >
+              {alert}
+            </Alert>
+          </Box>
+        )}
+        {children}
+      </>
+    </AppContext.Provider>
+  );
 }
 
 export default AppProvider;

@@ -102,7 +102,6 @@ function Schedule() {
       return result;
     }
   }, [selectedDate, userTrainingDays]);
-  console.log('selectedDayData', selectedDayData);
 
   const handleChange = (event: SelectChangeEvent) => {
     setSelectedWorkoutId(event.target.value as string);
