@@ -6,7 +6,13 @@ import { useAppContext } from '../../providers/AppProvider/AppProvider.hook';
 import Exercise from './Exercise';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-function WorkoutDialog({ closeDialog, editTrainingId }: { closeDialog: () => void; editTrainingId: string | null }) {
+function EditWorkoutDialog({
+  closeDialog,
+  editTrainingId,
+}: {
+  closeDialog: () => void;
+  editTrainingId: string | null;
+}) {
   const { workouts, setWorkouts, defaultRepeats, defaultWeight } = useAppContext();
   const editInitialData = workouts.find((el) => el.id === editTrainingId);
   const [workoutName, setWorkoutName] = useState(editInitialData?.name ?? '');
@@ -193,4 +199,4 @@ function WorkoutDialog({ closeDialog, editTrainingId }: { closeDialog: () => voi
   );
 }
 
-export default WorkoutDialog;
+export default EditWorkoutDialog;

@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useEffect, useState } from 'react';
+import { createContext, ReactNode, useEffect, useMemo, useState } from 'react';
 import {
   DEFAULT_REPEATS,
   DEFAULT_REPEATS_STORAGE_KEY,
@@ -6,6 +6,9 @@ import {
   DEFAULT_WEIGHT_STORAGE_KEY,
   WORKOUTS_STORAGE_KEY,
   USER_TRAINING_DAYS_STORAGE_KEY,
+  CUSTOM_EXERCISES_STORAGE_KEY,
+  ExerciseOptionType,
+  MOCKED_EXERCISES,
 } from './AppProvider.constants';
 import { Alert, Box } from '@mui/material';
 
@@ -19,7 +22,10 @@ export interface IApp {
   setDefaultRepeats: (v: number) => void;
   defaultWeight: number;
   setDefaultWeight: (v: number) => void;
+  customExercises: ExerciseOptionType[];
+  setCustomExercises: (v: ExerciseOptionType[]) => void;
   handleExportData: (data: WorkoutType[] | UserTrainingDayType[]) => void;
+  allExercises: ExerciseOptionType[];
 }
 
 export type SetType = {
@@ -85,6 +91,14 @@ function AppProvider({ children }: { children: ReactNode }) {
     window.localStorage.setItem(DEFAULT_REPEATS_STORAGE_KEY, JSON.stringify(newValue));
   };
 
+  const storageCustomExercises = window.localStorage.getItem(CUSTOM_EXERCISES_STORAGE_KEY);
+  const initialCustomExercises: ExerciseOptionType[] = storageCustomExercises ? JSON.parse(storageCustomExercises) : [];
+  const [customExercises, setCustomExercisesLocal] = useState(initialCustomExercises);
+  const setCustomExercises = (newValue: ExerciseOptionType[]) => {
+    setCustomExercisesLocal(newValue);
+    window.localStorage.setItem(CUSTOM_EXERCISES_STORAGE_KEY, JSON.stringify(newValue));
+  };
+
   function getLocalStorageSize() {
     let total = 0;
     for (let key in localStorage) {
@@ -105,10 +119,13 @@ function AppProvider({ children }: { children: ReactNode }) {
 
   const handleExportData = (data: WorkoutType[] | UserTrainingDayType[]) => {
     const dataToExport = JSON.stringify(data);
-    console.log('dataToExport', dataToExport);
     navigator.clipboard.writeText(dataToExport);
     setAlert('Copied to clipboard');
   };
+
+  const allExercises = useMemo(() => {
+    return [...MOCKED_EXERCISES, ...customExercises];
+  }, [customExercises]);
 
   const value = {
     workouts,
@@ -119,8 +136,11 @@ function AppProvider({ children }: { children: ReactNode }) {
     setDefaultRepeats,
     defaultWeight,
     setDefaultWeight,
+    customExercises,
+    setCustomExercises,
     localStorageUsage: getLocalStorageSize(),
     handleExportData,
+    allExercises,
   };
 
   return (

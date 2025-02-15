@@ -2,14 +2,13 @@ import { Box, Checkbox, FormControlLabel, Typography } from '@mui/material';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 import { useAppContext } from '../providers/AppProvider/AppProvider.hook';
 import { useMemo, useState } from 'react';
-import { EXERCISES } from '../providers/AppProvider/AppProvider.constants';
 import { getExerciseAvarageWeight, getExerciseName } from '../utils';
 import { ExerciseType } from '../providers/AppProvider/AppProvider';
 
 function Stats() {
-  const { userTrainingDays } = useAppContext();
+  const { userTrainingDays, allExercises } = useAppContext();
   // const selectedCathegory = MuscleGroup.Chest
-  const selectedExerciseId = EXERCISES[0].id;
+  const selectedExerciseId = allExercises[0]?.id;
   const [includeWarmups, setIncludeWarmups] = useState(false);
 
   const data = useMemo(() => {
@@ -69,7 +68,7 @@ function Stats() {
           gap: '20px',
         }}
       >
-        <Typography>{getExerciseName(selectedExerciseId)}</Typography>
+        <Typography>{getExerciseName(selectedExerciseId, allExercises)}</Typography>
         <FormControlLabel
           label="Include warmups"
           control={

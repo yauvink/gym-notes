@@ -1,10 +1,11 @@
 import { Box, Button, ListSubheader, MenuItem, Paper, Select, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { EXERCISES, GroupedExerciseOptionType } from '../../providers/AppProvider/AppProvider.constants';
+import { GroupedExerciseOptionType } from '../../providers/AppProvider/AppProvider.constants';
 import { SetType } from '../../providers/AppProvider/AppProvider';
 import Set from './Set';
 import { getExerciseColorByCategory, getExerciseColorById } from '../../utils';
 import { useMemo } from 'react';
+import { useAppContext } from '../../providers/AppProvider/AppProvider.hook';
 
 function Exercise({
   exerciseId,
@@ -23,12 +24,13 @@ function Exercise({
   showDelete: boolean;
   exerciseIndex: number;
 }) {
+  const { allExercises } = useAppContext();
   const isExerciseHasWarmup = Boolean(sets[0].wu);
 
   const groupedByCategoryExercises: Array<GroupedExerciseOptionType> = useMemo(() => {
     const groupedExercises: any = {};
 
-    EXERCISES.forEach((exercise) => {
+    allExercises.forEach((exercise) => {
       const category = exercise.optionCategory;
       if (!groupedExercises[category]) {
         groupedExercises[category] = {
@@ -40,7 +42,7 @@ function Exercise({
     });
 
     return Object.values(groupedExercises);
-  }, []);
+  }, [allExercises]);
 
   const renderSelectGroup = (groupedOptions: GroupedExerciseOptionType) => {
     const items = groupedOptions.exercises.map((p) => {
@@ -93,7 +95,7 @@ function Exercise({
             }}
             sx={{
               width: 'calc(100% - 40px)',
-              background: `${getExerciseColorById(exerciseId)}20`,
+              background: `${getExerciseColorById(exerciseId, allExercises)}20`,
             }}
           >
             {groupedByCategoryExercises?.map((groupedOptions) => renderSelectGroup(groupedOptions))}

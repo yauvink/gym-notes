@@ -1,12 +1,12 @@
 import { ExerciseType, WorkoutType } from "../providers/AppProvider/AppProvider"
-import { EXERCISES, MuscleGroup } from "../providers/AppProvider/AppProvider.constants"
+import { ExerciseOptionType, MuscleGroup } from "../providers/AppProvider/AppProvider.constants"
 
-export const getExerciseName = (id: string) => {
-  return EXERCISES.find(el => el.id === id)?.name
+export const getExerciseName = (id: string, exercises: ExerciseOptionType[]) => {
+  return exercises.find(el => el.id === id)?.name
 }
 
-export const getExerciseData = (id: string) => {
-  return EXERCISES.find(el => el.id === id)
+export const getExerciseData = (id: string, exercises: ExerciseOptionType[]) => {
+  return exercises.find(el => el.id === id)
 }
 
 export const getExerciseColorByCategory = (category: MuscleGroup | undefined) => {
@@ -38,8 +38,8 @@ export const getExerciseColorByCategory = (category: MuscleGroup | undefined) =>
   }
 }
 
-export const getExerciseColorById = (id: string | undefined) => {
-  const category = EXERCISES.find(el => el.id === id)?.optionCategory
+export const getExerciseColorById = (id: string | undefined, exercises: ExerciseOptionType[]) => {
+  const category = exercises.find(el => el.id === id)?.optionCategory
   return getExerciseColorByCategory(category)
 }
 

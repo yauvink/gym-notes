@@ -2,6 +2,7 @@ export const USER_TRAINING_DAYS_STORAGE_KEY = 'key1231231123';
 export const WORKOUTS_STORAGE_KEY = 'trainings_d1';
 export const DEFAULT_WEIGHT_STORAGE_KEY = 'default_weight';
 export const DEFAULT_REPEATS_STORAGE_KEY = 'default_repeats';
+export const CUSTOM_EXERCISES_STORAGE_KEY = 'cumstom_exercises';
 
 export const DEFAULT_WEIGHT = 50;
 export const DEFAULT_REPEATS = 8;
@@ -28,7 +29,7 @@ export type ExerciseOptionType = {
   optionCategory: MuscleGroup;
 };
 
-export const EXERCISES: ExerciseOptionType[] = [
+export const MOCKED_EXERCISES: ExerciseOptionType[] = [
   // Грудь
   { id: 'bench_press', name: 'Жим штанги лежа', optionCategory: MuscleGroup.Chest },
   { id: 'dumbbell_fly', name: 'Разведение гантелей', optionCategory: MuscleGroup.Chest },

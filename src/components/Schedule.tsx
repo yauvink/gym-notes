@@ -24,7 +24,7 @@ import { calcTrainingTotalWeight, getExerciseColorById, getExerciseName } from '
 const SOBER_DATE_STORAGE_KEY = 'date_key_21313';
 
 function Schedule() {
-  const { userTrainingDays, setUserTrainingDays, workouts } = useAppContext();
+  const { userTrainingDays, setUserTrainingDays, workouts, allExercises } = useAppContext();
   const [isAddTrainingDialogOpen, setAddTrainingDialogOpen] = useState(false);
   const [isSoberDialogOpen, setSoberDialogOpen] = useState(false);
   const [selectedDate, setSelectedDate] = React.useState<Dayjs | null | undefined>(dayjs(new Date()));
@@ -319,10 +319,10 @@ function Schedule() {
                         gap: '40px',
                         justifyContent: 'flex-end',
                         fontSize: '14px',
-                        background: `${getExerciseColorById(exercise.exercise_id)}20`,
+                        background: `${getExerciseColorById(exercise.exercise_id, allExercises)}20`,
                       }}
                     >
-                      {getExerciseName(exercise.exercise_id)}
+                      {getExerciseName(exercise.exercise_id, allExercises)}
                     </Box>
                     {exercise.sets.map((set, i, arr) => (
                       <Box
