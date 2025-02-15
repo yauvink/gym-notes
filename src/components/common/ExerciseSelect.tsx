@@ -1,4 +1,4 @@
-import { ListSubheader, MenuItem, Select } from '@mui/material';
+import { FormControl, InputLabel, ListSubheader, MenuItem, Select } from '@mui/material';
 import { GroupedExerciseOptionType } from '../../providers/AppProvider/AppProvider.constants';
 import { getExerciseColorByCategory, getExerciseColorById } from '../../utils';
 import { useMemo } from 'react';
@@ -53,19 +53,22 @@ function ExerciseSelect({
   };
 
   return (
-    <Select
-      error={exerciseId === ''}
-      fullWidth
-      value={exerciseId}
-      onChange={(e) => {
-        setExerciseId(e.target.value);
-      }}
-      sx={{
-        background: `${getExerciseColorById(exerciseId, allExercises)}${fade}`,
-      }}
-    >
-      {groupedByCategoryExercises?.map((groupedOptions) => renderSelectGroup(groupedOptions))}
-    </Select>
+    <FormControl fullWidth>
+      <InputLabel>Select exercise</InputLabel>
+      <Select
+        error={exerciseId === ''}
+        fullWidth
+        value={exerciseId}
+        onChange={(e) => {
+          setExerciseId(e.target.value);
+        }}
+        sx={{
+          background: `${getExerciseColorById(exerciseId, allExercises)}${fade}`,
+        }}
+      >
+        {groupedByCategoryExercises?.map((groupedOptions) => renderSelectGroup(groupedOptions))}
+      </Select>
+    </FormControl>
   );
 }
 
