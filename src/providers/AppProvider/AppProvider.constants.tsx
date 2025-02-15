@@ -20,6 +20,8 @@ export enum MuscleGroup {
   Core = 'Core',
 }
 
+export type GroupedExerciseOptionType = { category: MuscleGroup; exercises: ExerciseOptionType[] };
+
 export type ExerciseOptionType = {
   id: string;
   name: string;

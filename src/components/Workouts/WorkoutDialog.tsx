@@ -13,7 +13,7 @@ function WorkoutDialog({ closeDialog, editTrainingId }: { closeDialog: () => voi
   const INITIAL_WORKOUT_DATA: ExerciseType = {
     exercise_id: '',
     sets: [
-      { wu: true, reps: defaultRepeats, kg: defaultWeight / 2 },
+      // { wu: true, reps: defaultRepeats, kg: defaultWeight / 2 },
       { reps: defaultRepeats, kg: defaultWeight },
     ],
   };

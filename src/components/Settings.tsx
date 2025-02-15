@@ -42,7 +42,7 @@ function Settings() {
         }}
       >
         <Box> {localStorageUsage} </Box>
-        {0.021}
+        {0.022}
       </Box>
       <Typography
         sx={{

@@ -1,20 +1,10 @@
-import {
-  Autocomplete,
-  Box,
-  Button,
-  ListSubheader,
-  MenuItem,
-  Paper,
-  Select,
-  SelectChangeEvent,
-  TextField,
-  Typography,
-} from '@mui/material';
+import { Box, Button, ListSubheader, MenuItem, Paper, Select, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { ExerciseOptionType, EXERCISES, MuscleGroup } from '../../providers/AppProvider/AppProvider.constants';
+import { EXERCISES, GroupedExerciseOptionType } from '../../providers/AppProvider/AppProvider.constants';
 import { SetType } from '../../providers/AppProvider/AppProvider';
 import Set from './Set';
 import { getExerciseColorByCategory, getExerciseColorById } from '../../utils';
+import { useMemo } from 'react';
 
 function Exercise({
   exerciseId,
@@ -33,8 +23,44 @@ function Exercise({
   showDelete: boolean;
   exerciseIndex: number;
 }) {
-  const value = EXERCISES.find((el) => el.id === exerciseId);
   const isExerciseHasWarmup = Boolean(sets[0].wu);
+
+  const groupedByCategoryExercises: Array<GroupedExerciseOptionType> = useMemo(() => {
+    const groupedExercises: any = {};
+
+    EXERCISES.forEach((exercise) => {
+      const category = exercise.optionCategory;
+      if (!groupedExercises[category]) {
+        groupedExercises[category] = {
+          category: category,
+          exercises: [],
+        };
+      }
+      groupedExercises[category].exercises.push(exercise);
+    });
+
+    return Object.values(groupedExercises);
+  }, []);
+
+  const renderSelectGroup = (groupedOptions: GroupedExerciseOptionType) => {
+    const items = groupedOptions.exercises.map((p) => {
+      return (
+        <MenuItem key={p.id} value={p.id}>
+          {p.name}
+        </MenuItem>
+      );
+    });
+    return [
+      <ListSubheader
+        sx={{
+          background: `${getExerciseColorByCategory(groupedOptions.category)}`,
+        }}
+      >
+        {groupedOptions.category}
+      </ListSubheader>,
+      items,
+    ];
+  };
 
   return (
     <Paper
@@ -50,43 +76,6 @@ function Exercise({
           width: '100%',
         }}
       >
-        <Select fullWidth defaultValue="" id="grouped-select" label="Grouping">
-          <MenuItem value="">
-            <em>None</em>
-          </MenuItem>
-          <ListSubheader>Category 1</ListSubheader>
-          <MenuItem value={1}>Option 1</MenuItem>
-          <MenuItem value={2}>Option 2</MenuItem>
-          <MenuItem value={2}>Option 2</MenuItem>
-          <MenuItem value={2}>Option 2</MenuItem>
-          <MenuItem value={2}>Option 2</MenuItem>
-          <MenuItem value={2}>Option 2</MenuItem>
-          <MenuItem value={2}>Option 2</MenuItem>
-          <MenuItem value={2}>Option 2</MenuItem>
-          <MenuItem value={2}>Option 2</MenuItem>
-          <MenuItem value={2}>Option 2</MenuItem>
-          <MenuItem value={2}>Option 2</MenuItem>
-          <ListSubheader>Category 2</ListSubheader>
-          <MenuItem value={3}>Option 3</MenuItem>
-          <MenuItem value={4}>Option 4</MenuItem>
-          <MenuItem value={4}>Option 4</MenuItem>
-          <MenuItem value={4}>Option 4</MenuItem>
-          <MenuItem value={4}>Option 4</MenuItem>
-          <MenuItem value={4}>Option 4</MenuItem>
-          <MenuItem value={4}>Option 4</MenuItem>
-          <MenuItem value={4}>Option 4</MenuItem>
-          <MenuItem value={4}>Option 4</MenuItem>
-          <ListSubheader>Category 2</ListSubheader>
-          <MenuItem value={3}>Option 3</MenuItem>
-          <MenuItem value={4}>Option 4</MenuItem>
-          <MenuItem value={4}>Option 4</MenuItem>
-          <MenuItem value={4}>Option 4</MenuItem>
-          <MenuItem value={4}>Option 4</MenuItem>
-          <MenuItem value={4}>Option 4</MenuItem>
-          <MenuItem value={4}>Option 4</MenuItem>
-          <MenuItem value={4}>Option 4</MenuItem>
-          <MenuItem value={4}>Option 4</MenuItem>
-        </Select>
         <Box
           sx={{
             display: 'flex',
@@ -95,58 +84,20 @@ function Exercise({
             width: '100%',
           }}
         >
-          <Autocomplete
-            value={value}
-            onChange={(event: any, newValue: ExerciseOptionType | null) => {
-              if (newValue?.id) {
-                setExerciseId(newValue.id);
-              }
+          <Select
+            error={exerciseId === ''}
+            // fullWidth
+            value={exerciseId}
+            onChange={(e) => {
+              setExerciseId(e.target.value);
             }}
-            // options={options.sort((a, b) => -b.firstLetter.localeCompare(a.firstLetter))}
-            options={EXERCISES}
-            groupBy={(option) => option.optionCategory}
-            getOptionLabel={(option) => option.name}
-            getOptionKey={(option) => option.id}
-            fullWidth
             sx={{
-              background: `${getExerciseColorById(value?.id)}20`,
+              width: 'calc(100% - 40px)',
+              background: `${getExerciseColorById(exerciseId)}20`,
             }}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                size="small"
-                label="Choose exercise"
-                placeholder="Choose exercise"
-                error={exerciseId === ''}
-                // onFocus={(event) => {
-                //   setTimeout(() => {
-                //     const target = document.getElementById(`input_element_${exerciseIndex}`);
-                //     if (target) {
-                //       target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                //     }
-                //   }, 100);
-                // }}
-              />
-            )}
-            renderGroup={(params) => {
-              return (
-                <li key={params.key}>
-                  <Box
-                    sx={{
-                      position: 'sticky',
-                      top: '-8px',
-                      padding: '4px 10px',
-                      fontWeight: 600,
-                      backgroundColor: getExerciseColorByCategory(params.group as MuscleGroup),
-                    }}
-                  >
-                    {params.group}
-                  </Box>
-                  <ul>{params.children}</ul>
-                </li>
-              );
-            }}
-          />
+          >
+            {groupedByCategoryExercises?.map((groupedOptions) => renderSelectGroup(groupedOptions))}
+          </Select>
           {showDelete && (
             <Box
               sx={{

@@ -15,19 +15,19 @@ export const getExerciseColorByCategory = (category: MuscleGroup | undefined) =>
       return "#F45D01"
     }
     case (MuscleGroup.Biceps): {
-      return "#EEB902"
+      return "#C3C303"
     }
     case (MuscleGroup.Back): {
-      return "#F18B02"
+      return "#62A56B"
     }
     case (MuscleGroup.Triceps): {
-      return "#C3C303"
+      return "#EEB902"
     }
     case (MuscleGroup.Shoulders): {
       return "#97CC04"
     }
     case (MuscleGroup.Core): {
-      return "#62A56B"
+      return "#F18B02"
     }
     case (MuscleGroup.Legs): {
       return "#2D7DD2"
