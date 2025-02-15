@@ -99,9 +99,9 @@ function Stats() {
             sx={{
               width: '100%',
             }}
-            severity="error"
+            severity="warning"
           >
-            No data for selected excercise
+            No workouts data for selected excercise
           </Alert>
         ) : (
           <LineChart

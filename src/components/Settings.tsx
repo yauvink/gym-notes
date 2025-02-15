@@ -1,9 +1,10 @@
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Button, Dialog, TextField, Typography } from '@mui/material';
 import { NumberField } from '@base-ui-components/react/number-field';
 import { MinusIcon, PlusIcon } from './common/Icons';
 import styles from './common/buttons.module.css';
 import { useAppContext } from '../providers/AppProvider/AppProvider.hook';
 import { MAX_REPEATS, MAX_WEIGHT, MIN_REPEATS, MIN_WEIGHT } from '../providers/AppProvider/AppProvider.constants';
+import { useCallback, useState } from 'react';
 
 function Settings() {
   const {
@@ -14,8 +15,36 @@ function Settings() {
     setDefaultRepeats,
     localStorageUsage,
     userTrainingDays,
+    setUserTrainingDays,
     workouts,
+    setWorkouts,
   } = useAppContext();
+  const [isExportDialogOpen, setExportDialogOpen] = useState<'trainings' | 'workouts' | null>(null);
+  const [exportData, setExportData] = useState('');
+
+  const [isImportFinished, setImportFinished] = useState(false);
+  const [isError, setError] = useState(false);
+
+  const handleImportData = useCallback(() => {
+    try {
+      const data = JSON.parse(exportData);
+
+      if (isExportDialogOpen === 'trainings') {
+        setUserTrainingDays(data);
+      } else if (isExportDialogOpen === 'workouts') {
+        setWorkouts(data);
+      } else {
+        setError(true);
+      }
+
+      setImportFinished(true);
+    } catch (err) {
+      console.log('import error:', err);
+      setError(true);
+      setImportFinished(true);
+    }
+  }, [isExportDialogOpen, exportData, setUserTrainingDays, setWorkouts]);
+
   return (
     <Box
       sx={{
@@ -28,6 +57,29 @@ function Settings() {
         minHeight: '500px',
       }}
     >
+      {isImportFinished && (
+        <Box
+          sx={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: '#fff',
+            padding: '50px',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 9999999,
+          }}
+        >
+          {isError ? (
+            <Typography>Something went wrong :(</Typography>
+          ) : (
+            <Typography>Data imported, please reload the app</Typography>
+          )}
+        </Box>
+      )}
       <Box
         sx={{
           position: 'fixed',
@@ -42,7 +94,7 @@ function Settings() {
         }}
       >
         <Box> {localStorageUsage} </Box>
-        {0.025}
+        {0.027}
       </Box>
       <Typography
         sx={{
@@ -143,7 +195,57 @@ function Settings() {
         >
           export workouts data
         </Button>
+
+        <Button
+          onClick={() => {
+            if (window.confirm('Attention! This is unsafe and can break the app.')) {
+              setExportDialogOpen('trainings');
+            }
+          }}
+          variant="outlined"
+          color="warning"
+        >
+          import training days
+        </Button>
+
+        <Button
+          onClick={() => {
+            if (window.confirm('Attention! This is unsafe and can break the app.')) {
+              setExportDialogOpen('workouts');
+            }
+          }}
+          variant="outlined"
+          color="warning"
+        >
+          import workouts data
+        </Button>
       </Box>
+
+      <Dialog open={isExportDialogOpen !== null}>
+        <Box
+          sx={{
+            padding: '20px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '20px',
+            width: '300px',
+          }}
+        >
+          <Typography>Good luck!</Typography>
+          <TextField
+            multiline
+            rows={4}
+            fullWidth
+            value={exportData}
+            onChange={(e) => {
+              setExportData(e.target.value);
+            }}
+          ></TextField>
+          <Button color="warning" variant="outlined" onClick={handleImportData}>
+            Import data
+          </Button>
+        </Box>
+      </Dialog>
     </Box>
   );
 }
