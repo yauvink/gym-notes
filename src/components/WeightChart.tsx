@@ -6,9 +6,39 @@ import styles from './common/buttons.module.css';
 import { MinusIcon, PlusIcon } from './common/Icons';
 import CloseIcon from '@mui/icons-material/Close';
 import dayjs from 'dayjs';
+import { CartesianGrid, Line, LineChart, Tooltip } from 'recharts';
 
-const VERTICAL_LINES = [0.25, 0.5, 0.75];
-const HORIZONTAL_LINES = [0.16, 0.33, 0.5, 0.66, 0.83];
+const CustomTooltip = ({ active, payload, label }: any) => {
+  if (active && payload && payload.length) {
+    const date: number = payload[0].payload.t;
+    const value: number = payload[0].payload.w;
+    return (
+      <Paper
+        sx={{
+          padding: '10px',
+        }}
+      >
+        <Typography
+          sx={{
+            fontSize: '14px',
+          }}
+        >
+          {dayjs(date).format('DD MMM HH:mm')}
+        </Typography>
+        <Typography
+          sx={{
+            fontSize: '14px',
+            fontWeight: 600,
+          }}
+        >
+          {value} kg
+        </Typography>
+      </Paper>
+    );
+  }
+
+  return null;
+};
 
 function WeightChart() {
   const { userWeightData, setUserWeightData } = useAppContext();
@@ -16,152 +46,22 @@ function WeightChart() {
   const sortedWeightData = userWeightData.sort((a, b) => a.t - b.t);
   const initialValue = sortedWeightData[sortedWeightData.length - 1]?.w ?? 80;
   const [userWeightValue, setUserWeightValue] = useState(initialValue);
+  const [chartWidth, setChartWidth] = useState(0);
+  const chartWrapperRef = useRef<HTMLDivElement>(null);
 
-  // const canvasRef = useRef<HTMLCanvasElement>(null);
-  const canvasWrapperRef = useRef<HTMLDivElement>(null);
-  // const canvas = canvasRef.current;
-  // const context = canvas?.getContext('2d');
-  // const [currentValuePosition, setCurrentValuePosition] = useState(0);
-  // // console.log('currentValuePosition', currentValuePosition);
-  // const initialDataMock = [
-  //   { time: '2018-12-15', value: 32.51 },
-  //   { time: '2018-12-23', value: 31.11 },
-  //   { time: '2018-12-24', value: 27.02 },
-  //   { time: '2018-12-25', value: 27.32 },
-  //   { time: '2018-12-26', value: 25.17 },
-  //   { time: '2018-12-27', value: 28.89 },
-  //   { time: '2018-12-28', value: 25.46 },
-  //   { time: '2018-12-29', value: 23.92 },
-  //   { time: '2018-12-30', value: 22.98 },
-  //   { time: '2018-12-31', value: 22.67 },
-  // ];
+  useEffect(() => {
+    if (chartWrapperRef.current) {
+      setChartWidth(chartWrapperRef.current.getBoundingClientRect().width);
+    }
+    const handleResize = () => {
+      if (chartWrapperRef.current) {
+        setChartWidth(chartWrapperRef.current.getBoundingClientRect().width);
+      }
+    };
 
-  // const chartData = initialDataMock
-  //   .sort((a, b) => new Date(a.time).getTime() - new Date(b.time).getTime())
-  //   .filter((el, index, arr) => {
-  //     if (arr[index + 1]) {
-  //       return el.time !== arr[index + 1].time;
-  //     }
-  //     return true;
-  //   });
-
-  // const { chartMaxValue, chartMinValue, chartMaxTime, chartMinTime } = useMemo(() => {
-  //   let chartMaxValue = 0;
-  //   let chartMinValue = 0;
-  //   let chartMaxTime = 0;
-  //   let chartMinTime = 0;
-  //   chartData.forEach((el) => {
-  //     if (chartMaxValue === 0 || chartMaxValue < el.value) {
-  //       chartMaxValue = el.value;
-  //     }
-  //     if (chartMinValue === 0 || chartMinValue > el.value) {
-  //       chartMinValue = el.value;
-  //     }
-  //     const time = typeof el.time === 'string' ? new Date(el.time).getTime() : el.time * 1000;
-  //     if (chartMaxTime === 0 || chartMaxTime < time) {
-  //       chartMaxTime = time;
-  //     }
-  //     if (chartMinTime === 0 || chartMinTime > time) {
-  //       chartMinTime = time;
-  //     }
-  //   });
-  //   return { chartMaxValue, chartMinValue, chartMaxTime, chartMinTime };
-  // }, [chartData]);
-
-  // const currentValue = useMemo(() => {
-  //   const value = chartData[chartData.length - 1].value;
-  //   if (value < 1) {
-  //     return value.toFixed(9);
-  //   }
-  //   return chartData[chartData.length - 1].value;
-  // }, [chartData]);
-  // // console.log('currentValue', currentValue);
-
-  // const CANVAS_WIDTH = canvasWrapperRef.current?.offsetWidth ?? 0;
-  // const CANVAS_HEIGHT = canvasWrapperRef.current?.offsetHeight ?? 0;
-  // const RIGHT_BLOCK_WIDTH = 103;
-  // const BOTTOM_BLOCK_HEIGHT = 36;
-  // const CHART_WIDTH = CANVAS_WIDTH - RIGHT_BLOCK_WIDTH;
-  // const CHART_HEIGHT = CANVAS_HEIGHT - BOTTOM_BLOCK_HEIGHT;
-
-  // useEffect(() => {
-  //   console.log('canvas && context && canvasWrapperRef.current', canvas, context, canvasWrapperRef.current);
-  //   if (canvas && context && canvasWrapperRef.current) {
-  //     canvas.width = CANVAS_WIDTH;
-  //     canvas.height = CANVAS_HEIGHT;
-  //     console.log('tyt');
-  //     context.fillStyle = '#090909';
-  //     context.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-
-  //     const CHART_STEP_WIDTH = (CANVAS_WIDTH - RIGHT_BLOCK_WIDTH) / chartData.length;
-  //     const getY = (value: number) => {
-  //       const OFFSET = 40;
-  //       const percentage = (value - chartMinValue) / ((chartMaxValue - chartMinValue) / 100);
-  //       const result = (CANVAS_HEIGHT - OFFSET - BOTTOM_BLOCK_HEIGHT) * ((100 - percentage) / 100);
-
-  //       return result + OFFSET / 2;
-  //     };
-
-  //     VERTICAL_LINES.forEach((line) => {
-  //       context.beginPath();
-  //       context.lineTo(CHART_WIDTH * line, 0);
-  //       context.lineTo(CHART_WIDTH * line, CHART_HEIGHT);
-  //       context.lineWidth = 1;
-  //       context.strokeStyle = 'rgba(255, 255, 255, 0.20)';
-  //       context.stroke();
-  //     });
-
-  //     HORIZONTAL_LINES.forEach((line) => {
-  //       context.beginPath();
-  //       context.lineTo(0, CHART_HEIGHT * line);
-  //       context.lineTo(CHART_WIDTH, CHART_HEIGHT * line);
-  //       context.lineWidth = 1;
-  //       context.strokeStyle = 'rgba(255, 255, 255, 0.20)';
-  //       context.stroke();
-  //     });
-
-  //     context.beginPath();
-  //     chartData.forEach((el, index, arr) => {
-  //       context.lineTo(index * CHART_STEP_WIDTH, getY(el.value));
-  //       if (index !== arr.length - 1) {
-  //         context.lineTo(index * CHART_STEP_WIDTH + CHART_STEP_WIDTH, getY(el.value));
-  //       }
-  //     });
-  //     context.lineWidth = 2;
-  //     context.strokeStyle = '#70FF4D';
-  //     context.stroke();
-
-  //     context.beginPath();
-  //     context.lineTo(CHART_WIDTH, 0);
-  //     context.lineTo(CHART_WIDTH, CHART_HEIGHT);
-  //     context.lineTo(0, CHART_HEIGHT);
-  //     context.lineTo(CANVAS_WIDTH, CHART_HEIGHT);
-  //     context.lineWidth = 1;
-  //     context.strokeStyle = 'rgba(255, 255, 255, 0.20)';
-  //     context.stroke();
-
-  //     const currentValuePositionY = getY(chartData[chartData.length - 1].value);
-  //     setCurrentValuePosition(currentValuePositionY);
-  //     context.beginPath();
-  //     context.lineTo(0, currentValuePositionY);
-  //     context.lineTo(CHART_WIDTH + 50, currentValuePositionY);
-  //     context.setLineDash([4, 4]);
-  //     context.lineWidth = 1;
-  //     context.strokeStyle = '#70FF4D';
-  //     context.stroke();
-  //   }
-  // }, [
-  //   context,
-  //   canvasWrapperRef,
-  //   chartData,
-  //   canvas,
-  //   CANVAS_WIDTH,
-  //   CANVAS_HEIGHT,
-  //   CHART_HEIGHT,
-  //   CHART_WIDTH,
-  //   chartMaxValue,
-  //   chartMinValue,
-  // ]);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleSaveWeight = useCallback(() => {
     if (userWeightValue) {
@@ -176,68 +76,118 @@ function WeightChart() {
     }
   }, [userWeightValue, userWeightData, setUserWeightData]);
 
+  const dataToShow = useMemo(() => {
+    const sortedByDate = [...userWeightData].sort((a, b) => a.t - b.t);
+    const sortedByWeight = [...userWeightData].sort((a, b) => a.w - b.w);
+    const minValue = sortedByWeight[0].w;
+
+    const converted = sortedByDate.map((el) => ({
+      ...el,
+      chartValue: el.w - minValue + 1,
+    }));
+
+    return converted;
+  }, [userWeightData]);
+
+  const weeklyAverageWeight = useMemo(() => {
+    const lastWeekData = dataToShow.filter((el) => el.t > Date.now() - 7 * 24 * 60 * 60 * 1000);
+    if (lastWeekData.length > 0) {
+      const average =
+        lastWeekData.reduce((prev, curr) => {
+          return prev + curr.w;
+        }, 0) / lastWeekData.length;
+      return average.toFixed(2);
+    } else {
+      return '?';
+    }
+  }, [dataToShow]);
+
   return (
     <Box
-      ref={canvasWrapperRef}
       sx={{
         maxWidth: '500px',
-        // height: '335px',
-        // minWidth: '200px',
+        width: '100%',
         position: 'relative',
       }}
     >
-      {/* <canvas
-        width={'200px'}
-        height={'200px'}
-        style={{
-          width: '100%',
-          height: '100%',
-        }}
-        ref={canvasRef}
-      /> */}
-
       <Box
         sx={{
           display: 'flex',
           justifyContent: 'center',
           gap: '10px',
-          flexWrap: 'wrap',
+          width: '100%',
         }}
       >
-        {userWeightData.length === 0 && (
-          <Alert
+        <Box
+          sx={{
+            display: 'flex',
+            width: '100%',
+            gap: '20px',
+          }}
+        >
+          <Box
+            ref={chartWrapperRef}
             sx={{
               width: '100%',
+              height: '100px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
-            severity="warning"
           >
-            No weight data to show
-          </Alert>
-        )}
-        {userWeightData.map((el, i) => (
-          <Paper
-            elevation={3}
-            key={i}
+            {dataToShow.length === 0 ? (
+              <Alert
+                sx={{
+                  width: '100%',
+                }}
+                severity="warning"
+              >
+                No weight data to show
+              </Alert>
+            ) : (
+              <LineChart width={chartWidth} height={100} data={dataToShow}>
+                <Tooltip content={<CustomTooltip />} />
+                <CartesianGrid strokeDasharray="3 3" />
+                <Line type="monotone" dataKey="chartValue" stroke="#8884d8" activeDot={{ r: 8 }} />
+              </LineChart>
+            )}
+          </Box>
+          <Box
             sx={{
-              padding: '5px',
-              // border: '1px solid red'
+              // border: '1px solid green',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              gap: '10px',
             }}
           >
             <Typography
               sx={{
                 fontSize: '10px',
                 textAlign: 'center',
+                span: {
+                  fontSize: '14px',
+                },
               }}
             >
-              {dayjs(el.t).format('DD MMM HH:mm')}
+              Weekly average:
               <br />
-              {el.w} kg
+              <span>{weeklyAverageWeight}</span> kg
             </Typography>
-          </Paper>
-        ))}
-        <Button variant="contained" onClick={() => setDialogOpen(true)}>
-          Add weight
-        </Button>
+            <Button
+              variant="contained"
+              onClick={() => setDialogOpen(true)}
+              sx={{
+                fontSize: '10px',
+                padding: '5px',
+                textWrap: 'nowrap',
+                // width: '90px'
+              }}
+            >
+              Add weight
+            </Button>
+          </Box>
+        </Box>
       </Box>
 
       <Dialog open={isDialogOpen}>
