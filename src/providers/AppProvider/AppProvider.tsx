@@ -115,8 +115,12 @@ function AppProvider({ children }: { children: ReactNode }) {
   };
 
   const allExercises = useMemo(() => {
-    return [...MOCKED_EXERCISES, ...customExercises];
-  }, [customExercises]);
+    // save mocked exer to storage
+    if (customExercises.length < MOCKED_EXERCISES.length) {
+      setCustomExercises([...MOCKED_EXERCISES, ...customExercises]);
+    }
+    return customExercises;
+  }, [customExercises, setCustomExercises]);
 
   const value = {
     workouts,

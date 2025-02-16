@@ -46,6 +46,12 @@ function App() {
             onChange={(event, newValue) => {
               setValue(newValue);
             }}
+            sx={{
+              height: '60px',
+              '& .MuiBottomNavigationAction-root': {
+                paddingBottom: '10px',
+              },
+            }}
           >
             <BottomNavigationAction label="Schedule" icon={<CalendarMonthIcon />} />
             <BottomNavigationAction label="Workouts" icon={<FitnessCenterIcon />} />
@@ -54,7 +60,6 @@ function App() {
           </BottomNavigation>
         </Paper>
       </Box>
-
     </LocalizationProvider>
   );
 }

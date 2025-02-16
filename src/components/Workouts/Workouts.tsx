@@ -6,11 +6,12 @@ import { useAppContext } from '../../providers/AppProvider/AppProvider.hook';
 import { calcTrainingTotalWeight, getExerciseColorById, getExerciseName } from '../../utils';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import AddExerciseDialog from './AddExerciseDialog';
+import EditExercisesDialog from './EditExercisesDialog';
 
 function Workouts() {
   const [isWorkoutDialogOpen, setWorkoutDialogOpen] = useState(false);
-  const [isExerciseDialogOpen, setExerciseDialogOpen] = useState(false);
+  const [isEditExercisesDialogOpen, setEditExercisesDialogOpen] = useState(false);
+
   const { workouts, allExercises } = useAppContext();
   const [editTrainingId, setEditTrainingId] = useState<string | null>(null);
 
@@ -41,8 +42,8 @@ function Workouts() {
         <Button variant="contained" onClick={() => setWorkoutDialogOpen(true)}>
           Add new workout
         </Button>
-        <Button variant="contained" color="success" onClick={() => setExerciseDialogOpen(true)}>
-          Add new exercise
+        <Button variant="contained" color="success" onClick={() => setEditExercisesDialogOpen(true)}>
+          Edit exercises
         </Button>
       </Box>
 
@@ -207,10 +208,10 @@ function Workouts() {
         />
       )}
 
-      {isExerciseDialogOpen && (
-        <AddExerciseDialog
+      {isEditExercisesDialogOpen && (
+        <EditExercisesDialog
           closeDialog={() => {
-            setExerciseDialogOpen(false);
+            setEditExercisesDialogOpen(false);
           }}
         />
       )}
