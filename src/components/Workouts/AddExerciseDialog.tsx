@@ -97,7 +97,7 @@ function AddExerciseDialog({ closeDialog }: { closeDialog: () => void }) {
             ))}
           </Select>
         </FormControl>
-        <Button disabled={exerciseName.length < 2} variant="contained" onClick={() => handleAddExercise()}>
+        <Button disabled={exerciseName.length < 5} variant="contained" onClick={() => handleAddExercise()}>
           Save new exercise
         </Button>
       </Box>

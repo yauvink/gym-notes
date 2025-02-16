@@ -4,7 +4,6 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useAppContext } from '../../providers/AppProvider/AppProvider.hook';
 import { GroupedExerciseOptionType } from '../../providers/AppProvider/AppProvider.constants';
 import { getExerciseColorByCategory } from '../../utils';
-import AddExerciseDialog from './AddExerciseDialog';
 
 const renderGroup = (
   groupedOptions: GroupedExerciseOptionType,
@@ -53,7 +52,6 @@ const renderGroup = (
 function EditExercisesDialog({ closeDialog }: { closeDialog: () => void }) {
   const { allExercises, setCustomExercises } = useAppContext();
   const [localExercisesData, setLocalExercisesData] = useState(allExercises);
-  const [isAddExerciseDialogOpen, setAddExerciseDialogOpen] = useState(false);
   const groupedByCategoryExercises: Array<GroupedExerciseOptionType> = useMemo(() => {
     const groupedExercises: any = {};
 
@@ -128,11 +126,7 @@ function EditExercisesDialog({ closeDialog }: { closeDialog: () => void }) {
               justifyContent: 'center',
               padding: '20px',
             }}
-          >
-            <Button variant="contained" color="success" onClick={() => setAddExerciseDialogOpen(true)}>
-              Add new exercise
-            </Button>
-          </Box>
+          ></Box>
         </Paper>
         <Button
           disabled={isSaveDisabled}
@@ -147,14 +141,6 @@ function EditExercisesDialog({ closeDialog }: { closeDialog: () => void }) {
           Save
         </Button>
       </Box>
-
-      {isAddExerciseDialogOpen && (
-        <AddExerciseDialog
-          closeDialog={() => {
-            setAddExerciseDialogOpen(false);
-          }}
-        />
-      )}
     </Dialog>
   );
 }
