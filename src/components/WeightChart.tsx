@@ -77,16 +77,19 @@ function WeightChart() {
   }, [userWeightValue, userWeightData, setUserWeightData]);
 
   const dataToShow = useMemo(() => {
-    const sortedByDate = [...userWeightData].sort((a, b) => a.t - b.t);
-    const sortedByWeight = [...userWeightData].sort((a, b) => a.w - b.w);
-    const minValue = sortedByWeight[0].w;
+    if (userWeightData.length > 0) {
+      const sortedByDate = [...userWeightData].sort((a, b) => a.t - b.t);
+      const sortedByWeight = [...userWeightData].sort((a, b) => a.w - b.w);
+      const minValue = sortedByWeight[0].w;
 
-    const converted = sortedByDate.map((el) => ({
-      ...el,
-      chartValue: el.w - minValue + 1,
-    }));
+      const converted = sortedByDate.map((el) => ({
+        ...el,
+        chartValue: el.w - minValue + 1,
+      }));
 
-    return converted;
+      return converted;
+    }
+    return [];
   }, [userWeightData]);
 
   const weeklyAverageWeight = useMemo(() => {
