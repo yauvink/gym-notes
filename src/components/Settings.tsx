@@ -18,8 +18,10 @@ function Settings() {
     setUserTrainingDays,
     workouts,
     setWorkouts,
+    userWeightData,
+    setUserWeightData,
   } = useAppContext();
-  const [isExportDialogOpen, setExportDialogOpen] = useState<'trainings' | 'workouts' | null>(null);
+  const [isExportDialogOpen, setExportDialogOpen] = useState<'trainings' | 'workouts' | 'weight' | null>(null);
   const [exportData, setExportData] = useState('');
 
   const [isImportFinished, setImportFinished] = useState(false);
@@ -28,13 +30,19 @@ function Settings() {
   const handleImportData = useCallback(() => {
     try {
       const data = JSON.parse(exportData);
-
-      if (isExportDialogOpen === 'trainings') {
-        setUserTrainingDays(data);
-      } else if (isExportDialogOpen === 'workouts') {
-        setWorkouts(data);
-      } else {
-        setError(true);
+      switch (true) {
+        case isExportDialogOpen === 'trainings': {
+          setUserTrainingDays(data);
+          return;
+        }
+        case isExportDialogOpen === 'workouts': {
+          setWorkouts(data);
+          return;
+        }
+        case isExportDialogOpen === 'weight': {
+          setUserWeightData(data);
+          return;
+        }
       }
 
       setImportFinished(true);
@@ -43,7 +51,7 @@ function Settings() {
       setError(true);
       setImportFinished(true);
     }
-  }, [isExportDialogOpen, exportData, setUserTrainingDays, setWorkouts]);
+  }, [isExportDialogOpen, exportData, setUserTrainingDays, setWorkouts, setUserWeightData]);
 
   return (
     <Box
@@ -94,7 +102,7 @@ function Settings() {
         }}
       >
         <Box> {localStorageUsage} </Box>
-        {0.033}
+        {0.034}
       </Box>
       <Typography
         sx={{
@@ -178,6 +186,7 @@ function Settings() {
         }}
       >
         <Button
+          size="small"
           onClick={() => {
             handleExportData(userTrainingDays);
           }}
@@ -187,6 +196,7 @@ function Settings() {
           export training days data
         </Button>
         <Button
+          size="small"
           onClick={() => {
             handleExportData(workouts);
           }}
@@ -195,8 +205,19 @@ function Settings() {
         >
           export workouts data
         </Button>
+        <Button
+          size="small"
+          onClick={() => {
+            handleExportData(userWeightData);
+          }}
+          variant="outlined"
+          color="secondary"
+        >
+          export weight data
+        </Button>
 
         <Button
+          size="small"
           onClick={() => {
             if (window.confirm('Attention! This is unsafe and can break the app.')) {
               setExportDialogOpen('trainings');
@@ -209,6 +230,7 @@ function Settings() {
         </Button>
 
         <Button
+          size="small"
           onClick={() => {
             if (window.confirm('Attention! This is unsafe and can break the app.')) {
               setExportDialogOpen('workouts');
@@ -218,6 +240,18 @@ function Settings() {
           color="warning"
         >
           import workouts data
+        </Button>
+        <Button
+          size="small"
+          onClick={() => {
+            if (window.confirm('Attention! This is unsafe and can break the app.')) {
+              setExportDialogOpen('weight');
+            }
+          }}
+          variant="outlined"
+          color="warning"
+        >
+          import weight data
         </Button>
       </Box>
 
