@@ -92,16 +92,49 @@ function WeightChart() {
     return [];
   }, [userWeightData]);
 
-  const weeklyAverageWeight = useMemo(() => {
+  const getAverage = (weightData: Array<{ w: number }>) => {
+    if (weightData.length > 0) {
+      const average =
+        weightData.reduce((prev, curr) => {
+          return prev + curr.w;
+        }, 0) / weightData.length;
+      return average.toFixed(2);
+    }
+    return '-';
+  };
+
+  const weightData = useMemo(() => {
     const lastWeekData = dataToShow.filter((el) => el.t > Date.now() - 7 * 24 * 60 * 60 * 1000);
     if (lastWeekData.length > 0) {
-      const average =
-        lastWeekData.reduce((prev, curr) => {
-          return prev + curr.w;
-        }, 0) / lastWeekData.length;
-      return average.toFixed(2);
+      const morningWeightData = lastWeekData.filter((el) => {
+        const hour = dayjs(el.t).hour();
+        return hour >= 2 && hour < 12;
+      });
+      const dayWeightData = lastWeekData.filter((el) => {
+        const hour = dayjs(el.t).hour();
+        return hour >= 12 && hour < 18;
+      });
+      const eveningWeightData = lastWeekData.filter((el) => {
+        const hour = dayjs(el.t).hour();
+        return hour >= 18 || hour < 2;
+      });
+      const morningAverage = getAverage(morningWeightData);
+      const dayAverage = getAverage(dayWeightData);
+      const eveningAverage = getAverage(eveningWeightData);
+      const dataToCalc = [
+        ...(!isNaN(Number(morningAverage)) ? [{ w: Number(morningAverage) }] : []),
+        ...(!isNaN(Number(dayAverage)) ? [{ w: Number(dayAverage) }] : []),
+        ...(!isNaN(Number(eveningAverage)) ? [{ w: Number(eveningAverage) }] : []),
+      ];
+      const weeklyAverage = getAverage(dataToCalc);
+      return {
+        weeklyAverage: weeklyAverage,
+        morningAverage: morningAverage,
+        dayAverage: dayAverage,
+        eveningAverage: eveningAverage,
+      };
     } else {
-      return '?';
+      return { weeklyAverage: '?', morningAverage: '-', dayAverage: '-', eveningAverage: '-' };
     }
   }, [dataToShow]);
 
@@ -125,7 +158,7 @@ function WeightChart() {
           sx={{
             display: 'flex',
             width: '100%',
-            gap: '20px',
+            gap: '10px',
           }}
         >
           <Box
@@ -155,15 +188,57 @@ function WeightChart() {
               </LineChart>
             )}
           </Box>
+
           <Box
             sx={{
-              // border: '1px solid green',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'center',
-              gap: '10px',
+              gap: '2px',
             }}
           >
+            <Box
+              sx={{
+                display: 'flex',
+                div: {
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  fontSize: '10px',
+                  svg: {
+                    width: '40px',
+                    maxWidth: '40px',
+                  },
+                },
+              }}
+            >
+              <Box>
+                <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="200" height="200" fill="skyblue" />
+                  <circle cx="100" cy="140" r="40" fill="orange" />
+                  <rect x="0" y="140" width="200" height="60" fill="lightyellow" />
+                </svg>
+                {weightData.morningAverage}
+              </Box>
+              <Box>
+                <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="200" height="200" fill="deepskyblue" />
+                  <circle cx="100" cy="80" r="40" fill="yellow" />
+                </svg>
+                {weightData.dayAverage}
+              </Box>
+              <Box>
+                <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="200" height="200" fill="midnightblue" />
+                  <circle cx="130" cy="60" r="30" fill="lightgray" />
+                  <circle cx="125" cy="55" r="30" fill="midnightblue" />
+                  <circle cx="50" cy="40" r="3" fill="white" />
+                  <circle cx="70" cy="80" r="2" fill="white" />
+                  <circle cx="150" cy="120" r="2.5" fill="white" />
+                </svg>
+                {weightData.eveningAverage}
+              </Box>
+            </Box>
             <Typography
               sx={{
                 fontSize: '10px',
@@ -173,9 +248,7 @@ function WeightChart() {
                 },
               }}
             >
-              Weekly average:
-              <br />
-              <span>{weeklyAverageWeight}</span> kg
+              Weekly: <span>{weightData.weeklyAverage}</span> kg
             </Typography>
             <Button
               variant="contained"

@@ -33,15 +33,15 @@ function Settings() {
       switch (true) {
         case isExportDialogOpen === 'trainings': {
           setUserTrainingDays(data);
-          return;
+          break;
         }
         case isExportDialogOpen === 'workouts': {
           setWorkouts(data);
-          return;
+          break;
         }
         case isExportDialogOpen === 'weight': {
           setUserWeightData(data);
-          return;
+          break;
         }
       }
 
@@ -102,7 +102,7 @@ function Settings() {
         }}
       >
         <Box> {localStorageUsage} </Box>
-        {0.034}
+        {0.035}
       </Box>
       <Typography
         sx={{
