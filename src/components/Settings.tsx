@@ -59,7 +59,7 @@ function Settings() {
       setError(true);
       setImportFinished(true);
     }
-  }, [isExportDialogOpen, exportData, setUserTrainingDays, setWorkouts, setUserWeightData]);
+  }, [isExportDialogOpen, exportData, setUserTrainingDays, setWorkouts, setUserWeightData, setCustomExercises]);
 
   return (
     <Box
@@ -110,7 +110,7 @@ function Settings() {
         }}
       >
         <Box> {localStorageUsage} </Box>
-        {0.037}
+        {0.038}
       </Box>
       <Typography
         sx={{
@@ -244,7 +244,7 @@ function Settings() {
           variant="outlined"
           color="warning"
         >
-          import training days
+          import training days data
         </Button>
 
         <Button
@@ -257,7 +257,7 @@ function Settings() {
           variant="outlined"
           color="warning"
         >
-          import exercises days
+          import exercises data
         </Button>
 
         <Button

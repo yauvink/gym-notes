@@ -13,15 +13,12 @@ function EditWorkoutDialog({
   closeDialog: () => void;
   editTrainingId: string | null;
 }) {
-  const { workouts, setWorkouts, defaultRepeats, defaultWeight } = useAppContext();
+  const { workouts, setWorkouts, defaultRepeats, defaultWeight, allExercises, userTrainingDays } = useAppContext();
   const editInitialData = workouts.find((el) => el.id === editTrainingId);
   const [workoutName, setWorkoutName] = useState(editInitialData?.name ?? '');
   const INITIAL_WORKOUT_DATA: ExerciseType = {
     exercise_id: '',
-    sets: [
-      // { wu: true, reps: defaultRepeats, kg: defaultWeight / 2 },
-      { reps: defaultRepeats, kg: defaultWeight },
-    ],
+    sets: [],
   };
   const [exercises, setExercises] = useState<ExerciseType[]>(editInitialData?.exercises ?? [INITIAL_WORKOUT_DATA]);
 
@@ -87,7 +84,6 @@ function EditWorkoutDialog({
     >
       <Box
         sx={{
-          // backgroundColor: 'grey',
           padding: '60px 5px 120px',
           display: 'flex',
           flexDirection: 'column',
@@ -153,13 +149,36 @@ function EditWorkoutDialog({
               exerciseIndex={rowIndex}
               showDelete={arr.length > 1}
               exerciseId={exercise.exercise_id}
+              allExercises={allExercises}
               setExerciseId={(newValue) => {
                 setExercises((prev) => {
                   return prev.map((el, i): ExerciseType => {
                     if (i === rowIndex) {
+                      const sorted = userTrainingDays.sort(
+                        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+                      );
+                      const latestExrcises: ExerciseType[] = [];
+                      sorted.forEach((el) => {
+                        if (el.workout) {
+                          const savedExercise = el.workout.exercises.find(
+                            (exercise) => exercise.exercise_id === newValue
+                          );
+                          if (savedExercise) {
+                            latestExrcises.push(savedExercise);
+                          }
+                        }
+                      });
+
+                      if (latestExrcises.length > 0) {
+                        return {
+                          exercise_id: newValue,
+                          sets: latestExrcises[0].sets,
+                        };
+                      }
+
                       return {
-                        ...el,
                         exercise_id: newValue,
+                        sets: [{ reps: defaultRepeats, kg: defaultWeight }],
                       };
                     }
                     return el;
