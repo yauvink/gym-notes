@@ -21,7 +21,7 @@ function EditWorkoutDialog({
     sets: [],
   };
   const [exercises, setExercises] = useState<ExerciseType[]>(editInitialData?.exercises ?? [INITIAL_WORKOUT_DATA]);
-
+  const [expandedId, setExpandedId] = useState('');
   const handleSaveTraining = useCallback(() => {
     const newWorkouts: WorkoutType[] = editTrainingId
       ? workouts.map((el) => {
@@ -69,6 +69,25 @@ function EditWorkoutDialog({
   const isDisabled = useMemo(() => {
     return workoutName === '' || exercises.some((el) => el.exercise_id === '');
   }, [workoutName, exercises]);
+
+  const topUpExercise = (index: number) => {
+    console.log('index', index);
+    setExercises((prev) => {
+      if (index <= 0 || index >= prev.length) return prev; // No change if index is out of bounds
+
+      const newArr = [...prev]; // Create a copy of the array
+
+      // Swap elements
+      [newArr[index], newArr[index - 1]] = [newArr[index - 1], newArr[index]];
+
+      return newArr;
+    });
+  };
+
+  const expandExercise = (id: string) => {
+    // console.log('ii',index);
+    setExpandedId(id);
+  };
 
   return (
     <Dialog
@@ -150,6 +169,7 @@ function EditWorkoutDialog({
               showDelete={arr.length > 1}
               exerciseId={exercise.exercise_id}
               allExercises={allExercises}
+              expanded={expandedId === exercise.exercise_id}
               setExerciseId={(newValue) => {
                 setExercises((prev) => {
                   return prev.map((el, i): ExerciseType => {
@@ -201,6 +221,12 @@ function EditWorkoutDialog({
               }}
               handleDeleteExercise={() => {
                 handleDeleteExercise(rowIndex);
+              }}
+              handleTopUp={() => {
+                topUpExercise(rowIndex);
+              }}
+              handleExpand={() => {
+                expandExercise(exercise.exercise_id);
               }}
             />
           ))}

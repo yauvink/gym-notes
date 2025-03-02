@@ -6,6 +6,7 @@ import ExerciseSelect from '../common/ExerciseSelect';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { getExerciseColorById, getExerciseName } from '../../utils';
 import { ExerciseOptionType } from '../../providers/AppProvider/AppProvider.constants';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 
 function Exercise({
   exerciseId,
@@ -16,6 +17,9 @@ function Exercise({
   showDelete,
   exerciseIndex,
   allExercises,
+  handleExpand,
+  handleTopUp,
+  expanded,
 }: {
   exerciseId: string;
   setExerciseId: (v: string) => void;
@@ -25,12 +29,19 @@ function Exercise({
   showDelete: boolean;
   exerciseIndex: number;
   allExercises: ExerciseOptionType[];
+  handleExpand: () => void;
+  handleTopUp: () => void;
+  expanded: boolean;
 }) {
   const isExerciseHasWarmup = Boolean(sets[0]?.wu);
 
   return (
     <Accordion
       defaultExpanded={exerciseId === ''}
+      expanded={expanded}
+      onChange={(e, expanded) => {
+        handleExpand();
+      }}
       sx={
         {
           // background: `${getExerciseColorById(exerciseId, allExercises)}10`,
@@ -38,11 +49,26 @@ function Exercise({
       }
     >
       <AccordionSummary
-        expandIcon={<ArrowDropDownIcon />}
+        expandIcon={expanded ? undefined : <ArrowDropDownIcon />}
         sx={{
           background: `${getExerciseColorById(exerciseId, allExercises)}40`,
         }}
       >
+        <Box
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleTopUp();
+          }}
+          sx={{
+            marginRight: '16px',
+            cursor: 'n-resize',
+            visibility: exerciseIndex === 0 ? 'hidden' : 'visible',
+          }}
+        >
+          <ArrowUpwardIcon />
+        </Box>
+
         <Typography
           sx={{
             fontSize: '18px',
