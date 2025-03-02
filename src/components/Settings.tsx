@@ -20,8 +20,12 @@ function Settings() {
     setWorkouts,
     userWeightData,
     setUserWeightData,
+    customExercises,
+    setCustomExercises,
   } = useAppContext();
-  const [isExportDialogOpen, setExportDialogOpen] = useState<'trainings' | 'workouts' | 'weight' | null>(null);
+  const [isExportDialogOpen, setExportDialogOpen] = useState<'trainings' | 'workouts' | 'weight' | 'exercises' | null>(
+    null
+  );
   const [exportData, setExportData] = useState('');
 
   const [isImportFinished, setImportFinished] = useState(false);
@@ -41,6 +45,10 @@ function Settings() {
         }
         case isExportDialogOpen === 'weight': {
           setUserWeightData(data);
+          break;
+        }
+        case isExportDialogOpen === 'exercises': {
+          setCustomExercises(data);
           break;
         }
       }
@@ -102,7 +110,7 @@ function Settings() {
         }}
       >
         <Box> {localStorageUsage} </Box>
-        {0.035}
+        {0.037}
       </Box>
       <Typography
         sx={{
@@ -198,6 +206,16 @@ function Settings() {
         <Button
           size="small"
           onClick={() => {
+            handleExportData(customExercises);
+          }}
+          variant="outlined"
+          color="secondary"
+        >
+          export exercises data
+        </Button>
+        <Button
+          size="small"
+          onClick={() => {
             handleExportData(workouts);
           }}
           variant="outlined"
@@ -227,6 +245,19 @@ function Settings() {
           color="warning"
         >
           import training days
+        </Button>
+
+        <Button
+          size="small"
+          onClick={() => {
+            if (window.confirm('Attention! This is unsafe and can break the app.')) {
+              setExportDialogOpen('exercises');
+            }
+          }}
+          variant="outlined"
+          color="warning"
+        >
+          import exercises days
         </Button>
 
         <Button
