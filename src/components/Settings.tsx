@@ -134,7 +134,7 @@ function Settings() {
         <Box
           sx={{
             p: 2,
-            borderRadius: 2,
+            borderRadius: 1,
             bgcolor: 'background.paper',
             border: '1px solid',
             borderColor: 'divider',

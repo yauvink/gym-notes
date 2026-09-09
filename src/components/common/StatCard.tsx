@@ -4,13 +4,15 @@ import { ReactNode } from 'react';
 function StatCard({
   label,
   value,
-  caption,
+  valueSuffix,
+  corner,
   accent,
   onClick,
 }: {
   label: string;
   value: ReactNode;
-  caption?: ReactNode;
+  valueSuffix?: ReactNode;
+  corner?: ReactNode;
   accent: string;
   onClick?: () => void;
 }) {
@@ -20,8 +22,8 @@ function StatCard({
       sx={{
         flex: 1,
         minWidth: 0,
-        p: 1.5,
-        borderRadius: 2,
+        p: '8px 20px',
+        borderRadius: 1,
         bgcolor: 'background.paper',
         border: '1px solid',
         borderColor: 'divider',
@@ -40,21 +42,45 @@ function StatCard({
       <Typography sx={{ fontSize: 14, color: 'text.secondary', fontWeight: 600, position: 'relative' }}>
         {label}
       </Typography>
-      <Typography
+      <Box
         sx={{
-          fontFamily: '"Oswald", "Manrope", sans-serif',
-          fontSize: 36,
-          fontWeight: 700,
-          lineHeight: 1.05,
-          mt: 0.75,
+          display: 'flex',
+          alignItems: 'baseline',
+          gap: 0.75,
+          mt: 0.25,
           position: 'relative',
-          color: accent,
+          pr: corner ? 6 : 0,
         }}
       >
-        {value}
-      </Typography>
-      {caption ? (
-        <Typography sx={{ fontSize: 13, color: 'text.secondary', mt: 0.5, position: 'relative' }}>{caption}</Typography>
+        <Typography
+          sx={{
+            fontFamily: '"Oswald", "Manrope", sans-serif',
+            fontSize: 28,
+            fontWeight: 700,
+            lineHeight: 1,
+            color: accent,
+          }}
+        >
+          {value}
+        </Typography>
+        {valueSuffix ? (
+          <Typography sx={{ fontSize: 12, color: 'text.secondary', fontWeight: 600 }}>{valueSuffix}</Typography>
+        ) : null}
+      </Box>
+      {corner ? (
+        <Typography
+          sx={{
+            position: 'absolute',
+            right: '12px',
+            bottom: '8px',
+            fontSize: 12,
+            fontWeight: 600,
+            color: 'text.secondary',
+            zIndex: 1,
+          }}
+        >
+          {corner}
+        </Typography>
       ) : null}
     </Box>
   );

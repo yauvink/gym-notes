@@ -106,7 +106,7 @@ function Stats() {
             <XAxis dataKey="date" stroke="var(--text-muted)" />
             <YAxis yAxisId="right-axis" orientation="right" stroke="var(--text-muted)" />
             <Tooltip />
-            <Line yAxisId="right-axis" type="monotone" dataKey="weight" stroke="var(--color-primary)" />
+            <Line yAxisId="right-axis" type="monotone" dataKey="weight" stroke="var(--color-primary)" dot={false} activeDot={false} />
           </LineChart>
         )}
       </Box>

@@ -89,6 +89,15 @@ function Schedule() {
     return { trainings: thisYearTrainings.length, days: daysInYear };
   }, [userTrainingDays, viewedYear]);
 
+  const trainingsAvgPerMonth = useMemo(() => {
+    const from = dayjs().startOf('day').subtract(30, 'day');
+    const recentCount = userTrainingDays.filter((el) => !dayjs(el.date).isBefore(from, 'day')).length;
+    if (recentCount === 0) {
+      return null;
+    }
+    return (31 / recentCount).toFixed(1);
+  }, [userTrainingDays]);
+
   const handleDeleteTrainingDay = () => {
     if (window.confirm('Are you sure want to delete training day? This action cannot be undone.')) {
       if (selectedDate) {
@@ -114,18 +123,18 @@ function Schedule() {
   return (
     <Box
       sx={{
-        padding: '20px 20px 30px',
+        padding: '12px 16px 16px',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center',
-        gap: '22px',
+        justifyContent: 'flex-start',
+        gap: '10px',
       }}
     >
       <Box
         sx={{
           display: 'flex',
-          gap: '16px',
+          gap: '10px',
           width: '100%',
           maxWidth: '500px',
         }}
@@ -133,14 +142,15 @@ function Schedule() {
         <StatCard
           label="Sober days"
           value={soberDays.total}
-          caption={soberDays.real !== null ? `Real: ${soberDays.real}` : undefined}
+          valueSuffix={soberDays.real !== null ? `Real: ${soberDays.real}` : undefined}
           accent={colors.secondary}
           onClick={() => setSoberDialogOpen(true)}
         />
         <StatCard
           label={`Trainings in ${viewedYear}`}
           value={trainCount.trainings}
-          caption={`out of ${trainCount.days}`}
+          valueSuffix={`/${trainCount.days}`}
+          corner={trainingsAvgPerMonth ? `av/m ${trainingsAvgPerMonth}` : 'av/m —'}
           accent={colors.primary}
         />
       </Box>
@@ -162,10 +172,10 @@ function Schedule() {
           '--PickerDay-size': '48px',
           '--PickerDay-horizontalMargin': '0px',
           bgcolor: 'background.paper',
-          borderRadius: 2,
+          borderRadius: 1,
           border: '1px solid',
           borderColor: 'divider',
-          p: '8px 4px 12px',
+          p: '4px 2px 6px',
           '&.MuiDateCalendar-root': {
             width: '100%',
             maxWidth: 'none',
@@ -177,16 +187,17 @@ function Schedule() {
             paddingLeft: '8px',
             paddingRight: '8px',
             marginTop: 0,
-            minHeight: 52,
+            marginBottom: 0,
+            minHeight: 40,
             width: '100%',
           },
           '& .MuiPickersCalendarHeader-label': {
             fontWeight: 800,
-            fontSize: 18,
+            fontSize: 16,
           },
           '& .MuiPickersArrowSwitcher-button, & .MuiPickersCalendarHeader-switchViewButton': {
-            width: 44,
-            height: 44,
+            width: 36,
+            height: 36,
           },
           '& .MuiDayCalendar-header, & .MuiDayCalendar-weekContainer': {
             justifyContent: 'space-between',
@@ -195,13 +206,13 @@ function Schedule() {
           },
           '& .MuiDayCalendar-weekDayLabel': {
             width: 48,
-            height: 36,
-            fontSize: 13,
+            height: 22,
+            fontSize: 12,
             fontWeight: 700,
             margin: 0,
           },
           '& .MuiDayCalendar-slideTransition': {
-            minHeight: 320,
+            minHeight: 288,
           },
           '& .MuiPickersDay-root': {
             width: 48,
@@ -246,7 +257,7 @@ function Schedule() {
         }}
       />
 
-      <Box sx={{ display: 'flex', gap: '20px', width: '100%', maxWidth: '500px', mt: 1 }}>
+      <Box sx={{ display: 'flex', gap: '12px', width: '100%', maxWidth: '500px' }}>
         {selectedDayData ? (
           <Box
             sx={{
@@ -269,7 +280,7 @@ function Schedule() {
               <Box
                 sx={{
                   p: 1.5,
-                  borderRadius: 2,
+                  borderRadius: 1,
                   bgcolor: 'background.paper',
                   border: '1px solid',
                   borderColor: 'divider',
@@ -359,7 +370,7 @@ function Schedule() {
                 ))}
               </Box>
             ) : (
-              <Typography sx={{ textAlign: 'center', margin: '20px 0' }}>
+              <Typography sx={{ textAlign: 'center', margin: '8px 0' }}>
                 No workout data
                 <br />
                 for this day
@@ -371,7 +382,7 @@ function Schedule() {
             variant="contained"
             onClick={() => setAddTrainingDialogOpen(true)}
             sx={{
-              margin: '20px auto',
+              margin: '4px auto',
             }}
           >
             + Add training day

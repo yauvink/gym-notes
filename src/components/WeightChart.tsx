@@ -9,6 +9,7 @@ import dayjs from 'dayjs';
 import { CartesianGrid, Line, LineChart, Tooltip } from 'recharts';
 import { DayIcon, MorningIcon, NightIcon } from './common/TimeOfDayIcons';
 import { useThemeSettings } from '../theme';
+import WeightDetailDialog from './WeightDetailDialog';
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
@@ -46,6 +47,7 @@ function WeightChart() {
   const { userWeightData, setUserWeightData } = useAppContext();
   const { colors } = useThemeSettings();
   const [isDialogOpen, setDialogOpen] = useState(false);
+  const [isDetailOpen, setDetailOpen] = useState(false);
   const sortedWeightData = userWeightData.sort((a, b) => a.t - b.t);
   const initialValue = sortedWeightData[sortedWeightData.length - 1]?.w ?? 80;
   const [userWeightValue, setUserWeightValue] = useState(initialValue);
@@ -148,8 +150,8 @@ function WeightChart() {
         width: '100%',
         position: 'relative',
         mt: 0,
-        p: 2,
-        borderRadius: 2,
+        p: '8px 10px',
+        borderRadius: 1,
         bgcolor: 'background.paper',
         border: '1px solid',
         borderColor: 'divider',
@@ -159,7 +161,7 @@ function WeightChart() {
         sx={{
           display: 'flex',
           justifyContent: 'center',
-          gap: '16px',
+          gap: '10px',
           width: '100%',
         }}
       >
@@ -167,35 +169,62 @@ function WeightChart() {
           sx={{
             display: 'flex',
             width: '100%',
-            gap: '16px',
+            gap: '10px',
           }}
         >
           <Box
-            ref={chartWrapperRef}
             sx={{
-              width: '100%',
-              height: '100px',
+              flex: 1,
+              minWidth: 0,
               display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              gap: 0.5,
             }}
           >
-            {dataToShow.length === 0 ? (
-              <Alert
-                sx={{
-                  width: '100%',
-                }}
-                severity="warning"
-              >
-                No weight data to show
-              </Alert>
-            ) : (
-              <LineChart width={chartWidth} height={100} data={dataToShow}>
-                <Tooltip content={<CustomTooltip />} />
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" />
-                <Line type="monotone" dataKey="chartValue" stroke="var(--color-secondary)" activeDot={{ r: 8 }} />
-              </LineChart>
-            )}
+            <Box
+              ref={chartWrapperRef}
+              sx={{
+                width: '100%',
+                height: '84px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              {dataToShow.length === 0 ? (
+                <Alert
+                  sx={{
+                    width: '100%',
+                  }}
+                  severity="warning"
+                >
+                  No weight data to show
+                </Alert>
+              ) : (
+                <LineChart width={chartWidth} height={84} data={dataToShow}>
+                  <Tooltip content={<CustomTooltip />} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" />
+                  <Line type="monotone" dataKey="chartValue" stroke="var(--color-secondary)" dot={false} activeDot={false} />
+                </LineChart>
+              )}
+            </Box>
+            <Button
+              variant="outlined"
+              color="inherit"
+              onClick={() => setDetailOpen(true)}
+              disabled={dataToShow.length === 0}
+              sx={{
+                alignSelf: 'center',
+                minHeight: 26,
+                height: 26,
+                px: 1.5,
+                fontSize: 11,
+                lineHeight: 1,
+              }}
+            >
+              Expand
+            </Button>
           </Box>
 
           <Box
@@ -203,41 +232,42 @@ function WeightChart() {
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'center',
-                gap: '8px',
+                gap: '4px',
               }}
             >
             <Box
               sx={{
                 display: 'flex',
-                gap: '8px',
+                gap: '6px',
                 div: {
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
-                  fontSize: '12px',
-                  gap: '4px',
+                  fontSize: '11px',
+                  gap: '2px',
                 },
               }}
             >
               <Box>
-                <MorningIcon bg={colors.secondary} fg={colors.primary} size={40} />
+                <MorningIcon bg={colors.secondary} fg={colors.primary} size={34} />
                 {weightData.morningAverage}
               </Box>
               <Box>
-                <DayIcon bg={colors.secondary} fg={colors.primary} size={40} />
+                <DayIcon bg={colors.secondary} fg={colors.primary} size={34} />
                 {weightData.dayAverage}
               </Box>
               <Box>
-                <NightIcon bg={colors.secondary} fg={colors.primary} size={40} />
+                <NightIcon bg={colors.secondary} fg={colors.primary} size={34} />
                 {weightData.eveningAverage}
               </Box>
             </Box>
             <Typography
               sx={{
-                fontSize: '13px',
+                fontSize: '12px',
                 textAlign: 'center',
+                lineHeight: 1.2,
                 span: {
-                  fontSize: '16px',
+                  fontSize: '14px',
                   fontWeight: 700,
                 },
               }}
@@ -249,9 +279,9 @@ function WeightChart() {
               onClick={() => setDialogOpen(true)}
               sx={{
                 fontSize: '13px',
-                padding: '8px 10px',
+                padding: '6px 10px',
+                minHeight: 36,
                 textWrap: 'nowrap',
-                // width: '90px'
               }}
             >
               Add weight
@@ -259,6 +289,12 @@ function WeightChart() {
           </Box>
         </Box>
       </Box>
+
+      <WeightDetailDialog
+        open={isDetailOpen}
+        onClose={() => setDetailOpen(false)}
+        weightData={userWeightData}
+      />
 
       <Dialog open={isDialogOpen}>
         <Box
