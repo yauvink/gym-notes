@@ -229,11 +229,11 @@ function Exercise({
                   }, 200);
                 }}
                 sx={{
-                  background: '#fff',
+                  bgcolor: 'background.paper',
                   height: '30px',
                   fontSize: '12px',
                   marginTop: '10px',
-                  color: 'black',
+                  color: 'text.primary',
                 }}
               >
                 + Add set

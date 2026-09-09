@@ -23,10 +23,9 @@ function Workouts() {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center',
-        height: '100%',
+        justifyContent: 'flex-start',
         maxWidth: '500px',
-        margin: 'auto',
+        margin: '0 auto',
       }}
     >
       <Box
@@ -43,10 +42,10 @@ function Workouts() {
         <Button variant="contained" onClick={() => setWorkoutDialogOpen(true)}>
           Add new workout
         </Button>
-        <Button variant="contained" color="success" onClick={() => setAddExerciseDialogOpen(true)}>
+        <Button variant="contained" color="secondary" onClick={() => setAddExerciseDialogOpen(true)}>
           Add new exercise
         </Button>
-        <Button variant="outlined" color="success" onClick={() => setEditExercisesDialogOpen(true)}>
+        <Button variant="outlined" color="secondary" onClick={() => setEditExercisesDialogOpen(true)}>
           Edit exercises
         </Button>
       </Box>
@@ -86,11 +85,11 @@ function Workouts() {
                 </Box>
                 <Typography
                   sx={{
-                    fontSize: '24px',
-                    fontWeight: 600,
+                    fontSize: '20px',
+                    fontWeight: 700,
                     lineHeight: 'normal',
                     span: {
-                      fontSize: '16px',
+                      fontSize: '15px',
                       fontWeight: 400,
                       opacity: 0.5,
                     },
@@ -127,7 +126,7 @@ function Workouts() {
                     </AccordionSummary>
                     <AccordionDetails
                       sx={{
-                        background: '#fff',
+                        bgcolor: 'background.paper',
                         padding: '0px 0px 10px',
                       }}
                     >

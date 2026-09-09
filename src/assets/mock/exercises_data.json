@@ -1,0 +1,186 @@
+[
+  { "id": "bench_press", "name": "Жим штанги лежа", "optionCategory": "Chest" },
+  {
+    "id": "dumbbell_fly",
+    "name": "Разведение гантелей",
+    "optionCategory": "Chest"
+  },
+  {
+    "id": "incline_bench_press",
+    "name": "Жим штанги на наклонной скамье",
+    "optionCategory": "Chest"
+  },
+  {
+    "id": "decline_bench_press",
+    "name": "Жим штанги на отрицательном наклоне",
+    "optionCategory": "Chest"
+  },
+  { "id": "push_ups", "name": "Отжимания", "optionCategory": "Chest" },
+  {
+    "id": "cable_crossover",
+    "name": "Жим в тенажере сидя",
+    "optionCategory": "Chest"
+  },
+  { "id": "pull_ups", "name": "Подтягивания", "optionCategory": "Back" },
+  { "id": "deadlift", "name": "Становая тяга", "optionCategory": "Back" },
+  {
+    "id": "bent_over_row",
+    "name": "Тяга штанги в наклоне",
+    "optionCategory": "Back"
+  },
+  {
+    "id": "lat_pulldown",
+    "name": "Тяга верхнего блока",
+    "optionCategory": "Back"
+  },
+  {
+    "id": "seated_row",
+    "name": "Тяга горизонтального блока",
+    "optionCategory": "Back"
+  },
+  {
+    "id": "dumbbell_row",
+    "name": "Тяга гантели в наклоне",
+    "optionCategory": "Back"
+  },
+  {
+    "id": "overhead_press",
+    "name": "Жим штанги над головой",
+    "optionCategory": "Shoulders"
+  },
+  {
+    "id": "lateral_raise",
+    "name": "Подъем гантелей в стороны",
+    "optionCategory": "Shoulders"
+  },
+  {
+    "id": "front_raise",
+    "name": "Подъем гантелей перед собой",
+    "optionCategory": "Shoulders"
+  },
+  {
+    "id": "rear_delt_fly",
+    "name": "Обратные махи",
+    "optionCategory": "Shoulders"
+  },
+  {
+    "id": "arnold_press",
+    "name": "Жим Арнольда",
+    "optionCategory": "Shoulders"
+  },
+  { "id": "shrugs", "name": "Шраги", "optionCategory": "Shoulders" },
+  {
+    "id": "barbell_curl",
+    "name": "Подъем штанги на бицепс",
+    "optionCategory": "Biceps"
+  },
+  {
+    "id": "dumbbell_curl",
+    "name": "Подъем гантелей на бицепс",
+    "optionCategory": "Biceps"
+  },
+  {
+    "id": "hammer_curl",
+    "name": "Молотковый подъем гантелей",
+    "optionCategory": "Biceps"
+  },
+  {
+    "id": "preacher_curl",
+    "name": "Подъем на скамье Скотта",
+    "optionCategory": "Biceps"
+  },
+  {
+    "id": "concentration_curl",
+    "name": "Концентрированный подъем на бицепс",
+    "optionCategory": "Biceps"
+  },
+  {
+    "id": "cable_curl",
+    "name": "Сгибания на блоке",
+    "optionCategory": "Biceps"
+  },
+  {
+    "id": "triceps_dips",
+    "name": "Отжимания на брусьях",
+    "optionCategory": "Triceps"
+  },
+  {
+    "id": "close_grip_bench_press",
+    "name": "Жим штанги узким хватом",
+    "optionCategory": "Triceps"
+  },
+  {
+    "id": "triceps_pushdown",
+    "name": "Разгибание рук на блоке",
+    "optionCategory": "Triceps"
+  },
+  {
+    "id": "overhead_triceps_extension",
+    "name": "Французский жим",
+    "optionCategory": "Triceps"
+  },
+  {
+    "id": "skull_crusher",
+    "name": "Разгибания штанги лежа",
+    "optionCategory": "Triceps"
+  },
+  {
+    "id": "diamond_push_ups",
+    "name": "Отжимания узким хватом",
+    "optionCategory": "Triceps"
+  },
+  { "id": "squat", "name": "Приседания со штангой", "optionCategory": "Legs" },
+  { "id": "leg_press", "name": "Жим ногами", "optionCategory": "Legs" },
+  { "id": "lunges", "name": "Выпады", "optionCategory": "Legs" },
+  {
+    "id": "leg_curl",
+    "name": "Сгибание ног в тренажере",
+    "optionCategory": "Legs"
+  },
+  {
+    "id": "leg_extension",
+    "name": "Разгибание ног в тренажере",
+    "optionCategory": "Legs"
+  },
+  { "id": "calf_raise", "name": "Подъем на носки", "optionCategory": "Legs" },
+  { "id": "crunches", "name": "Скручивания", "optionCategory": "Core" },
+  { "id": "leg_raises", "name": "Подъемы ног лежа", "optionCategory": "Core" },
+  { "id": "plank", "name": "Планка", "optionCategory": "Core" },
+  {
+    "id": "russian_twist",
+    "name": "Русские скручивания",
+    "optionCategory": "Core"
+  },
+  {
+    "id": "hanging_leg_raises",
+    "name": "Подъемы ног в висе",
+    "optionCategory": "Core"
+  },
+  { "id": "ab_rollout", "name": "Выкаты с колесом", "optionCategory": "Core" },
+  {
+    "id": "1739820170228",
+    "name": "Разгибание блока вверх ",
+    "optionCategory": "Triceps"
+  },
+  {
+    "id": "1740163632381",
+    "name": "Сведение в нижнем кроссовере",
+    "optionCategory": "Chest"
+  },
+  {
+    "id": "1740423542777",
+    "name": "Жим гантелей под 45",
+    "optionCategory": "Chest"
+  },
+  { "id": "1740767361390", "name": "Бабочка", "optionCategory": "Chest" },
+  {
+    "id": "1742063679942",
+    "name": "Сведение в верхнем кроссовере ",
+    "optionCategory": "Chest"
+  },
+  {
+    "id": "1762278162035",
+    "name": "Жим в тренажере лежа",
+    "optionCategory": "Chest"
+  }
+]

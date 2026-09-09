@@ -14,18 +14,19 @@ import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 import { DatePicker, PickersDay } from '@mui/x-date-pickers';
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { ReactComponent as Badge1 } from '../assets/images/badge_1.svg';
-import { ReactComponent as Badge2 } from '../assets/images/badge_2.svg';
 import dayjs, { Dayjs } from 'dayjs';
 import { useAppContext } from '../providers/AppProvider/AppProvider.hook';
 import { UserTrainingDayType } from '../providers/AppProvider/AppProvider';
 import { calcTrainingTotalWeight, getExerciseColorById, getExerciseName } from '../utils';
 import WeightChart from './WeightChart';
+import StatCard from './common/StatCard';
+import { useThemeSettings } from '../theme';
 
 const SOBER_DATE_STORAGE_KEY = 'date_key_21313';
 
 function Schedule() {
   const { userTrainingDays, setUserTrainingDays, workouts, allExercises } = useAppContext();
+  const { colors } = useThemeSettings();
   const [isAddTrainingDialogOpen, setAddTrainingDialogOpen] = useState(false);
   const [isSoberDialogOpen, setSoberDialogOpen] = useState(false);
   const [selectedDate, setSelectedDate] = React.useState<Dayjs | null | undefined>(dayjs(new Date()));
@@ -118,118 +119,30 @@ function Schedule() {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
+        gap: '22px',
       }}
     >
       <Box
         sx={{
           display: 'flex',
-          gap: '20px',
+          gap: '16px',
+          width: '100%',
+          maxWidth: '500px',
         }}
       >
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}
-        >
-          <Typography sx={{ fontSize: '20px' }}>Sober days:</Typography>
-          <Box
-            onClick={() => setSoberDialogOpen(true)}
-            sx={{
-              position: 'relative',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              cursor: 'pointer',
-              svg: {
-                width: '150px',
-                height: '150px',
-              },
-            }}
-          >
-            <Badge2 />
-            <Typography
-              sx={{
-                position: 'absolute',
-                fontSize: '28px',
-                fontWeight: 600,
-                marginTop: '5px',
-                textShadow: '#c4a316 0px 0 10px',
-              }}
-            >
-              {soberDays.total}
-            </Typography>
-            <Typography
-              sx={{
-                position: 'absolute',
-                fontSize: '10px',
-                fontWeight: 600,
-                marginTop: '105px',
-                opacity: 0.5,
-              }}
-            >
-              {soberDays.real !== null && `(Real: ${soberDays.real})`}
-            </Typography>
-          </Box>
-        </Box>
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}
-        >
-          <Typography
-            sx={{
-              fontSize: '20px',
-              textAlign: 'center',
-              span: {
-                fontWeight: 600,
-                color: 'green',
-              },
-            }}
-          >
-            Trainings in <span>{viewedYear}</span>:
-          </Typography>
-          <Box
-            sx={{
-              position: 'relative',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              svg: {
-                width: '150px',
-                height: '150px',
-              },
-            }}
-          >
-            <Badge1 />
-            <Typography
-              sx={{
-                position: 'absolute',
-                fontSize: '24px',
-                fontWeight: 600,
-                marginTop: '5px',
-                textShadow: '#c4a316 0px 0 10px',
-                textAlign: 'center',
-                display: 'flex',
-                flexDirection: 'column',
-                span: {
-                  fontSize: '10px',
-                  fontWeight: 400,
-                  margin: '-8px 0',
-                },
-              }}
-            >
-              {trainCount.trainings}
-              <span>out of</span>
-              {trainCount.days}
-            </Typography>
-          </Box>
-        </Box>
+        <StatCard
+          label="Sober days"
+          value={soberDays.total}
+          caption={soberDays.real !== null ? `Real: ${soberDays.real}` : undefined}
+          accent={colors.secondary}
+          onClick={() => setSoberDialogOpen(true)}
+        />
+        <StatCard
+          label={`Trainings in ${viewedYear}`}
+          value={trainCount.trainings}
+          caption={`out of ${trainCount.days}`}
+          accent={colors.primary}
+        />
       </Box>
 
       <WeightChart />
@@ -237,14 +150,69 @@ function Schedule() {
       <DateCalendar
         disableFuture
         readOnly
-        // onChange={(a, b, c) => {
-        //   console.log('aa', a, b, c);
-        // }}
-        // defaultValue={dayjs('2022-02-02')}
-        // value={viewedMonth}
+        showDaysOutsideCurrentMonth
         onMonthChange={(newMonth) => {
-          // setViewedMonth(newMonth);
           setViewedYear(Number(newMonth.format('YYYY')));
+        }}
+        sx={{
+          width: '100%',
+          maxWidth: '100%',
+          height: 'auto',
+          maxHeight: 'none',
+          '--PickerDay-size': '48px',
+          '--PickerDay-horizontalMargin': '0px',
+          bgcolor: 'background.paper',
+          borderRadius: 2,
+          border: '1px solid',
+          borderColor: 'divider',
+          p: '8px 4px 12px',
+          '&.MuiDateCalendar-root': {
+            width: '100%',
+            maxWidth: 'none',
+          },
+          '& .MuiDateCalendar-viewTransitionContainer, & .MuiDayCalendar-root, & .MuiDayCalendar-monthContainer': {
+            width: '100%',
+          },
+          '& .MuiPickersCalendarHeader-root': {
+            paddingLeft: '8px',
+            paddingRight: '8px',
+            marginTop: 0,
+            minHeight: 52,
+            width: '100%',
+          },
+          '& .MuiPickersCalendarHeader-label': {
+            fontWeight: 800,
+            fontSize: 18,
+          },
+          '& .MuiPickersArrowSwitcher-button, & .MuiPickersCalendarHeader-switchViewButton': {
+            width: 44,
+            height: 44,
+          },
+          '& .MuiDayCalendar-header, & .MuiDayCalendar-weekContainer': {
+            justifyContent: 'space-between',
+            margin: 0,
+            padding: '0 4px',
+          },
+          '& .MuiDayCalendar-weekDayLabel': {
+            width: 48,
+            height: 36,
+            fontSize: 13,
+            fontWeight: 700,
+            margin: 0,
+          },
+          '& .MuiDayCalendar-slideTransition': {
+            minHeight: 320,
+          },
+          '& .MuiPickersDay-root': {
+            width: 48,
+            height: 48,
+            fontSize: 16,
+            fontWeight: 600,
+            margin: 0,
+          },
+          '& .MuiYearCalendar-root, & .MuiMonthCalendar-root': {
+            width: '100%',
+          },
         }}
         slots={{
           day: (props) => {
@@ -257,9 +225,20 @@ function Schedule() {
                   setSelectedDate(dayjs(props.day).startOf('day'));
                 }}
                 sx={{
-                  backgroundColor: isTraining ? 'lightblue' : 'transparent',
+                  width: 48,
+                  height: 48,
+                  fontSize: 16,
+                  backgroundColor: isTraining ? colors.primary : 'transparent',
+                  color: isTraining ? 'primary.contrastText' : undefined,
+                  fontWeight: isTraining ? 700 : 600,
                   borderRadius: '50%',
-                  // '&:hover': { backgroundColor: isTraining ? 'blue' : '' },
+                  '&.Mui-selected': {
+                    backgroundColor: colors.secondary,
+                    color: 'secondary.contrastText',
+                    '&:hover, &:focus': {
+                      backgroundColor: colors.secondary,
+                    },
+                  },
                 }}
               />
             );
@@ -267,7 +246,7 @@ function Schedule() {
         }}
       />
 
-      <Box sx={{ display: 'flex', gap: '20px', width: '100%', maxWidth: '500px', marginTop: '-50px' }}>
+      <Box sx={{ display: 'flex', gap: '20px', width: '100%', maxWidth: '500px', mt: 1 }}>
         {selectedDayData ? (
           <Box
             sx={{
@@ -288,19 +267,22 @@ function Schedule() {
 
             {selectedDayData.workout ? (
               <Box
-                sx={
-                  {
-                    // border: '1px solid green',
-                  }
-                }
+                sx={{
+                  p: 1.5,
+                  borderRadius: 2,
+                  bgcolor: 'background.paper',
+                  border: '1px solid',
+                  borderColor: 'divider',
+                }}
               >
                 <Typography
                   sx={{
                     lineHeight: 'normal',
                     marginBottom: '5px',
-                    fontSize: '20px',
+                    fontSize: '18px',
+                    fontWeight: 700,
                     span: {
-                      fontSize: '16px',
+                      fontSize: '15px',
                       fontWeight: 400,
                       opacity: 0.5,
                     },

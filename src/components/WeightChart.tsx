@@ -7,6 +7,8 @@ import { MinusIcon, PlusIcon } from './common/Icons';
 import CloseIcon from '@mui/icons-material/Close';
 import dayjs from 'dayjs';
 import { CartesianGrid, Line, LineChart, Tooltip } from 'recharts';
+import { DayIcon, MorningIcon, NightIcon } from './common/TimeOfDayIcons';
+import { useThemeSettings } from '../theme';
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
@@ -20,14 +22,14 @@ const CustomTooltip = ({ active, payload, label }: any) => {
       >
         <Typography
           sx={{
-            fontSize: '14px',
+            fontSize: '15px',
           }}
         >
           {dayjs(date).format('DD MMM HH:mm')}
         </Typography>
         <Typography
           sx={{
-            fontSize: '14px',
+            fontSize: '15px',
             fontWeight: 600,
           }}
         >
@@ -42,6 +44,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 
 function WeightChart() {
   const { userWeightData, setUserWeightData } = useAppContext();
+  const { colors } = useThemeSettings();
   const [isDialogOpen, setDialogOpen] = useState(false);
   const sortedWeightData = userWeightData.sort((a, b) => a.t - b.t);
   const initialValue = sortedWeightData[sortedWeightData.length - 1]?.w ?? 80;
@@ -144,13 +147,19 @@ function WeightChart() {
         maxWidth: '500px',
         width: '100%',
         position: 'relative',
+        mt: 0,
+        p: 2,
+        borderRadius: 2,
+        bgcolor: 'background.paper',
+        border: '1px solid',
+        borderColor: 'divider',
       }}
     >
       <Box
         sx={{
           display: 'flex',
           justifyContent: 'center',
-          gap: '10px',
+          gap: '16px',
           width: '100%',
         }}
       >
@@ -158,7 +167,7 @@ function WeightChart() {
           sx={{
             display: 'flex',
             width: '100%',
-            gap: '10px',
+            gap: '16px',
           }}
         >
           <Box
@@ -183,68 +192,53 @@ function WeightChart() {
             ) : (
               <LineChart width={chartWidth} height={100} data={dataToShow}>
                 <Tooltip content={<CustomTooltip />} />
-                <CartesianGrid strokeDasharray="3 3" />
-                <Line type="monotone" dataKey="chartValue" stroke="#8884d8" activeDot={{ r: 8 }} />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" />
+                <Line type="monotone" dataKey="chartValue" stroke="var(--color-secondary)" activeDot={{ r: 8 }} />
               </LineChart>
             )}
           </Box>
 
           <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              gap: '2px',
-            }}
-          >
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                gap: '8px',
+              }}
+            >
             <Box
               sx={{
                 display: 'flex',
+                gap: '8px',
                 div: {
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
-                  fontSize: '10px',
-                  svg: {
-                    width: '40px',
-                    maxWidth: '40px',
-                  },
+                  fontSize: '12px',
+                  gap: '4px',
                 },
               }}
             >
               <Box>
-                <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                  <rect width="200" height="200" fill="skyblue" />
-                  <circle cx="100" cy="140" r="40" fill="orange" />
-                  <rect x="0" y="140" width="200" height="60" fill="lightyellow" />
-                </svg>
+                <MorningIcon bg={colors.secondary} fg={colors.primary} size={40} />
                 {weightData.morningAverage}
               </Box>
               <Box>
-                <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                  <rect width="200" height="200" fill="deepskyblue" />
-                  <circle cx="100" cy="80" r="40" fill="yellow" />
-                </svg>
+                <DayIcon bg={colors.secondary} fg={colors.primary} size={40} />
                 {weightData.dayAverage}
               </Box>
               <Box>
-                <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                  <rect width="200" height="200" fill="midnightblue" />
-                  <circle cx="130" cy="60" r="30" fill="lightgray" />
-                  <circle cx="125" cy="55" r="30" fill="midnightblue" />
-                  <circle cx="50" cy="40" r="3" fill="white" />
-                  <circle cx="70" cy="80" r="2" fill="white" />
-                  <circle cx="150" cy="120" r="2.5" fill="white" />
-                </svg>
+                <NightIcon bg={colors.secondary} fg={colors.primary} size={40} />
                 {weightData.eveningAverage}
               </Box>
             </Box>
             <Typography
               sx={{
-                fontSize: '10px',
+                fontSize: '13px',
                 textAlign: 'center',
                 span: {
-                  fontSize: '14px',
+                  fontSize: '16px',
+                  fontWeight: 700,
                 },
               }}
             >
@@ -254,8 +248,8 @@ function WeightChart() {
               variant="contained"
               onClick={() => setDialogOpen(true)}
               sx={{
-                fontSize: '10px',
-                padding: '5px',
+                fontSize: '13px',
+                padding: '8px 10px',
                 textWrap: 'nowrap',
                 // width: '90px'
               }}

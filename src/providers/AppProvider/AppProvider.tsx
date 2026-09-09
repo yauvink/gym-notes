@@ -26,7 +26,7 @@ export interface IApp {
   setDefaultWeight: (v: number) => void;
   customExercises: ExerciseOptionType[];
   setCustomExercises: (v: ExerciseOptionType[]) => void;
-  handleExportData: (data: WorkoutType[] | UserTrainingDayType[] | UserWeightDataType[] | ExerciseOptionType[]) => void;
+  handleExportData: (data: unknown) => void;
   allExercises: ExerciseOptionType[];
   userWeightData: UserWeightDataType[];
   setUserWeightData: (v: UserWeightDataType[]) => void;
@@ -108,9 +108,7 @@ function AppProvider({ children }: { children: ReactNode }) {
     }
   }, [alert]);
 
-  const handleExportData = (
-    data: WorkoutType[] | UserTrainingDayType[] | UserWeightDataType[] | ExerciseOptionType[]
-  ) => {
+  const handleExportData = (data: unknown) => {
     const dataToExport = JSON.stringify(data);
     navigator.clipboard.writeText(dataToExport);
     setAlert('Copied to clipboard');
@@ -157,6 +155,8 @@ function AppProvider({ children }: { children: ReactNode }) {
             <Alert
               sx={{
                 borderRadius: 0,
+                bgcolor: 'primary.main',
+                color: 'primary.contrastText',
               }}
               severity="success"
               variant="filled"

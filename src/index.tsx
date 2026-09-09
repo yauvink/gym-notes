@@ -5,12 +5,15 @@ import App from './App';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
 import AppProvider from './providers/AppProvider';
+import { ThemeSettingsProvider } from './theme';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
-  <AppProvider>
-    <App />
-  </AppProvider>
+  <ThemeSettingsProvider>
+    <AppProvider>
+      <App />
+    </AppProvider>
+  </ThemeSettingsProvider>
 );
 
 // If you want your app to work offline and load faster, you can change

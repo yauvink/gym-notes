@@ -36,7 +36,7 @@ function Set({
         display: 'flex',
         justifyContent: 'space-between',
         gap: '10px',
-        background: isWarmup ? 'rgba(0,255,0,0.1)' : '#fff',
+        background: isWarmup ? 'var(--color-secondary-soft)' : 'var(--bg-paper)',
         borderRadius: '5px',
         padding: '5px 10px',
       }}
@@ -44,7 +44,7 @@ function Set({
       <Box
         sx={{
           color: isWarmup ? 'green' : undefined,
-          fontSize: isWarmup ? '12px' : '18px',
+          fontSize: isWarmup ? '13px' : '16px',
           minWidth: '30px',
           display: 'flex',
           justifyContent: 'center',

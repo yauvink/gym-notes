@@ -51,15 +51,13 @@ function Stats() {
         padding: '20px',
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100%',
+        alignItems: 'flex-start',
+        justifyContent: 'flex-start',
         width: '100%',
       }}
     >
       <Box
         sx={{
-          marginTop: '20px',
           display: 'flex',
           alignItems: 'flex-start',
           flexDirection: 'column',
@@ -103,21 +101,12 @@ function Stats() {
             No workouts data for selected excercise
           </Alert>
         ) : (
-          <LineChart
-            width={window.innerWidth - 20}
-            height={300}
-            data={data}
-            style={
-              {
-                // border: '1px solid green',
-              }
-            }
-          >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="date" />
-            <YAxis yAxisId="right-axis" orientation="right" />
+          <LineChart width={window.innerWidth - 20} height={300} data={data}>
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" />
+            <XAxis dataKey="date" stroke="var(--text-muted)" />
+            <YAxis yAxisId="right-axis" orientation="right" stroke="var(--text-muted)" />
             <Tooltip />
-            <Line yAxisId="right-axis" type="monotone" dataKey="weight" stroke="blue" />
+            <Line yAxisId="right-axis" type="monotone" dataKey="weight" stroke="var(--color-primary)" />
           </LineChart>
         )}
       </Box>

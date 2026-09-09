@@ -1,0 +1,75 @@
+[
+  {
+    "id": "b9308213-914e-4cfe-9a04-f91b570fd74c",
+    "name": "Sunday",
+    "exercises": [
+      {
+        "exercise_id": "bench_press",
+        "sets": [
+          { "reps": 8, "kg": 80 },
+          { "reps": 8, "kg": 80 },
+          { "reps": 8, "kg": 80 },
+          { "reps": 5, "kg": 90 }
+        ]
+      },
+      {
+        "exercise_id": "front_raise",
+        "sets": [
+          { "reps": 10, "kg": 16 },
+          { "reps": 10, "kg": 20 },
+          { "reps": 12, "kg": 20 },
+          { "reps": 12, "kg": 20 }
+        ]
+      },
+      {
+        "exercise_id": "lateral_raise",
+        "sets": [
+          { "reps": 10, "kg": 16 },
+          { "reps": 10, "kg": 16 },
+          { "reps": 12, "kg": 16 },
+          { "reps": 12, "kg": 16 }
+        ]
+      },
+      {
+        "exercise_id": "rear_delt_fly",
+        "sets": [
+          { "reps": 12, "kg": 16 },
+          { "reps": 12, "kg": 16 },
+          { "reps": 12, "kg": 16 },
+          { "reps": 12, "kg": 16 }
+        ]
+      },
+      {
+        "exercise_id": "shrugs",
+        "sets": [
+          { "reps": 20, "kg": 50 },
+          { "reps": 20, "kg": 50 }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "88c2ac1d-95d3-4d65-a844-448c36bdcd36",
+    "name": "Chest",
+    "exercises": [
+      {
+        "exercise_id": "1762278162035",
+        "sets": [
+          { "wu": true, "reps": 8, "kg": 60 },
+          { "reps": 8, "kg": 85 },
+          { "reps": 6, "kg": 85 },
+          { "reps": 4, "kg": 85 },
+          { "reps": 6, "kg": 75 },
+          { "reps": 6, "kg": 75 }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "2fedf2cc-0c3e-41ba-8af0-b21a9c730746",
+    "name": "Back",
+    "exercises": [
+      { "exercise_id": "pull_ups", "sets": [{ "reps": 8, "kg": 80 }] }
+    ]
+  }
+]
