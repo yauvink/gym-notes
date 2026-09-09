@@ -67,7 +67,7 @@ export function createAppTheme(mode: PaletteMode, colors: ThemeColors): Theme {
       },
     },
     shape: {
-      borderRadius: 8,
+      borderRadius: 12,
     },
     components: {
       MuiCssBaseline: {
@@ -81,7 +81,7 @@ export function createAppTheme(mode: PaletteMode, colors: ThemeColors): Theme {
       MuiButton: {
         styleOverrides: {
           root: {
-            borderRadius: 8,
+            borderRadius: 12,
             paddingInline: 16,
             minHeight: 44,
             boxShadow: 'none',
@@ -142,7 +142,7 @@ export function createAppTheme(mode: PaletteMode, colors: ThemeColors): Theme {
       MuiAlert: {
         styleOverrides: {
           root: {
-            borderRadius: 8,
+            borderRadius: 12,
           },
         },
       },

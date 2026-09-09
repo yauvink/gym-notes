@@ -220,6 +220,7 @@ function Schedule() {
             fontSize: 16,
             fontWeight: 600,
             margin: 0,
+            borderRadius: '16px',
           },
           '& .MuiYearCalendar-root, & .MuiMonthCalendar-root': {
             width: '100%',
@@ -242,7 +243,10 @@ function Schedule() {
                   backgroundColor: isTraining ? colors.primary : 'transparent',
                   color: isTraining ? 'primary.contrastText' : undefined,
                   fontWeight: isTraining ? 700 : 600,
-                  borderRadius: '50%',
+                  borderRadius: '16px',
+                  '&.MuiPickersDay-today': {
+                    borderRadius: '16px',
+                  },
                   '&.Mui-selected': {
                     backgroundColor: colors.secondary,
                     color: 'secondary.contrastText',
@@ -266,16 +270,6 @@ function Schedule() {
               width: '100%',
             }}
           >
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'flex-end',
-                width: '100%',
-              }}
-            >
-              <DeleteIcon sx={{ color: 'red', cursor: 'pointer' }} onClick={() => handleDeleteTrainingDay()} />
-            </Box>
-
             {selectedDayData.workout ? (
               <Box
                 sx={{
@@ -286,21 +280,31 @@ function Schedule() {
                   borderColor: 'divider',
                 }}
               >
-                <Typography
+                <Box
                   sx={{
-                    lineHeight: 'normal',
-                    marginBottom: '5px',
-                    fontSize: '18px',
-                    fontWeight: 700,
-                    span: {
-                      fontSize: '15px',
-                      fontWeight: 400,
-                      opacity: 0.5,
-                    },
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: 1,
+                    mb: '5px',
                   }}
                 >
-                  {selectedDayData.workout.name} <span>({calcTrainingTotalWeight(selectedDayData.workout)}kg)</span>
-                </Typography>
+                  <Typography
+                    sx={{
+                      lineHeight: 'normal',
+                      fontSize: '18px',
+                      fontWeight: 700,
+                      span: {
+                        fontSize: '15px',
+                        fontWeight: 400,
+                        opacity: 0.5,
+                      },
+                    }}
+                  >
+                    {selectedDayData.workout.name} <span>({calcTrainingTotalWeight(selectedDayData.workout)}kg)</span>
+                  </Typography>
+                  <DeleteIcon sx={{ color: '#C47B7B', cursor: 'pointer', flexShrink: 0 }} onClick={() => handleDeleteTrainingDay()} />
+                </Box>
 
                 {selectedDayData.workout.exercises.map((exercise, i) => (
                   <Box
@@ -370,11 +374,26 @@ function Schedule() {
                 ))}
               </Box>
             ) : (
-              <Typography sx={{ textAlign: 'center', margin: '8px 0' }}>
-                No workout data
-                <br />
-                for this day
-              </Typography>
+              <Box
+                sx={{
+                  p: 1.5,
+                  borderRadius: 1,
+                  bgcolor: 'background.paper',
+                  border: '1px solid',
+                  borderColor: 'divider',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: 1,
+                }}
+              >
+                <Typography sx={{ textAlign: 'left', fontSize: 16 }}>
+                  No workout data
+                  <br />
+                  for this day
+                </Typography>
+                <DeleteIcon sx={{ color: '#C47B7B', cursor: 'pointer', flexShrink: 0 }} onClick={() => handleDeleteTrainingDay()} />
+              </Box>
             )}
           </Box>
         ) : (
