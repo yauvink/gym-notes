@@ -54,6 +54,7 @@ function ThemeModeToggle() {
         p: '4px',
         borderRadius: 999,
         bgcolor: isDark ? 'rgba(255,255,255,0.08)' : '#E6E6EA',
+        transition: 'background-color 1s ease',
       }}
     >
       <Box
@@ -68,7 +69,7 @@ function ThemeModeToggle() {
           border: '1px solid',
           borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)',
           boxShadow: isDark ? '0 1px 4px rgba(0,0,0,0.35)' : '0 1px 3px rgba(0,0,0,0.08)',
-          transition: 'left 200ms ease',
+          transition: 'left 200ms ease, background-color 1s ease, border-color 1s ease, box-shadow 1s ease',
           pointerEvents: 'none',
         }}
       />

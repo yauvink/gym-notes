@@ -75,6 +75,7 @@ export function createAppTheme(mode: PaletteMode, colors: ThemeColors): Theme {
           body: {
             backgroundColor: surface.default,
             color: surface.text,
+            transition: 'background-color 1s ease, color 1s ease',
           },
         },
       },
@@ -103,6 +104,7 @@ export function createAppTheme(mode: PaletteMode, colors: ThemeColors): Theme {
         styleOverrides: {
           root: {
             backgroundImage: 'none',
+            transition: 'background-color 1s ease, border-color 1s ease, color 1s ease',
           },
         },
       },
@@ -113,6 +115,7 @@ export function createAppTheme(mode: PaletteMode, colors: ThemeColors): Theme {
             backgroundImage: 'none',
             boxShadow: 'none',
             border: `1px solid ${surface.divider}`,
+            transition: 'background-color 1s ease, border-color 1s ease, color 1s ease',
             '&:before': { display: 'none' },
             '&.Mui-expanded': {
               margin: 0,
@@ -136,6 +139,7 @@ export function createAppTheme(mode: PaletteMode, colors: ThemeColors): Theme {
             backgroundImage: 'none',
             backgroundColor: surface.paper,
             border: `1px solid ${surface.divider}`,
+            transition: 'background-color 1s ease, border-color 1s ease, color 1s ease',
           },
         },
       },
@@ -151,6 +155,7 @@ export function createAppTheme(mode: PaletteMode, colors: ThemeColors): Theme {
           root: {
             backgroundColor: surface.paper,
             borderTop: `1px solid ${surface.divider}`,
+            transition: 'background-color 1s ease, border-color 1s ease',
           },
         },
       },
@@ -158,6 +163,10 @@ export function createAppTheme(mode: PaletteMode, colors: ThemeColors): Theme {
         styleOverrides: {
           root: {
             color: surface.muted,
+            transition: 'color 220ms ease, background-color 220ms ease',
+            '& .MuiTouchRipple-child': {
+              backgroundColor: colors.primary,
+            },
             '&.Mui-selected': {
               color: colors.primary,
             },
@@ -180,6 +189,7 @@ export function applyThemeCssVars(mode: PaletteMode, colors: ThemeColors) {
   const root = document.documentElement;
   root.setAttribute('data-theme', mode);
   root.style.colorScheme = mode;
+  root.style.removeProperty('background-color');
   root.style.setProperty('--color-primary', colors.primary);
   root.style.setProperty('--color-secondary', colors.secondary);
   root.style.setProperty('--color-primary-contrast', getContrastText(colors.primary));

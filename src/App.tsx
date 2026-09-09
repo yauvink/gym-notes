@@ -29,6 +29,7 @@ function App() {
           flexDirection: 'column',
           bgcolor: 'background.default',
           overflow: 'hidden',
+          transition: 'background-color 1s ease',
         }}
       >
         <Box
@@ -50,6 +51,7 @@ function App() {
             borderRadius: 0,
             bgcolor: 'background.paper',
             pb: 'env(safe-area-inset-bottom)',
+            transition: 'background-color 1s ease, border-color 1s ease',
           }}
           elevation={0}
         >

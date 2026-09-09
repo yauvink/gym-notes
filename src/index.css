@@ -1,3 +1,51 @@
+@property --bg-default {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #0a0c0e;
+}
+
+@property --bg-paper {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #14181c;
+}
+
+@property --bg-elevated {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #1c2228;
+}
+
+@property --text-primary {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #f2f4f5;
+}
+
+@property --text-muted {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #8b939c;
+}
+
+@property --border-subtle {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: rgba(255, 255, 255, 0.08);
+}
+
+@property --color-primary {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #ffb020;
+}
+
+@property --color-secondary {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #ff6a2b;
+}
+
 html,
 body,
 #root {
@@ -10,6 +58,8 @@ html {
   height: 100dvh;
   overflow: hidden;
   overscroll-behavior: none;
+  background-color: var(--bg-default, #0a0c0e);
+  transition: background-color 1s ease;
 }
 
 body {
@@ -29,6 +79,7 @@ body {
   overscroll-behavior: none;
   background: var(--bg-default, #0A0C0E);
   color: var(--text-primary, #F2F4F5);
+  transition: background-color 1s ease, color 1s ease;
 }
 
 img,
@@ -73,6 +124,13 @@ code {
 
 .tab-panel::-webkit-scrollbar {
   display: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  #root .MuiBox-root,
+  #root .MuiTypography-root {
+    transition: background-color 1s ease, color 1s ease, border-color 1s ease;
+  }
 }
 
 .loader {
