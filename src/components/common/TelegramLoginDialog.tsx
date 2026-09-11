@@ -1,14 +1,16 @@
 import { Box, Dialog, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   TELEGRAM_BOT_USERNAME,
   TelegramAuthUser,
-  isTelegramAuthUser,
+  installTelegramAuthBridge,
+  logTelegram,
+  setTelegramAuthListener,
 } from "../../utils/telegramAuth";
 
 declare global {
   interface Window {
-    onTelegramAuth?: (user: TelegramAuthUser) => void;
+    onTelegramAuth?: (user: unknown) => void;
   }
 }
 
@@ -22,35 +24,44 @@ function TelegramLoginDialog({
   onAuth: (user: TelegramAuthUser) => void;
 }) {
   const [hostEl, setHostEl] = useState<HTMLDivElement | null>(null);
+  const onAuthRef = useRef(onAuth);
+  onAuthRef.current = onAuth;
+
+  useEffect(() => {
+    installTelegramAuthBridge();
+  }, []);
 
   useEffect(() => {
     if (!open || !hostEl) {
       return;
     }
 
-    hostEl.replaceChildren();
+    setTelegramAuthListener((user) => {
+      logTelegram("listener received user", user);
+      onAuthRef.current(user);
+    });
 
-    window.onTelegramAuth = (user: TelegramAuthUser) => {
-      if (isTelegramAuthUser(user)) {
-        onAuth(user);
-      }
-    };
-
-    const script = document.createElement("script");
-    script.src = "https://telegram.org/js/telegram-widget.js?22";
-    script.async = true;
-    script.setAttribute("data-telegram-login", TELEGRAM_BOT_USERNAME);
-    script.setAttribute("data-size", "large");
-    script.setAttribute("data-userpic", "false");
-    script.setAttribute("data-radius", "8");
-    script.setAttribute("data-onauth", "onTelegramAuth(user)");
-    hostEl.appendChild(script);
+    if (!hostEl.querySelector("script, iframe")) {
+      const script = document.createElement("script");
+      script.src = "https://telegram.org/js/telegram-widget.js?22";
+      script.async = true;
+      script.setAttribute("data-telegram-login", TELEGRAM_BOT_USERNAME);
+      script.setAttribute("data-size", "large");
+      script.setAttribute("data-userpic", "false");
+      script.setAttribute("data-radius", "8");
+      script.setAttribute("data-onauth", "onTelegramAuth(user)");
+      script.onload = () => logTelegram("widget.js loaded");
+      script.onerror = (error) => {
+        console.error("%c[Telegram] widget.js failed", "color: #FF2BD6; font-weight: 800;", error);
+      };
+      hostEl.appendChild(script);
+      logTelegram("widget.js injected");
+    }
 
     return () => {
-      delete window.onTelegramAuth;
-      hostEl.replaceChildren();
+      setTelegramAuthListener(null);
     };
-  }, [open, hostEl, onAuth]);
+  }, [open, hostEl]);
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="xs" keepMounted>

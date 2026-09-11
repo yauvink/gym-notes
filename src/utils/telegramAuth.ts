@@ -3,6 +3,15 @@ export const KACH_API_URL = "https://kach.brostep.click";
 export const TELEGRAM_USER_STORAGE_KEY = "kach_telegram_user";
 export const TELEGRAM_AUTH_MAX_AGE_SEC = 7 * 24 * 60 * 60;
 export const TELEGRAM_AUTH_CHANGED_EVENT = "kach-telegram-auth";
+const TELEGRAM_LOG_STYLE = "color: #FF2BD6; font-weight: 800;";
+
+export function logTelegram(message: string, extra?: unknown) {
+  if (extra !== undefined) {
+    console.log(`%c[Telegram] ${message}`, TELEGRAM_LOG_STYLE, extra);
+    return;
+  }
+  console.log(`%c[Telegram] ${message}`, TELEGRAM_LOG_STYLE);
+}
 
 export type TelegramAuthUser = {
   id: number;
@@ -18,18 +27,66 @@ function notifyAuthChanged() {
   window.dispatchEvent(new Event(TELEGRAM_AUTH_CHANGED_EVENT));
 }
 
-export function isTelegramAuthUser(value: unknown): value is TelegramAuthUser {
+export function parseTelegramAuthUser(value: unknown): TelegramAuthUser | null {
   if (!value || typeof value !== "object") {
-    return false;
+    return null;
   }
-  const user = value as TelegramAuthUser;
-  return (
-    typeof user.id === "number" &&
-    typeof user.first_name === "string" &&
-    typeof user.auth_date === "number" &&
-    typeof user.hash === "string" &&
-    user.hash.length > 0
-  );
+  const raw = value as Record<string, unknown>;
+  const id = Number(raw.id);
+  const authDate = Number(raw.auth_date);
+  if (!Number.isInteger(id) || id <= 0 || !Number.isFinite(authDate)) {
+    return null;
+  }
+  if (typeof raw.first_name !== "string" || raw.first_name.length === 0) {
+    return null;
+  }
+  if (typeof raw.hash !== "string" || raw.hash.length === 0) {
+    return null;
+  }
+
+  const user: TelegramAuthUser = {
+    id,
+    first_name: raw.first_name,
+    auth_date: authDate,
+    hash: raw.hash,
+  };
+  if (typeof raw.last_name === "string" && raw.last_name) {
+    user.last_name = raw.last_name;
+  }
+  if (typeof raw.username === "string" && raw.username) {
+    user.username = raw.username;
+  }
+  if (typeof raw.photo_url === "string" && raw.photo_url) {
+    user.photo_url = raw.photo_url;
+  }
+  return user;
+}
+
+export function isTelegramAuthUser(value: unknown): value is TelegramAuthUser {
+  return parseTelegramAuthUser(value) !== null;
+}
+
+type TelegramAuthListener = (user: TelegramAuthUser) => void;
+let telegramAuthListener: TelegramAuthListener | null = null;
+
+export function setTelegramAuthListener(listener: TelegramAuthListener | null) {
+  telegramAuthListener = listener;
+}
+
+export function installTelegramAuthBridge() {
+  window.onTelegramAuth = (user: unknown) => {
+    logTelegram("auth callback", user);
+    const parsed = parseTelegramAuthUser(user);
+    if (!parsed) {
+      console.warn("%c[Telegram] rejected payload", TELEGRAM_LOG_STYLE, user);
+      return;
+    }
+    if (!telegramAuthListener) {
+      console.warn("%c[Telegram] callback fired but no listener", TELEGRAM_LOG_STYLE);
+      return;
+    }
+    telegramAuthListener(parsed);
+  };
 }
 
 export function isSessionValid(user: TelegramAuthUser): boolean {
@@ -43,8 +100,8 @@ export function getTelegramUser(): TelegramAuthUser | null {
     return null;
   }
   try {
-    const parsed: unknown = JSON.parse(raw);
-    if (!isTelegramAuthUser(parsed)) {
+    const parsed = parseTelegramAuthUser(JSON.parse(raw));
+    if (!parsed) {
       return null;
     }
     if (!isSessionValid(parsed)) {
