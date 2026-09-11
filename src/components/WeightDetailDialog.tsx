@@ -4,7 +4,8 @@ import { useMemo, useState } from 'react';
 import dayjs from 'dayjs';
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { useThemeSettings } from '../theme';
-import { UserWeightDataType } from '../providers/AppProvider/AppProvider.constants';
+import { WeightEntryType } from '../providers/AppProvider/AppProvider.constants';
+import { AppleIcon } from './common/Icons';
 
 type PeriodId = '1m' | '6m' | 'max';
 
@@ -34,7 +35,7 @@ function formatAxisDate(value: number, period: PeriodId) {
   return dayjs(value).format('MMM YY');
 }
 
-function WeightTooltip({ active, payload }: { active?: boolean; payload?: Array<{ payload: UserWeightDataType }> }) {
+function WeightTooltip({ active, payload }: { active?: boolean; payload?: Array<{ payload: WeightEntryType }> }) {
   if (!active || !payload?.length) {
     return null;
   }
@@ -54,7 +55,7 @@ function WeightDetailDialog({
 }: {
   open: boolean;
   onClose: () => void;
-  weightData: UserWeightDataType[];
+  weightData: WeightEntryType[];
 }) {
   const { colors } = useThemeSettings();
   const [period, setPeriod] = useState<PeriodId>('6m');
@@ -65,6 +66,7 @@ function WeightDetailDialog({
   const to = Date.now();
 
   const chartData = useMemo(() => sorted.filter((el) => el.t >= from && el.t <= to), [sorted, from, to]);
+  const tableData = useMemo(() => [...chartData].reverse(), [chartData]);
   const xDomain: [number, number] | undefined =
     chartData.length > 0 ? [chartData[0].t, chartData[chartData.length - 1].t] : undefined;
 
@@ -184,7 +186,7 @@ function WeightDetailDialog({
                 />
                 <Tooltip content={<WeightTooltip />} />
                 <Line
-                  type="monotone"
+                  type="linear"
                   dataKey="w"
                   stroke="var(--color-secondary)"
                   strokeWidth={2}
@@ -194,6 +196,65 @@ function WeightDetailDialog({
                 />
               </LineChart>
             </ResponsiveContainer>
+          )}
+        </Box>
+
+        <Box
+          sx={{
+            maxHeight: 260,
+            overflowY: 'auto',
+            borderRadius: '10px',
+            border: '0.5px solid var(--glass-border)',
+            bgcolor: 'var(--glass-bg)',
+          }}
+        >
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: '1fr auto 22px',
+              gap: 1,
+              px: 1.5,
+              py: 0.85,
+              fontSize: 12,
+              fontWeight: 700,
+              color: 'text.secondary',
+              borderBottom: '0.5px solid var(--glass-border)',
+              position: 'sticky',
+              top: 0,
+              bgcolor: 'var(--glass-bg-strong)',
+              zIndex: 1,
+            }}
+          >
+            <Box>Date</Box>
+            <Box>Weight</Box>
+            <Box />
+          </Box>
+          {tableData.length === 0 ? (
+            <Typography sx={{ px: 1.5, py: 1.5, fontSize: 13, color: 'text.secondary' }}>
+              No records for this period
+            </Typography>
+          ) : (
+            tableData.map((row, index) => (
+              <Box
+                key={`${row.t}-${row.w}-${index}`}
+                sx={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr auto 22px',
+                  alignItems: 'center',
+                  gap: 1,
+                  px: 1.5,
+                  py: 0.9,
+                  fontSize: 13,
+                  borderBottom: index === tableData.length - 1 ? 0 : '0.5px solid var(--glass-border)',
+                }}
+              >
+                <Box>{dayjs(row.t).format('DD MMM YY HH:mm')}</Box>
+                <Box sx={{ fontWeight: 700, fontVariantNumeric: 'tabular-nums' }}>{row.w} kg</Box>
+                <Box sx={{ display: 'flex', justifyContent: 'center', color: 'text.secondary' }}>
+                  {row.fromHealth ? <AppleIcon /> : null}
+                </Box>
+              </Box>
+            ))
           )}
         </Box>
       </Box>

@@ -1,15 +1,14 @@
 import { Alert, Box, Button, Dialog, Paper, Typography } from '@mui/material';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useAppContext } from '../providers/AppProvider/AppProvider.hook';
-import { NumberField } from '@base-ui-components/react/number-field';
-import styles from './common/buttons.module.css';
-import { MinusIcon, PlusIcon } from './common/Icons';
 import CloseIcon from '@mui/icons-material/Close';
 import dayjs from 'dayjs';
 import { CartesianGrid, Line, LineChart, Tooltip } from 'recharts';
 import { DayIcon, MorningIcon, NightIcon } from './common/TimeOfDayIcons';
 import { useThemeSettings } from '../theme';
 import WeightDetailDialog from './WeightDetailDialog';
+import { mergeWeightEntries } from '../providers/AppProvider/AppProvider.constants';
+import WeightWheelPicker from './WeightWheelPicker';
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
@@ -44,12 +43,15 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 
 function WeightChart() {
-  const { userWeightData, setUserWeightData } = useAppContext();
+  const { userWeightData, setUserWeightData, healthWeightData } = useAppContext();
   const { colors } = useThemeSettings();
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [isDetailOpen, setDetailOpen] = useState(false);
-  const sortedWeightData = userWeightData.sort((a, b) => a.t - b.t);
-  const initialValue = sortedWeightData[sortedWeightData.length - 1]?.w ?? 80;
+  const mergedWeightData = useMemo(
+    () => mergeWeightEntries(userWeightData, healthWeightData),
+    [userWeightData, healthWeightData]
+  );
+  const initialValue = mergedWeightData[mergedWeightData.length - 1]?.w ?? 80;
   const [userWeightValue, setUserWeightValue] = useState(initialValue);
   const [chartWidth, setChartWidth] = useState(0);
   const chartWrapperRef = useRef<HTMLDivElement>(null);
@@ -82,20 +84,17 @@ function WeightChart() {
   }, [userWeightValue, userWeightData, setUserWeightData]);
 
   const dataToShow = useMemo(() => {
-    if (userWeightData.length > 0) {
-      const sortedByDate = [...userWeightData].sort((a, b) => a.t - b.t);
-      const sortedByWeight = [...userWeightData].sort((a, b) => a.w - b.w);
+    if (mergedWeightData.length > 0) {
+      const sortedByWeight = [...mergedWeightData].sort((a, b) => a.w - b.w);
       const minValue = sortedByWeight[0].w;
 
-      const converted = sortedByDate.map((el) => ({
+      return mergedWeightData.map((el) => ({
         ...el,
         chartValue: el.w - minValue + 1,
       }));
-
-      return converted;
     }
     return [];
-  }, [userWeightData]);
+  }, [mergedWeightData]);
 
   const getAverage = (weightData: Array<{ w: number }>) => {
     if (weightData.length > 0) {
@@ -273,7 +272,10 @@ function WeightChart() {
             </Typography>
             <Button
               variant="contained"
-              onClick={() => setDialogOpen(true)}
+              onClick={() => {
+                setUserWeightValue(mergedWeightData[mergedWeightData.length - 1]?.w ?? 80);
+                setDialogOpen(true);
+              }}
               sx={{
                 fontSize: '13px',
                 padding: '6px 10px',
@@ -290,7 +292,7 @@ function WeightChart() {
       <WeightDetailDialog
         open={isDetailOpen}
         onClose={() => setDetailOpen(false)}
-        weightData={userWeightData}
+        weightData={mergedWeightData}
       />
 
       <Dialog open={isDialogOpen}>
@@ -320,32 +322,7 @@ function WeightChart() {
           </Box>
 
           <Typography>{dayjs(Date.now()).format('DD MMM YYYY HH:mm')}</Typography>
-          <NumberField.Root
-            className={styles.Field}
-            value={userWeightValue}
-            step={0.1}
-            onValueChange={(value) => {
-              if (value && value >= 10) {
-                if (value > 300) {
-                  setUserWeightValue(300);
-                } else {
-                  setUserWeightValue(value);
-                }
-              } else {
-                setUserWeightValue(10);
-              }
-            }}
-          >
-            <NumberField.Group className={styles.Group}>
-              <NumberField.Decrement className={styles.LargeDecrement}>
-                <MinusIcon />
-              </NumberField.Decrement>
-              <NumberField.Input className={styles.LargeInput} inputMode="decimal" />
-              <NumberField.Increment className={styles.LargeIncrement}>
-                <PlusIcon />
-              </NumberField.Increment>
-            </NumberField.Group>
-          </NumberField.Root>
+          {isDialogOpen && <WeightWheelPicker value={userWeightValue} onChange={setUserWeightValue} />}
           <Button fullWidth variant="outlined" onClick={handleSaveWeight}>
             Save weight
           </Button>

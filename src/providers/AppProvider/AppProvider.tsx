@@ -10,6 +10,7 @@ import {
   ExerciseOptionType,
   MOCKED_EXERCISES,
   USER_WEIGHT_STORAGE_KEY,
+  HEALTH_WEIGHT_STORAGE_KEY,
   UserWeightDataType,
 } from './AppProvider.constants';
 import { Alert, Box } from '@mui/material';
@@ -30,6 +31,8 @@ export interface IApp {
   allExercises: ExerciseOptionType[];
   userWeightData: UserWeightDataType[];
   setUserWeightData: (v: UserWeightDataType[]) => void;
+  healthWeightData: UserWeightDataType[];
+  setHealthWeightData: (v: UserWeightDataType[]) => void;
 }
 
 export type SetType = {
@@ -89,6 +92,10 @@ function AppProvider({ children }: { children: ReactNode }) {
     []
   );
   const [userWeightData, setUserWeightData] = useLocalStorageState<UserWeightDataType[]>(USER_WEIGHT_STORAGE_KEY, []);
+  const [healthWeightData, setHealthWeightData] = useLocalStorageState<UserWeightDataType[]>(
+    HEALTH_WEIGHT_STORAGE_KEY,
+    []
+  );
 
   function getLocalStorageSize() {
     let total = 0;
@@ -138,6 +145,8 @@ function AppProvider({ children }: { children: ReactNode }) {
     allExercises,
     userWeightData,
     setUserWeightData,
+    healthWeightData,
+    setHealthWeightData,
   };
 
   return (

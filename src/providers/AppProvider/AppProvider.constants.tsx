@@ -4,6 +4,7 @@ export const DEFAULT_WEIGHT_STORAGE_KEY = 'default_weight';
 export const DEFAULT_REPEATS_STORAGE_KEY = 'default_repeats';
 export const CUSTOM_EXERCISES_STORAGE_KEY = 'cumstom_exercises';
 export const USER_WEIGHT_STORAGE_KEY = 'user_weight';
+export const HEALTH_WEIGHT_STORAGE_KEY = 'health_weight';
 
 export const DEFAULT_WEIGHT = 50;
 export const DEFAULT_REPEATS = 8;
@@ -36,6 +37,24 @@ export type UserWeightDataType = {
   // weight
   w: number;
 };
+
+export type WeightEntryType = UserWeightDataType & {
+  fromHealth?: boolean;
+};
+
+export function mergeWeightEntries(
+  appWeight: UserWeightDataType[],
+  healthWeight: UserWeightDataType[]
+): WeightEntryType[] {
+  const merged = new Map<string, WeightEntryType>();
+  appWeight.forEach((entry) => {
+    merged.set(`${entry.t}|${entry.w}`, { ...entry, fromHealth: false });
+  });
+  healthWeight.forEach((entry) => {
+    merged.set(`${entry.t}|${entry.w}`, { ...entry, fromHealth: true });
+  });
+  return Array.from(merged.values()).sort((a, b) => a.t - b.t);
+}
 
 export const MOCKED_EXERCISES: ExerciseOptionType[] = [
   // Грудь
