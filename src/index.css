@@ -305,3 +305,83 @@ code {
   75%   { transform: translate(-20px , 5px)}
   100%   { transform: translate(0 , 10px)}
 }
+
+[data-sonner-toaster] {
+  z-index: 20000 !important;
+  --width: min(320px, calc(100vw - 16px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px))) !important;
+  box-sizing: border-box;
+}
+
+@media (max-width: 600px) {
+  [data-sonner-toaster] {
+    left: auto !important;
+    right: var(--mobile-offset-right, 8px) !important;
+    width: var(--width) !important;
+    max-width: calc(100vw - 16px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)) !important;
+  }
+
+  [data-sonner-toaster] [data-sonner-toast] {
+    left: auto !important;
+    right: 0 !important;
+    width: max-content !important;
+    max-width: 100% !important;
+  }
+}
+
+[data-sonner-toast].gn-toast {
+  box-sizing: border-box !important;
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+  margin-left: auto !important;
+  margin-right: 0 !important;
+  border: 0.5px solid var(--glass-border) !important;
+  background: var(--glass-bg-strong) !important;
+  color: var(--text-primary) !important;
+  box-shadow: var(--glass-shadow) !important;
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+[data-sonner-toast].gn-toast [data-title],
+[data-sonner-toast].gn-toast [data-description] {
+  color: var(--text-primary) !important;
+}
+
+[data-sonner-toast].gn-toast--short {
+  width: max-content !important;
+  max-width: 100% !important;
+  padding: 8px 12px !important;
+  font-size: 13px !important;
+  font-weight: 650;
+}
+
+[data-sonner-toast].gn-toast--short [data-content],
+[data-sonner-toast].gn-toast--short [data-title] {
+  flex: 0 0 auto !important;
+  min-width: auto !important;
+  white-space: nowrap;
+}
+
+[data-sonner-toast].gn-toast--short [data-icon] {
+  display: flex;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+[data-sonner-toast].gn-toast--large {
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 14px 16px !important;
+}
+
+[data-sonner-toast].gn-toast--large [data-title] {
+  font-size: 15px !important;
+  font-weight: 750;
+}
+
+[data-sonner-toast].gn-toast--large [data-description] {
+  font-size: 13px !important;
+  color: var(--text-muted) !important;
+  margin-top: 4px;
+}

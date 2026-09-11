@@ -11,6 +11,8 @@ import { withAlpha } from '../theme/colorUtils';
 import packageJson from '../../package.json';
 import { collectObservations, observationToWeight } from '../utils/appleHealth';
 import { UserWeightDataType } from '../providers/AppProvider/AppProvider.constants';
+import { notifyError, notifyLarge } from '../utils/notify';
+import { useConfirm } from '../providers/ConfirmProvider';
 
 function Settings() {
   const {
@@ -32,11 +34,9 @@ function Settings() {
     healthWeightData,
   } = useAppContext();
   const { colors } = useThemeSettings();
+  const confirm = useConfirm();
   const [isImportDialogOpen, setImportDialogOpen] = useState(false);
   const [importPayload, setImportPayload] = useState('');
-
-  const [isImportFinished, setImportFinished] = useState(false);
-  const [isError, setError] = useState(false);
   const healthFileInputRef = useRef<HTMLInputElement>(null);
   const [healthModal, setHealthModal] = useState<'closed' | 'choose' | 'paste'>('closed');
   const [healthXmlText, setHealthXmlText] = useState('');
@@ -106,6 +106,11 @@ function Settings() {
           percent: 100,
           count: sorted.length,
         });
+        if (sorted.length) {
+          notifyLarge('Apple Health imported', `${sorted.length} weight records saved.`);
+        } else {
+          notifyLarge('No weight records found', `Nothing to import from this ${sourceLabel}.`);
+        }
       } catch (err) {
         console.log('Apple Health import failed', err);
         setHealthImport({
@@ -114,6 +119,7 @@ function Settings() {
           percent: 100,
           count: healthWeightData.length,
         });
+        notifyError('Apple Health import failed', `Could not import this ${sourceLabel}.`);
       }
     },
     [healthWeightData.length, setHealthWeightData]
@@ -155,6 +161,7 @@ function Settings() {
           percent: 100,
           count: healthWeightData.length,
         });
+        notifyError('Apple Health import failed', 'Could not read this file.');
       };
 
       reader.readAsText(file);
@@ -202,11 +209,12 @@ function Settings() {
         setHealthWeightData(healthWeightData);
       }
 
-      setImportFinished(true);
+      setImportDialogOpen(false);
+      setImportPayload('');
+      notifyLarge('Data imported', 'Reload the app to apply everything.');
     } catch (err) {
       console.log('import error:', err);
-      setError(true);
-      setImportFinished(true);
+      notifyError('Import failed', 'This backup JSON is invalid.');
     }
   }, [
     importPayload,
@@ -229,29 +237,6 @@ function Settings() {
         justifyContent: 'flex-start',
       }}
     >
-      {isImportFinished && (
-        <Box
-          sx={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            bgcolor: 'background.default',
-            padding: '50px',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            zIndex: 9999999,
-          }}
-        >
-          {isError ? (
-            <Typography sx={{ fontSize: 18 }}>Something went wrong :(</Typography>
-          ) : (
-            <Typography sx={{ fontSize: 18 }}>Data imported, please reload the app</Typography>
-          )}
-        </Box>
-      )}
       <Box
         sx={{
           width: '100%',
@@ -375,8 +360,9 @@ function Settings() {
             Export
           </Button>
           <Button
-            onClick={() => {
-              if (window.confirm('Attention! This is unsafe and can break the app.')) {
+            onClick={async () => {
+              const ok = await confirm('Attention! This is unsafe and can break the app.');
+              if (ok) {
                 setImportDialogOpen(true);
               }
             }}

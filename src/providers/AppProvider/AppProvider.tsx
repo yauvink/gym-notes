@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useEffect, useMemo, useState } from 'react';
+import { createContext, ReactNode, useMemo, useState } from 'react';
 import {
   DEFAULT_REPEATS,
   DEFAULT_REPEATS_STORAGE_KEY,
@@ -13,7 +13,7 @@ import {
   HEALTH_WEIGHT_STORAGE_KEY,
   UserWeightDataType,
 } from './AppProvider.constants';
-import { Alert, Box } from '@mui/material';
+import { notifyError, notifyLarge } from '../../utils/notify';
 
 export interface IApp {
   workouts: WorkoutType[];
@@ -76,7 +76,6 @@ function useLocalStorageState<T>(key: string, defaultValue: T): [T, (value: T) =
 }
 
 function AppProvider({ children }: { children: ReactNode }) {
-  const [alert, setAlert] = useState<string | null>(null);
   const [workouts, setWorkouts] = useLocalStorageState<WorkoutType[]>(WORKOUTS_STORAGE_KEY, []);
   const [userTrainingDays, setUserTrainingDays] = useLocalStorageState<UserTrainingDayType[]>(
     USER_TRAINING_DAYS_STORAGE_KEY,
@@ -107,18 +106,16 @@ function AppProvider({ children }: { children: ReactNode }) {
     return `Local Storage Usage: ${(total / 1024).toFixed(2)} KB`;
   }
 
-  useEffect(() => {
-    if (alert) {
-      setTimeout(() => {
-        setAlert(null);
-      }, 500);
-    }
-  }, [alert]);
-
   const handleExportData = (data: unknown) => {
     const dataToExport = JSON.stringify(data);
-    navigator.clipboard.writeText(dataToExport);
-    setAlert('Copied to clipboard');
+    void navigator.clipboard.writeText(dataToExport).then(
+      () => {
+        notifyLarge('Copied to clipboard', 'Backup JSON is ready to paste.');
+      },
+      () => {
+        notifyError('Could not copy', 'Clipboard access was denied.');
+      }
+    );
   };
 
   const allExercises = useMemo(() => {
@@ -149,35 +146,7 @@ function AppProvider({ children }: { children: ReactNode }) {
     setHealthWeightData,
   };
 
-  return (
-    <AppContext.Provider value={value}>
-      <>
-        {alert && (
-          <Box
-            sx={{
-              position: 'fixed',
-              zIndex: 999,
-              top: 0,
-              width: '100%',
-            }}
-          >
-            <Alert
-              sx={{
-                borderRadius: 0,
-                bgcolor: 'primary.main',
-                color: 'primary.contrastText',
-              }}
-              severity="success"
-              variant="filled"
-            >
-              {alert}
-            </Alert>
-          </Box>
-        )}
-        {children}
-      </>
-    </AppContext.Provider>
-  );
+  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }
 
 export default AppProvider;

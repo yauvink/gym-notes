@@ -80,3 +80,19 @@ export function MinusIcon(props: React.ComponentProps<'svg'>) {
     </svg>
   );
 }
+
+export function DoneIcon(props: React.ComponentProps<'svg'>) {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden {...props}>
+      <circle cx="12" cy="12" r="10" fill="#2F9E6B" />
+      <path
+        d="M7.6 12.2 10.5 15.1 16.5 8.8"
+        fill="none"
+        stroke="#F7F8F4"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}

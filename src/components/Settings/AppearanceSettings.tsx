@@ -3,6 +3,7 @@ import { useThemeSettings } from '../../theme';
 import { AMBER_COLORS, ThemeColors } from '../../theme/defaults';
 import { hexToHsl, hslToHex } from '../../theme/colorUtils';
 import ThemeModeToggle from './ThemeModeToggle';
+import { notifyShort } from '../../utils/notify';
 
 const COLOR_LABELS: Record<keyof ThemeColors, string> = {
   primary: 'Primary',
@@ -113,7 +114,10 @@ function AppearanceSettings() {
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mt: 0.5 }}>
           <Button
             variant="contained"
-            onClick={resetAmber}
+            onClick={() => {
+              resetAmber();
+              notifyShort('Colors reset');
+            }}
             disabled={isAmberSelected}
             sx={{
               bgcolor: AMBER_COLORS.primary,
@@ -128,7 +132,14 @@ function AppearanceSettings() {
           >
             Reset to default (amber)
           </Button>
-          <Button variant="outlined" color="inherit" onClick={pickRandomColors}>
+          <Button
+            variant="outlined"
+            color="inherit"
+            onClick={() => {
+              pickRandomColors();
+              notifyShort('Colors updated');
+            }}
+          >
             Pick random colors
           </Button>
         </Box>

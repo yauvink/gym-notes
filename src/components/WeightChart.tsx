@@ -9,6 +9,7 @@ import { useThemeSettings } from '../theme';
 import WeightDetailDialog from './WeightDetailDialog';
 import { mergeWeightEntries } from '../providers/AppProvider/AppProvider.constants';
 import WeightWheelPicker from './WeightWheelPicker';
+import { notifyShort } from '../utils/notify';
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
@@ -80,6 +81,7 @@ function WeightChart() {
         },
       ]);
       setDialogOpen(false);
+      notifyShort('Weight saved');
     }
   }, [userWeightValue, userWeightData, setUserWeightData]);
 

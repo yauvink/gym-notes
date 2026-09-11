@@ -21,12 +21,15 @@ import { calcTrainingTotalWeight, getExerciseColorById, getExerciseName } from '
 import WeightChart from './WeightChart';
 import StatCard from './common/StatCard';
 import { useThemeSettings } from '../theme';
+import { notifyShort } from '../utils/notify';
+import { useConfirm } from '../providers/ConfirmProvider';
 
 const SOBER_DATE_STORAGE_KEY = 'date_key_21313';
 
 function Schedule() {
   const { userTrainingDays, setUserTrainingDays, workouts, allExercises } = useAppContext();
   const { colors } = useThemeSettings();
+  const confirm = useConfirm();
   const [isAddTrainingDialogOpen, setAddTrainingDialogOpen] = useState(false);
   const [isSoberDialogOpen, setSoberDialogOpen] = useState(false);
   const [selectedDate, setSelectedDate] = React.useState<Dayjs | null | undefined>(dayjs(new Date()));
@@ -68,6 +71,7 @@ function Schedule() {
         },
       ];
       setUserTrainingDays(newTrainingDays);
+      notifyShort('Training day added');
       handleCloseAddTrainDayDialog();
     }
   }, [userTrainingDays, setUserTrainingDays, selectedDate, selectedWorkoutId, workouts]);
@@ -98,12 +102,12 @@ function Schedule() {
     return (31 / recentCount).toFixed(1);
   }, [userTrainingDays]);
 
-  const handleDeleteTrainingDay = () => {
-    if (window.confirm('Are you sure want to delete training day? This action cannot be undone.')) {
-      if (selectedDate) {
-        const newTrainingDays = userTrainingDays.filter((el) => !dayjs(el.date).isSame(selectedDate, 'day'));
-        setUserTrainingDays(newTrainingDays);
-      }
+  const handleDeleteTrainingDay = async () => {
+    const ok = await confirm('Are you sure want to delete training day? This action cannot be undone.');
+    if (ok && selectedDate) {
+      const newTrainingDays = userTrainingDays.filter((el) => !dayjs(el.date).isSame(selectedDate, 'day'));
+      setUserTrainingDays(newTrainingDays);
+      notifyShort('Training day deleted');
     }
   };
 
@@ -490,10 +494,12 @@ function Schedule() {
                 setSoberSelectedDate(null);
                 setSoberDialogOpen(false);
                 window.localStorage.removeItem(SOBER_DATE_STORAGE_KEY);
+                notifyShort('Sober date cleared');
               } else {
                 setSoberSelectedDate(newValue);
                 setSoberDialogOpen(false);
                 window.localStorage.setItem(SOBER_DATE_STORAGE_KEY, JSON.stringify(newValue));
+                notifyShort('Sober date saved');
               }
             }}
             slotProps={{

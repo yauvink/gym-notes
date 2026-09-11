@@ -14,6 +14,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useAppContext } from '../../providers/AppProvider/AppProvider.hook';
 import { ExerciseOptionType, MuscleGroup } from '../../providers/AppProvider/AppProvider.constants';
 import { getExerciseColorByCategory } from '../../utils';
+import { notifyShort } from '../../utils/notify';
 
 function AddExerciseDialog({ closeDialog }: { closeDialog: () => void }) {
   const { customExercises, setCustomExercises } = useAppContext();
@@ -30,6 +31,7 @@ function AddExerciseDialog({ closeDialog }: { closeDialog: () => void }) {
       },
     ];
     setCustomExercises(newCustomExercises);
+    notifyShort('Exercise added');
     closeDialog();
   }, [exerciseName, selectedCategory, customExercises, setCustomExercises, closeDialog]);
 

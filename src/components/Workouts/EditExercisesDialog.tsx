@@ -4,6 +4,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useAppContext } from '../../providers/AppProvider/AppProvider.hook';
 import { GroupedExerciseOptionType } from '../../providers/AppProvider/AppProvider.constants';
 import { getExerciseColorByCategory } from '../../utils';
+import { notifyShort } from '../../utils/notify';
 
 const renderGroup = (
   groupedOptions: GroupedExerciseOptionType,
@@ -84,6 +85,7 @@ function EditExercisesDialog({ closeDialog }: { closeDialog: () => void }) {
 
   const handleSaveExercises = useCallback(() => {
     setCustomExercises(localExercisesData);
+    notifyShort('Exercises saved');
     closeDialog();
   }, [localExercisesData, setCustomExercises, closeDialog]);
 

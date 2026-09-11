@@ -5,13 +5,16 @@ import App from './App';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
 import AppProvider from './providers/AppProvider';
+import ConfirmProvider from './providers/ConfirmProvider';
 import { ThemeSettingsProvider } from './theme';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
   <ThemeSettingsProvider>
     <AppProvider>
-      <App />
+      <ConfirmProvider>
+        <App />
+      </ConfirmProvider>
     </AppProvider>
   </ThemeSettingsProvider>
 );

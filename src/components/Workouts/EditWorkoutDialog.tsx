@@ -5,6 +5,8 @@ import { ExerciseType, WorkoutType } from '../../providers/AppProvider/AppProvid
 import { useAppContext } from '../../providers/AppProvider/AppProvider.hook';
 import Exercise from './Exercise';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { notifyShort } from '../../utils/notify';
+import { useConfirm } from '../../providers/ConfirmProvider';
 
 function EditWorkoutDialog({
   closeDialog,
@@ -14,6 +16,7 @@ function EditWorkoutDialog({
   editTrainingId: string | null;
 }) {
   const { workouts, setWorkouts, defaultRepeats, defaultWeight, allExercises, userTrainingDays } = useAppContext();
+  const confirm = useConfirm();
   const editInitialData = workouts.find((el) => el.id === editTrainingId);
   const [workoutName, setWorkoutName] = useState(editInitialData?.name ?? '');
   const INITIAL_WORKOUT_DATA: ExerciseType = {
@@ -43,6 +46,7 @@ function EditWorkoutDialog({
           },
         ];
     setWorkouts(newWorkouts);
+    notifyShort(editTrainingId ? 'Workout updated' : 'Workout added');
     closeDialog();
   }, [setWorkouts, workouts, workoutName, exercises, closeDialog, editTrainingId]);
 
@@ -50,19 +54,23 @@ function EditWorkoutDialog({
     setExercises((prev) => [...prev, INITIAL_WORKOUT_DATA]);
   };
 
-  const handleDeleteExercise = (rowIndex: number) => {
-    if (window.confirm('Remove this exercise?')) {
+  const handleDeleteExercise = async (rowIndex: number) => {
+    const ok = await confirm('Remove this exercise?');
+    if (ok) {
       setExercises((prev) => [...prev.slice(0, rowIndex), ...prev.slice(rowIndex + 1, prev.length)]);
     }
   };
 
-  const handleDeleteTraining = () => {
-    if (editTrainingId) {
-      if (window.confirm('Are you sure want to delete this workout? This action cannot be undone.')) {
-        const newWorkouts = workouts.filter((el) => el.id !== editTrainingId);
-        setWorkouts(newWorkouts);
-        closeDialog();
-      }
+  const handleDeleteTraining = async () => {
+    if (!editTrainingId) {
+      return;
+    }
+    const ok = await confirm('Are you sure want to delete this workout? This action cannot be undone.');
+    if (ok) {
+      const newWorkouts = workouts.filter((el) => el.id !== editTrainingId);
+      setWorkouts(newWorkouts);
+      notifyShort('Workout deleted');
+      closeDialog();
     }
   };
 

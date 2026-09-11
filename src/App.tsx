@@ -10,6 +10,7 @@ import Workouts from './components/Workouts/Workouts';
 import Stats from './components/Stats';
 import Settings from './components/Settings';
 import GlassTabBar from './components/common/GlassTabBar';
+import AppToaster from './components/common/AppToaster';
 
 dayjs.extend(isLeapYear);
 dayjs.extend(updateLocale);
@@ -22,6 +23,7 @@ function App() {
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <AppToaster />
       <Box
         sx={{
           height: '100dvh',
