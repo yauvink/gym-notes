@@ -53,8 +53,9 @@ function Settings() {
       workouts,
       exercises: customExercises,
       weight: userWeightData,
+      ...(healthWeightData.length > 0 ? { health_weight: healthWeightData } : {}),
     });
-  }, [handleExportData, userTrainingDays, workouts, customExercises, userWeightData]);
+  }, [handleExportData, userTrainingDays, workouts, customExercises, userWeightData, healthWeightData]);
 
   const processHealthXml = useCallback(
     async (xml: string, sourceLabel: string) => {
@@ -195,6 +196,11 @@ function Settings() {
       setWorkouts(data.workouts);
       setCustomExercises(data.exercises);
       setUserWeightData(data.weight);
+      if (Array.isArray(data.health_weight)) {
+        setHealthWeightData(data.health_weight);
+      } else if (healthWeightData.length > 0) {
+        setHealthWeightData(healthWeightData);
+      }
 
       setImportFinished(true);
     } catch (err) {
@@ -202,7 +208,15 @@ function Settings() {
       setError(true);
       setImportFinished(true);
     }
-  }, [importPayload, setUserTrainingDays, setWorkouts, setUserWeightData, setCustomExercises]);
+  }, [
+    importPayload,
+    setUserTrainingDays,
+    setWorkouts,
+    setUserWeightData,
+    setCustomExercises,
+    setHealthWeightData,
+    healthWeightData,
+  ]);
 
   return (
     <Box
