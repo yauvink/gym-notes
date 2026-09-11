@@ -81,6 +81,27 @@ export function MinusIcon(props: React.ComponentProps<'svg'>) {
   );
 }
 
+export function ShareIcon(props: React.ComponentProps<'svg'>) {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+      {...props}
+    >
+      <path d="M12 14V4" />
+      <path d="M8.2 7.2 12 3.4l3.8 3.8" />
+      <path d="M6 11v8a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-8" />
+    </svg>
+  );
+}
+
 export function DoneIcon(props: React.ComponentProps<'svg'>) {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden {...props}>

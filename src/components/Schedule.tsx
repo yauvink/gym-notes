@@ -8,46 +8,56 @@ import {
   Select,
   SelectChangeEvent,
   Typography,
-} from '@mui/material';
-import React, { useCallback, useMemo, useState } from 'react';
-import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
-import { DatePicker, PickersDay } from '@mui/x-date-pickers';
-import CloseIcon from '@mui/icons-material/Close';
-import DeleteIcon from '@mui/icons-material/Delete';
-import dayjs, { Dayjs } from 'dayjs';
-import { useAppContext } from '../providers/AppProvider/AppProvider.hook';
-import { UserTrainingDayType } from '../providers/AppProvider/AppProvider';
-import { calcTrainingTotalWeight, getExerciseColorById, getExerciseName } from '../utils';
-import WeightChart from './WeightChart';
-import StatCard from './common/StatCard';
-import { useThemeSettings } from '../theme';
-import { notifyShort } from '../utils/notify';
-import { useConfirm } from '../providers/ConfirmProvider';
+} from "@mui/material";
+import React, { useCallback, useMemo, useState } from "react";
+import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
+import { DatePicker, PickersDay } from "@mui/x-date-pickers";
+import CloseIcon from "@mui/icons-material/Close";
+import DeleteIcon from "@mui/icons-material/Delete";
+import dayjs, { Dayjs } from "dayjs";
+import { useAppContext } from "../providers/AppProvider/AppProvider.hook";
+import { UserTrainingDayType } from "../providers/AppProvider/AppProvider";
+import {
+  calcTrainingTotalWeight,
+  getExerciseColorById,
+  getExerciseName,
+} from "../utils";
+import WeightChart from "./WeightChart";
+import StatCard from "./common/StatCard";
+import { useThemeSettings } from "../theme";
+import { withAlpha } from "../theme/colorUtils";
+import { notifyError, notifyLarge, notifyPending, notifyShort } from "../utils/notify";
+import { useConfirm } from "../providers/ConfirmProvider";
+import { ShareIcon } from "./common/Icons";
+import chatImage from "../assets/images/chat.png";
 
-const SOBER_DATE_STORAGE_KEY = 'date_key_21313';
+const SOBER_DATE_STORAGE_KEY = "date_key_21313";
 
 function Schedule() {
-  const { userTrainingDays, setUserTrainingDays, workouts, allExercises } = useAppContext();
+  const { userTrainingDays, setUserTrainingDays, workouts, allExercises } =
+    useAppContext();
   const { colors } = useThemeSettings();
   const confirm = useConfirm();
   const [isAddTrainingDialogOpen, setAddTrainingDialogOpen] = useState(false);
   const [isSoberDialogOpen, setSoberDialogOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = React.useState<Dayjs | null | undefined>(dayjs(new Date()));
+  const [selectedDate, setSelectedDate] = React.useState<
+    Dayjs | null | undefined
+  >(dayjs(new Date()));
   const savedSoberDate = window.localStorage.getItem(SOBER_DATE_STORAGE_KEY);
-  const [soberSelectedDate, setSoberSelectedDate] = React.useState<Dayjs | null | undefined>(
-    savedSoberDate !== null ? dayjs(JSON.parse(savedSoberDate)) : null
-  );
+  const [soberSelectedDate, setSoberSelectedDate] = React.useState<
+    Dayjs | null | undefined
+  >(savedSoberDate !== null ? dayjs(JSON.parse(savedSoberDate)) : null);
   const [viewedYear, setViewedYear] = useState(dayjs(new Date()).year());
-  const [selectedWorkoutId, setSelectedWorkoutId] = React.useState('');
+  const [selectedWorkoutId, setSelectedWorkoutId] = React.useState("");
 
   const soberDays = useMemo(() => {
     if (soberSelectedDate !== null && soberSelectedDate !== undefined) {
-      const daysDiff = dayjs(new Date()).diff(soberSelectedDate, 'day', true);
+      const daysDiff = dayjs(new Date()).diff(soberSelectedDate, "day", true);
 
       let weekendCount = 0;
 
       for (let i = 0; i <= daysDiff; i++) {
-        const currentDate = soberSelectedDate.add(i, 'day');
+        const currentDate = soberSelectedDate.add(i, "day");
         const dayOfWeek = currentDate.day(); // 0 = Sunday, 6 = Saturday
 
         if (dayOfWeek === 0 || dayOfWeek === 6) {
@@ -57,7 +67,7 @@ function Schedule() {
 
       return { total: daysDiff.toFixed(), real: weekendCount };
     }
-    return { total: '+', real: null };
+    return { total: "+", real: null };
   }, [soberSelectedDate]);
 
   const handleAddTraining = useCallback(() => {
@@ -71,15 +81,22 @@ function Schedule() {
         },
       ];
       setUserTrainingDays(newTrainingDays);
-      notifyShort('Training day added');
+      notifyShort("Training day added");
       handleCloseAddTrainDayDialog();
     }
-  }, [userTrainingDays, setUserTrainingDays, selectedDate, selectedWorkoutId, workouts]);
+  }, [
+    userTrainingDays,
+    setUserTrainingDays,
+    selectedDate,
+    selectedWorkoutId,
+    workouts,
+  ]);
 
-  const isTrainingDay = (date: Dayjs) => userTrainingDays.some((t) => dayjs(t.date).isSame(date, 'day'));
+  const isTrainingDay = (date: Dayjs) =>
+    userTrainingDays.some((t) => dayjs(t.date).isSame(date, "day"));
 
   const handleCloseAddTrainDayDialog = () => {
-    setSelectedWorkoutId('');
+    setSelectedWorkoutId("");
     setAddTrainingDialogOpen(false);
   };
 
@@ -94,27 +111,77 @@ function Schedule() {
   }, [userTrainingDays, viewedYear]);
 
   const trainingsAvgPerMonth = useMemo(() => {
-    const from = dayjs().startOf('day').subtract(30, 'day');
-    const recentCount = userTrainingDays.filter((el) => !dayjs(el.date).isBefore(from, 'day')).length;
+    const from = dayjs().startOf("day").subtract(30, "day");
+    const recentCount = userTrainingDays.filter(
+      (el) => !dayjs(el.date).isBefore(from, "day"),
+    ).length;
     if (recentCount === 0) {
       return null;
     }
     return (31 / recentCount).toFixed(1);
   }, [userTrainingDays]);
 
+  const handleShareTrainings = async () => {
+    const ok = await confirm("Send this year's training count to Chat?");
+    if (!ok) {
+      return;
+    }
+
+    const toastId = notifyPending("Sending to Chat…", "Waiting for a response.");
+
+    try {
+      const response = await fetch("TODO_CHANGE_FOR_REAL_URL", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: "TODO_CHANGE_FOR_REAL",
+          days_count: trainCount.trainings,
+        }),
+      });
+      const data = (await response.json()) as {
+        success?: boolean;
+        error?: string;
+      };
+      if (!response.ok || !data.success) {
+        notifyError(
+          "Could not send to Chat",
+          data.error || "The server rejected this request.",
+          toastId,
+        );
+        return;
+      }
+      notifyLarge(
+        "Sent to Chat",
+        `${trainCount.trainings} training days were shared.`,
+        toastId,
+      );
+    } catch (err) {
+      console.log("share trainings failed", err);
+      notifyError(
+        "Could not send to Chat",
+        "Check the connection and try again.",
+        toastId,
+      );
+    }
+  };
+
   const handleDeleteTrainingDay = async () => {
-    const ok = await confirm('Are you sure want to delete training day? This action cannot be undone.');
+    const ok = await confirm(
+      "Are you sure want to delete training day? This action cannot be undone.",
+    );
     if (ok && selectedDate) {
-      const newTrainingDays = userTrainingDays.filter((el) => !dayjs(el.date).isSame(selectedDate, 'day'));
+      const newTrainingDays = userTrainingDays.filter(
+        (el) => !dayjs(el.date).isSame(selectedDate, "day"),
+      );
       setUserTrainingDays(newTrainingDays);
-      notifyShort('Training day deleted');
+      notifyShort("Training day deleted");
     }
   };
 
   const selectedDayData = useMemo(() => {
     if (selectedDate) {
       const result = userTrainingDays.find((el) => {
-        return dayjs(el.date).isSame(selectedDate, 'day');
+        return dayjs(el.date).isSame(selectedDate, "day");
       });
       return result;
     }
@@ -127,36 +194,90 @@ function Schedule() {
   return (
     <Box
       sx={{
-        padding: '12px 16px 16px',
-        paddingTop: 'calc(12px + env(safe-area-inset-top, 0px))',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'flex-start',
-        gap: '10px',
+        padding: "12px 16px 16px",
+        paddingTop: "calc(12px + env(safe-area-inset-top, 0px))",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "flex-start",
+        gap: "10px",
       }}
     >
       <Box
         sx={{
-          display: 'flex',
-          gap: '10px',
-          width: '100%',
-          maxWidth: '500px',
+          display: "flex",
+          gap: "10px",
+          width: "100%",
+          maxWidth: "500px",
         }}
       >
         <StatCard
           label="Sober days"
           value={soberDays.total}
-          valueSuffix={soberDays.real !== null ? `Real: ${soberDays.real}` : undefined}
+          valueSuffix={
+            soberDays.real !== null ? `Real: ${soberDays.real}` : undefined
+          }
           accent={colors.secondary}
+          flex="0 0 calc(40% - 5px)"
           onClick={() => setSoberDialogOpen(true)}
         />
         <StatCard
           label={`Trainings in ${viewedYear}`}
           value={trainCount.trainings}
           valueSuffix={`/${trainCount.days}`}
-          corner={trainingsAvgPerMonth ? `av/m ${trainingsAvgPerMonth}` : 'av/m —'}
+          headerAction={
+            <Box
+              sx={{
+                fontSize: 11,
+                fontWeight: 600,
+                color: withAlpha(colors.primary, 0.8),
+                flexShrink: 0,
+              }}
+            >
+              {trainingsAvgPerMonth ? `av/m ${trainingsAvgPerMonth}` : "av/m —"}
+            </Box>
+          }
           accent={colors.primary}
+          flex="0 0 calc(60% - 5px)"
+          corner={
+            <Button
+              variant="outlined"
+              color="secondary"
+              aria-label="Share trainings to Chat"
+              onClick={(event) => {
+                event.stopPropagation();
+                void handleShareTrainings();
+              }}
+              sx={{
+                minHeight: 28,
+                minWidth: 0,
+                px: 1,
+                py: 0.25,
+                gap: "5px",
+                fontSize: 11,
+                fontWeight: 650,
+                lineHeight: 1,
+                position: "relative",
+                zIndex: 1,
+                flexShrink: 0,
+              }}
+            >
+              <ShareIcon />
+              SEND
+              <Box
+                component="img"
+                src={chatImage}
+                alt=""
+                sx={{
+                  width: 18,
+                  height: 18,
+                  borderRadius: "50%",
+                  objectFit: "cover",
+                  display: "block",
+                }}
+              />
+            </Button>
+          }
         />
       </Box>
 
@@ -168,65 +289,67 @@ function Schedule() {
         showDaysOutsideCurrentMonth
         className="glass-surface"
         onMonthChange={(newMonth) => {
-          setViewedYear(Number(newMonth.format('YYYY')));
+          setViewedYear(Number(newMonth.format("YYYY")));
         }}
         sx={{
-          width: '100%',
-          maxWidth: '100%',
-          height: 'auto',
-          maxHeight: 'none',
-          '--PickerDay-size': '48px',
-          '--PickerDay-horizontalMargin': '0px',
-          p: '4px 2px 6px',
-          '&.MuiDateCalendar-root': {
-            width: '100%',
-            maxWidth: 'none',
-            backgroundColor: 'transparent',
+          width: "100%",
+          maxWidth: "100%",
+          height: "auto",
+          maxHeight: "none",
+          "--PickerDay-size": "48px",
+          "--PickerDay-horizontalMargin": "0px",
+          p: "4px 2px 6px",
+          "&.MuiDateCalendar-root": {
+            width: "100%",
+            maxWidth: "none",
+            backgroundColor: "transparent",
           },
-          '& .MuiDateCalendar-viewTransitionContainer, & .MuiDayCalendar-root, & .MuiDayCalendar-monthContainer': {
-            width: '100%',
-          },
-          '& .MuiPickersCalendarHeader-root': {
-            paddingLeft: '8px',
-            paddingRight: '8px',
+          "& .MuiDateCalendar-viewTransitionContainer, & .MuiDayCalendar-root, & .MuiDayCalendar-monthContainer":
+            {
+              width: "100%",
+            },
+          "& .MuiPickersCalendarHeader-root": {
+            paddingLeft: "8px",
+            paddingRight: "8px",
             marginTop: 0,
             marginBottom: 0,
             minHeight: 40,
-            width: '100%',
+            width: "100%",
           },
-          '& .MuiPickersCalendarHeader-label': {
+          "& .MuiPickersCalendarHeader-label": {
             fontWeight: 800,
             fontSize: 16,
           },
-          '& .MuiPickersArrowSwitcher-button, & .MuiPickersCalendarHeader-switchViewButton': {
-            width: 36,
-            height: 36,
-          },
-          '& .MuiDayCalendar-header, & .MuiDayCalendar-weekContainer': {
-            justifyContent: 'space-between',
+          "& .MuiPickersArrowSwitcher-button, & .MuiPickersCalendarHeader-switchViewButton":
+            {
+              width: 36,
+              height: 36,
+            },
+          "& .MuiDayCalendar-header, & .MuiDayCalendar-weekContainer": {
+            justifyContent: "space-between",
             margin: 0,
-            padding: '0 4px',
+            padding: "0 4px",
           },
-          '& .MuiDayCalendar-weekDayLabel': {
+          "& .MuiDayCalendar-weekDayLabel": {
             width: 48,
             height: 22,
             fontSize: 12,
             fontWeight: 700,
             margin: 0,
           },
-          '& .MuiDayCalendar-slideTransition': {
+          "& .MuiDayCalendar-slideTransition": {
             minHeight: 288,
           },
-          '& .MuiPickersDay-root': {
+          "& .MuiPickersDay-root": {
             width: 48,
             height: 48,
             fontSize: 16,
             fontWeight: 600,
             margin: 0,
-            borderRadius: '16px',
+            borderRadius: "16px",
           },
-          '& .MuiYearCalendar-root, & .MuiMonthCalendar-root': {
-            width: '100%',
+          "& .MuiYearCalendar-root, & .MuiMonthCalendar-root": {
+            width: "100%",
           },
         }}
         slots={{
@@ -237,23 +360,23 @@ function Schedule() {
               <PickersDay
                 {...props}
                 onClick={() => {
-                  setSelectedDate(dayjs(props.day).startOf('day'));
+                  setSelectedDate(dayjs(props.day).startOf("day"));
                 }}
                 sx={{
                   width: 48,
                   height: 48,
                   fontSize: 16,
-                  backgroundColor: isTraining ? colors.primary : 'transparent',
-                  color: isTraining ? 'primary.contrastText' : undefined,
+                  backgroundColor: isTraining ? colors.primary : "transparent",
+                  color: isTraining ? "primary.contrastText" : undefined,
                   fontWeight: isTraining ? 700 : 600,
-                  borderRadius: '16px',
-                  '&.MuiPickersDay-today': {
-                    borderRadius: '16px',
+                  borderRadius: "16px",
+                  "&.MuiPickersDay-today": {
+                    borderRadius: "16px",
                   },
-                  '&.Mui-selected': {
+                  "&.Mui-selected": {
                     backgroundColor: colors.secondary,
-                    color: 'secondary.contrastText',
-                    '&:hover, &:focus': {
+                    color: "secondary.contrastText",
+                    "&:hover, &:focus": {
                       backgroundColor: colors.secondary,
                     },
                   },
@@ -264,13 +387,15 @@ function Schedule() {
         }}
       />
 
-      <Box sx={{ display: 'flex', gap: '12px', width: '100%', maxWidth: '500px' }}>
+      <Box
+        sx={{ display: "flex", gap: "12px", width: "100%", maxWidth: "500px" }}
+      >
         {selectedDayData ? (
           <Box
             sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              width: '100%',
+              display: "flex",
+              flexDirection: "column",
+              width: "100%",
             }}
           >
             {selectedDayData.workout ? (
@@ -282,45 +407,51 @@ function Schedule() {
               >
                 <Box
                   sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
                     gap: 1,
-                    mb: '5px',
+                    mb: "5px",
                   }}
                 >
                   <Typography
                     sx={{
-                      lineHeight: 'normal',
-                      fontSize: '18px',
+                      lineHeight: "normal",
+                      fontSize: "18px",
                       fontWeight: 700,
                       span: {
-                        fontSize: '15px',
+                        fontSize: "15px",
                         fontWeight: 400,
                         opacity: 0.5,
                       },
                     }}
                   >
-                    {selectedDayData.workout.name} <span>({calcTrainingTotalWeight(selectedDayData.workout)}kg)</span>
+                    {selectedDayData.workout.name}{" "}
+                    <span>
+                      ({calcTrainingTotalWeight(selectedDayData.workout)}kg)
+                    </span>
                   </Typography>
-                  <DeleteIcon sx={{ color: '#C47B7B', cursor: 'pointer', flexShrink: 0 }} onClick={() => handleDeleteTrainingDay()} />
+                  <DeleteIcon
+                    sx={{ color: "#C47B7B", cursor: "pointer", flexShrink: 0 }}
+                    onClick={() => handleDeleteTrainingDay()}
+                  />
                 </Box>
 
                 {selectedDayData.workout.exercises.map((exercise, i) => (
                   <Box
                     key={i}
                     sx={{
-                      display: 'flex',
-                      flexDirection: 'column',
+                      display: "flex",
+                      flexDirection: "column",
                     }}
                   >
                     <Box
                       sx={{
-                        padding: '5px 20px',
-                        display: 'flex',
-                        gap: '40px',
-                        justifyContent: 'flex-end',
-                        fontSize: '14px',
+                        padding: "5px 20px",
+                        display: "flex",
+                        gap: "40px",
+                        justifyContent: "flex-end",
+                        fontSize: "14px",
                         background: `${getExerciseColorById(exercise.exercise_id, allExercises)}20`,
                       }}
                     >
@@ -330,28 +461,31 @@ function Schedule() {
                       <Box
                         key={i}
                         sx={{
-                          padding: '0 20px',
-                          display: 'flex',
-                          gap: '40px',
-                          justifyContent: 'flex-end',
-                          fontSize: '14px',
+                          padding: "0 20px",
+                          display: "flex",
+                          gap: "40px",
+                          justifyContent: "flex-end",
+                          fontSize: "14px",
                           opacity: 0.6,
-                          borderBottom: i !== arr.length - 1 ? '1px solid rgba(0,0,0,0.07)' : undefined,
+                          borderBottom:
+                            i !== arr.length - 1
+                              ? "1px solid rgba(0,0,0,0.07)"
+                              : undefined,
                           div: {
-                            width: '50px',
-                            textAlign: 'center',
-                            color: set.wu ? 'green' : undefined,
-                            textWrap: 'nowrap',
+                            width: "50px",
+                            textAlign: "center",
+                            color: set.wu ? "green" : undefined,
+                            textWrap: "nowrap",
                           },
                         }}
                       >
                         <Box
                           sx={{
-                            lineHeight: set.wu ? '6px' : undefined,
-                            fontSize: set.wu ? '10px' : undefined,
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
+                            lineHeight: set.wu ? "6px" : undefined,
+                            fontSize: set.wu ? "10px" : undefined,
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
                           }}
                         >
                           {set.wu ? (
@@ -378,18 +512,21 @@ function Schedule() {
                 className="glass-surface"
                 sx={{
                   p: 1.5,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
                   gap: 1,
                 }}
               >
-                <Typography sx={{ textAlign: 'left', fontSize: 16 }}>
+                <Typography sx={{ textAlign: "left", fontSize: 16 }}>
                   No workout data
                   <br />
                   for this day
                 </Typography>
-                <DeleteIcon sx={{ color: '#C47B7B', cursor: 'pointer', flexShrink: 0 }} onClick={() => handleDeleteTrainingDay()} />
+                <DeleteIcon
+                  sx={{ color: "#C47B7B", cursor: "pointer", flexShrink: 0 }}
+                  onClick={() => handleDeleteTrainingDay()}
+                />
               </Box>
             )}
           </Box>
@@ -398,7 +535,7 @@ function Schedule() {
             variant="contained"
             onClick={() => setAddTrainingDialogOpen(true)}
             sx={{
-              margin: '4px auto',
+              margin: "4px auto",
             }}
           >
             + Add training day
@@ -409,20 +546,20 @@ function Schedule() {
       <Dialog open={isAddTrainingDialogOpen}>
         <Box
           sx={{
-            padding: '60px 20px 20px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '20px',
+            padding: "60px 20px 20px",
+            display: "flex",
+            flexDirection: "column",
+            gap: "20px",
           }}
         >
           <Box
             onClick={handleCloseAddTrainDayDialog}
             sx={{
-              position: 'absolute',
-              top: '20px',
-              right: '20px',
-              cursor: 'pointer',
-              '&:hover': {
+              position: "absolute",
+              top: "20px",
+              right: "20px",
+              cursor: "pointer",
+              "&:hover": {
                 opacity: 0.8,
               },
             }}
@@ -438,12 +575,16 @@ function Schedule() {
             label="Date"
             value={selectedDate}
             onChange={(newValue) => {
-              setSelectedDate(dayjs(newValue).startOf('day'));
+              setSelectedDate(dayjs(newValue).startOf("day"));
             }}
           />
           <FormControl fullWidth>
             <InputLabel>Select workout</InputLabel>
-            <Select value={selectedWorkoutId} label="Select workout" onChange={handleChange}>
+            <Select
+              value={selectedWorkoutId}
+              label="Select workout"
+              onChange={handleChange}
+            >
               {workouts.map((el, i) => (
                 <MenuItem key={i} value={el.id}>
                   {el.name}
@@ -464,20 +605,20 @@ function Schedule() {
       <Dialog open={isSoberDialogOpen}>
         <Box
           sx={{
-            padding: '60px 20px 20px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '20px',
+            padding: "60px 20px 20px",
+            display: "flex",
+            flexDirection: "column",
+            gap: "20px",
           }}
         >
           <Box
             onClick={() => setSoberDialogOpen(false)}
             sx={{
-              position: 'absolute',
-              top: '20px',
-              right: '20px',
-              cursor: 'pointer',
-              '&:hover': {
+              position: "absolute",
+              top: "20px",
+              right: "20px",
+              cursor: "pointer",
+              "&:hover": {
                 opacity: 0.8,
               },
             }}
@@ -494,17 +635,20 @@ function Schedule() {
                 setSoberSelectedDate(null);
                 setSoberDialogOpen(false);
                 window.localStorage.removeItem(SOBER_DATE_STORAGE_KEY);
-                notifyShort('Sober date cleared');
+                notifyShort("Sober date cleared");
               } else {
                 setSoberSelectedDate(newValue);
                 setSoberDialogOpen(false);
-                window.localStorage.setItem(SOBER_DATE_STORAGE_KEY, JSON.stringify(newValue));
-                notifyShort('Sober date saved');
+                window.localStorage.setItem(
+                  SOBER_DATE_STORAGE_KEY,
+                  JSON.stringify(newValue),
+                );
+                notifyShort("Sober date saved");
               }
             }}
             slotProps={{
               actionBar: {
-                actions: ['today', 'clear', 'accept'],
+                actions: ["today", "clear", "accept"],
               },
             }}
           />
