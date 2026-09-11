@@ -34,7 +34,15 @@ import {
 } from "../utils/notify";
 import { useConfirm } from "../providers/ConfirmProvider";
 import { ShareIcon } from "./common/Icons";
+import TelegramLoginDialog from "./common/TelegramLoginDialog";
 import chatImage from "../assets/images/chat.png";
+import {
+  KACH_API_URL,
+  TelegramAuthUser,
+  clearTelegramUser,
+  getTelegramUser,
+  setTelegramUser,
+} from "../utils/telegramAuth";
 
 const SOBER_DATE_STORAGE_KEY = "date_key_21313";
 
@@ -54,6 +62,7 @@ function Schedule() {
   >(savedSoberDate !== null ? dayjs(JSON.parse(savedSoberDate)) : null);
   const [viewedYear, setViewedYear] = useState(dayjs(new Date()).year());
   const [selectedWorkoutId, setSelectedWorkoutId] = React.useState("");
+  const [isTelegramLoginOpen, setTelegramLoginOpen] = useState(false);
 
   const soberDays = useMemo(() => {
     if (soberSelectedDate !== null && soberSelectedDate !== undefined) {
@@ -126,52 +135,89 @@ function Schedule() {
     return (31 / recentCount).toFixed(1);
   }, [userTrainingDays]);
 
+  const sendTrainingsToChat = useCallback(
+    async (telegramUser: TelegramAuthUser) => {
+      const toastId = notifyPending(
+        "Sending to Chat…",
+        "Waiting for a response.",
+      );
+
+      try {
+        const response = await fetch(`${KACH_API_URL}/api/share-count`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ...telegramUser,
+            days_count: trainCount.trainings,
+          }),
+        });
+        const data = (await response.json()) as {
+          success?: boolean;
+          error?: string;
+        };
+        if (response.status === 401) {
+          clearTelegramUser();
+          notifyError(
+            "Could not send to Chat",
+            data.error || "Sign in with Telegram again.",
+            toastId,
+          );
+          setTelegramLoginOpen(true);
+          return;
+        }
+        if (!response.ok || !data.success) {
+          notifyError(
+            "Could not send to Chat",
+            data.error || "The server rejected this request.",
+            toastId,
+          );
+          return;
+        }
+        notifyLarge(
+          "Sent to Chat",
+          `${trainCount.trainings} training days were shared.`,
+          toastId,
+        );
+      } catch (err) {
+        console.log("share trainings failed", err);
+        notifyError(
+          "Could not send to Chat",
+          "Check the connection and try again.",
+          toastId,
+        );
+      }
+    },
+    [trainCount.trainings],
+  );
+
   const handleShareTrainings = async () => {
-    const ok = await confirm("Send this year's training count to Chat?");
+    const telegramUser = getTelegramUser();
+    if (!telegramUser) {
+      setTelegramLoginOpen(true);
+      return;
+    }
+
+    const ok = await confirm(
+      <>
+        Send this year&apos;s training count to Chat?{" "}
+        <Box component="span" sx={{ color: colors.primary, fontWeight: 800 }}>
+          {trainCount.trainings}
+        </Box>{" "}
+        days.
+      </>,
+    );
     if (!ok) {
       return;
     }
 
-    const toastId = notifyPending(
-      "Sending to Chat…",
-      "Waiting for a response.",
-    );
-
-    try {
-      const response = await fetch("TODO_CHANGE_FOR_REAL_URL", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          id: "TODO_CHANGE_FOR_REAL",
-          days_count: trainCount.trainings,
-        }),
-      });
-      const data = (await response.json()) as {
-        success?: boolean;
-        error?: string;
-      };
-      if (!response.ok || !data.success) {
-        notifyError(
-          "Could not send to Chat",
-          data.error || "The server rejected this request.",
-          toastId,
-        );
-        return;
-      }
-      notifyLarge(
-        "Sent to Chat",
-        `${trainCount.trainings} training days were shared.`,
-        toastId,
-      );
-    } catch (err) {
-      console.log("share trainings failed", err);
-      notifyError(
-        "Could not send to Chat",
-        "Check the connection and try again.",
-        toastId,
-      );
-    }
+    await sendTrainingsToChat(telegramUser);
   };
+
+  const handleTelegramAuth = useCallback((user: TelegramAuthUser) => {
+    setTelegramUser(user);
+    setTelegramLoginOpen(false);
+    notifyShort("Signed in with Telegram");
+  }, []);
 
   const handleDeleteTrainingDay = async () => {
     const ok = await confirm(
@@ -257,31 +303,40 @@ function Schedule() {
                 void handleShareTrainings();
               }}
               sx={{
-                minHeight: 28,
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                minHeight: 31,
                 minWidth: 0,
-                px: 1,
-                py: 0.25,
-                gap: "5px",
-                fontSize: 11,
+                px: 0.5,
+                pl: 0.8,
+                py: 0.275,
+                gap: "6px",
+                fontSize: 12.65,
                 fontWeight: 650,
-                lineHeight: 1,
+                lineHeight: "normal",
                 position: "relative",
                 zIndex: 1,
                 flexShrink: 0,
+                "& svg": {
+                  display: "block",
+                  flexShrink: 0,
+                },
               }}
             >
-              <ShareIcon />
-              SEND
+              <ShareIcon width={18} height={18} />
+              SEND TO
               <Box
                 component="img"
                 src={chatImage}
                 alt=""
                 sx={{
-                  width: 18,
-                  height: 18,
+                  width: 21,
+                  height: 21,
                   borderRadius: "50%",
                   objectFit: "cover",
                   display: "block",
+                  flexShrink: 0,
                 }}
               />
             </Button>
@@ -662,6 +717,11 @@ function Schedule() {
           />
         </Box>
       </Dialog>
+      <TelegramLoginDialog
+        open={isTelegramLoginOpen}
+        onClose={() => setTelegramLoginOpen(false)}
+        onAuth={handleTelegramAuth}
+      />
     </Box>
   );
 }

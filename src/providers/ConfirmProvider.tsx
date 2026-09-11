@@ -1,12 +1,12 @@
 import { Box, Button, Dialog, Typography } from '@mui/material';
 import { createContext, ReactNode, useCallback, useContext, useRef, useState } from 'react';
 
-type ConfirmFn = (message: string) => Promise<boolean>;
+type ConfirmFn = (message: ReactNode) => Promise<boolean>;
 
 const ConfirmContext = createContext<ConfirmFn | null>(null);
 
 function ConfirmProvider({ children }: { children: ReactNode }) {
-  const [message, setMessage] = useState<string | null>(null);
+  const [message, setMessage] = useState<ReactNode | null>(null);
   const resolverRef = useRef<((value: boolean) => void) | null>(null);
 
   const close = useCallback((value: boolean) => {
@@ -15,7 +15,7 @@ function ConfirmProvider({ children }: { children: ReactNode }) {
     setMessage(null);
   }, []);
 
-  const confirm = useCallback((nextMessage: string) => {
+  const confirm = useCallback((nextMessage: ReactNode) => {
     return new Promise<boolean>((resolve) => {
       resolverRef.current?.(false);
       resolverRef.current = resolve;

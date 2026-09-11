@@ -18,6 +18,7 @@ import {
 } from "../providers/AppProvider/AppProvider.constants";
 import { ChangeEvent, useCallback, useRef, useState } from "react";
 import AppearanceSettings from "./Settings/AppearanceSettings";
+import TelegramChatSettings from "./Settings/TelegramChatSettings";
 import { useThemeSettings } from "../theme";
 import { withAlpha } from "../theme/colorUtils";
 import packageJson from "../../package.json";
@@ -325,6 +326,8 @@ function Settings() {
       </Box>
 
       <AppearanceSettings />
+
+      <TelegramChatSettings />
 
       <Box sx={{ width: "100%", maxWidth: 420, mt: 3 }}>
         <Typography sx={{ fontWeight: 800, mb: 1.5, fontSize: 20 }}>
