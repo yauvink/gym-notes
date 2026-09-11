@@ -1,7 +1,7 @@
 export const TELEGRAM_BOT_USERNAME = "kach_motivach_bot";
 export const KACH_API_URL = "https://kach.brostep.click";
 export const TELEGRAM_USER_STORAGE_KEY = "kach_telegram_user";
-export const SHARE_SENT_DATE_STORAGE_KEY = "kach_share_sent_date";
+export const SHARE_SENT_STORAGE_KEY = "kach_share_sent";
 export const TELEGRAM_AUTH_MAX_AGE_SEC = 7 * 24 * 60 * 60;
 export const TELEGRAM_AUTH_CHANGED_EVENT = "kach-telegram-auth";
 const TELEGRAM_LOG_STYLE = "color: #FF2BD6; font-weight: 800;";
@@ -125,26 +125,37 @@ export function clearTelegramUser() {
   notifyAuthChanged();
 }
 
-function parseStoredDate(raw: string | null): string | null {
+export type ShareSentSnapshot = {
+  year: number;
+  count: number;
+};
+
+function parseShareSentSnapshot(raw: string | null): ShareSentSnapshot | null {
   if (!raw) {
     return null;
   }
   try {
-    const parsed = JSON.parse(raw);
-    return typeof parsed === "string" && /^\d{4}-\d{2}-\d{2}$/.test(parsed)
-      ? parsed
-      : null;
+    const parsed = JSON.parse(raw) as Partial<ShareSentSnapshot>;
+    const year = Number(parsed.year);
+    const count = Number(parsed.count);
+    if (!Number.isInteger(year) || year < 2000 || year > 2100) {
+      return null;
+    }
+    if (!Number.isInteger(count) || count < 0 || count > 366) {
+      return null;
+    }
+    return { year, count };
   } catch {
-    return /^\d{4}-\d{2}-\d{2}$/.test(raw) ? raw : null;
+    return null;
   }
 }
 
-export function getShareSentDate(): string | null {
-  return parseStoredDate(window.localStorage.getItem(SHARE_SENT_DATE_STORAGE_KEY));
+export function getShareSentSnapshot(): ShareSentSnapshot | null {
+  return parseShareSentSnapshot(window.localStorage.getItem(SHARE_SENT_STORAGE_KEY));
 }
 
-export function setShareSentDate(date: string) {
-  window.localStorage.setItem(SHARE_SENT_DATE_STORAGE_KEY, JSON.stringify(date));
+export function setShareSentSnapshot(snapshot: ShareSentSnapshot) {
+  window.localStorage.setItem(SHARE_SENT_STORAGE_KEY, JSON.stringify(snapshot));
 }
 
 export function formatTelegramDisplayName(user: TelegramAuthUser): string {

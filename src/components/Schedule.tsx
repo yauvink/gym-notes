@@ -40,9 +40,9 @@ import {
   KACH_API_URL,
   TelegramAuthUser,
   clearTelegramUser,
-  getShareSentDate,
+  getShareSentSnapshot,
   getTelegramUser,
-  setShareSentDate,
+  setShareSentSnapshot,
   setTelegramUser,
 } from "../utils/telegramAuth";
 
@@ -68,11 +68,7 @@ function Schedule() {
   const [viewedYear, setViewedYear] = useState(dayjs(new Date()).year());
   const [selectedWorkoutId, setSelectedWorkoutId] = React.useState("");
   const [isTelegramLoginOpen, setTelegramLoginOpen] = useState(false);
-  const [shareSentDate, setShareSentDateState] = useState<string | null>(() =>
-    getShareSentDate(),
-  );
-  const todayDateKey = dayjs().format("YYYY-MM-DD");
-  const alreadySentToday = shareSentDate === todayDateKey;
+  const [shareSent, setShareSentState] = useState(() => getShareSentSnapshot());
 
   const soberDays = useMemo(() => {
     if (soberSelectedDate !== null && soberSelectedDate !== undefined) {
@@ -134,6 +130,9 @@ function Schedule() {
     return { trainings: thisYearTrainings.length, days: daysInYear };
   }, [userTrainingDays, viewedYear]);
 
+  const alreadySentThisCount =
+    shareSent?.year === viewedYear && shareSent.count === trainCount.trainings;
+
   const trainingsAvgPerMonth = useMemo(() => {
     const from = dayjs().startOf("day").subtract(30, "day");
     const recentCount = userTrainingDays.filter(
@@ -183,9 +182,9 @@ function Schedule() {
           );
           return;
         }
-        const today = dayjs().format("YYYY-MM-DD");
-        setShareSentDate(today);
-        setShareSentDateState(today);
+        const snapshot = { year: viewedYear, count: trainCount.trainings };
+        setShareSentSnapshot(snapshot);
+        setShareSentState(snapshot);
         notifyLarge(
           "Sent to Chat",
           `${trainCount.trainings} training days were shared.`,
@@ -200,7 +199,7 @@ function Schedule() {
         );
       }
     },
-    [trainCount.trainings],
+    [trainCount.trainings, viewedYear],
   );
 
   const handleShareTrainings = async () => {
@@ -216,10 +215,10 @@ function Schedule() {
       </Box>
     );
     const ok = await confirm(
-      alreadySentToday ? (
+      alreadySentThisCount ? (
         <>
-          You already sent this result today ({countHighlight}). Do you really
-          want to send it again?
+          You already sent this result ({countHighlight}). Do you really want to
+          send it again?
         </>
       ) : (
         <>
@@ -319,8 +318,8 @@ function Schedule() {
               variant="outlined"
               color="secondary"
               aria-label={
-                alreadySentToday
-                  ? "Already sent to Chat today"
+                alreadySentThisCount
+                  ? "This count was already sent to Chat"
                   : "Share trainings to Chat"
               }
               onClick={(event) => {
@@ -343,7 +342,7 @@ function Schedule() {
                 position: "relative",
                 zIndex: 1,
                 flexShrink: 0,
-                ...(alreadySentToday && {
+                ...(alreadySentThisCount && {
                   color: EXPORT_GREEN,
                   borderColor: EXPORT_GREEN,
                   "&:hover": {
@@ -358,12 +357,12 @@ function Schedule() {
                 },
               }}
             >
-              {alreadySentToday ? (
+              {alreadySentThisCount ? (
                 <CheckIcon width={18} height={18} />
               ) : (
                 <ShareIcon width={18} height={18} />
               )}
-              {alreadySentToday ? "SENT" : "SEND TO"}
+              {alreadySentThisCount ? "SENT" : "SEND TO"}
               <Box
                 component="img"
                 src={chatImage}
