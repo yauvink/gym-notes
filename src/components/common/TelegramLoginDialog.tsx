@@ -1,5 +1,5 @@
 import { Box, Dialog, Typography } from "@mui/material";
-import { useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
 import {
   TELEGRAM_BOT_USERNAME,
   TelegramAuthUser,
@@ -21,19 +21,14 @@ function TelegramLoginDialog({
   onClose: () => void;
   onAuth: (user: TelegramAuthUser) => void;
 }) {
-  const hostRef = useRef<HTMLDivElement | null>(null);
+  const [hostEl, setHostEl] = useState<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (!open) {
+    if (!open || !hostEl) {
       return;
     }
 
-    const host = hostRef.current;
-    if (!host) {
-      return;
-    }
-
-    host.replaceChildren();
+    hostEl.replaceChildren();
 
     window.onTelegramAuth = (user: TelegramAuthUser) => {
       if (isTelegramAuthUser(user)) {
@@ -49,16 +44,16 @@ function TelegramLoginDialog({
     script.setAttribute("data-userpic", "false");
     script.setAttribute("data-radius", "8");
     script.setAttribute("data-onauth", "onTelegramAuth(user)");
-    host.appendChild(script);
+    hostEl.appendChild(script);
 
     return () => {
       delete window.onTelegramAuth;
-      host.replaceChildren();
+      hostEl.replaceChildren();
     };
-  }, [open, onAuth]);
+  }, [open, hostEl, onAuth]);
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="xs">
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="xs" keepMounted>
       <Box sx={{ p: 2.5, display: "flex", flexDirection: "column", gap: 1.5, alignItems: "center" }}>
         <Typography sx={{ fontWeight: 800, fontSize: 18, textAlign: "center" }}>
           Sign in with Telegram
@@ -66,7 +61,10 @@ function TelegramLoginDialog({
         <Typography sx={{ fontSize: 14, color: "text.secondary", textAlign: "center" }}>
           Needed once to send your training count to Chat.
         </Typography>
-        <Box ref={hostRef} sx={{ minHeight: 48, display: "flex", justifyContent: "center" }} />
+        <Box
+          ref={setHostEl}
+          sx={{ minHeight: 48, display: "flex", justifyContent: "center" }}
+        />
       </Box>
     </Dialog>
   );
