@@ -226,7 +226,7 @@ export function applyThemeCssVars(mode: PaletteMode, colors: ThemeColors) {
 
   const themeMeta = document.querySelector('meta[name="theme-color"]');
   if (themeMeta) {
-    themeMeta.setAttribute('content', surface.default);
+    themeMeta.setAttribute('content', 'transparent');
   }
 }
 

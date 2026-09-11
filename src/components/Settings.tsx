@@ -208,6 +208,7 @@ function Settings() {
     <Box
       sx={{
         padding: '20px',
+        paddingTop: 'calc(20px + env(safe-area-inset-top, 0px))',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',

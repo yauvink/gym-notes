@@ -124,6 +124,7 @@ function Schedule() {
     <Box
       sx={{
         padding: '12px 16px 16px',
+        paddingTop: 'calc(12px + env(safe-area-inset-top, 0px))',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
