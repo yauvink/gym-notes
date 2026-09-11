@@ -1,16 +1,16 @@
 {
   "files": {
     "main.css": "/gym-notes/static/css/main.1ef7ff4b.css",
-    "main.js": "/gym-notes/static/js/main.7c1e797e.js",
+    "main.js": "/gym-notes/static/js/main.f2772f44.js",
     "static/js/453.1dcc7e68.chunk.js": "/gym-notes/static/js/453.1dcc7e68.chunk.js",
     "service-worker.js": "/gym-notes/service-worker.js",
     "index.html": "/gym-notes/index.html",
     "main.1ef7ff4b.css.map": "/gym-notes/static/css/main.1ef7ff4b.css.map",
-    "main.7c1e797e.js.map": "/gym-notes/static/js/main.7c1e797e.js.map",
+    "main.f2772f44.js.map": "/gym-notes/static/js/main.f2772f44.js.map",
     "453.1dcc7e68.chunk.js.map": "/gym-notes/static/js/453.1dcc7e68.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.1ef7ff4b.css",
-    "static/js/main.7c1e797e.js"
+    "static/js/main.f2772f44.js"
   ]
 }
