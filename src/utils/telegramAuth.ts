@@ -1,6 +1,7 @@
 export const TELEGRAM_BOT_USERNAME = "kach_motivach_bot";
 export const KACH_API_URL = "https://kach.brostep.click";
 export const TELEGRAM_USER_STORAGE_KEY = "kach_telegram_user";
+export const SHARE_SENT_DATE_STORAGE_KEY = "kach_share_sent_date";
 export const TELEGRAM_AUTH_MAX_AGE_SEC = 7 * 24 * 60 * 60;
 export const TELEGRAM_AUTH_CHANGED_EVENT = "kach-telegram-auth";
 const TELEGRAM_LOG_STYLE = "color: #FF2BD6; font-weight: 800;";
@@ -122,6 +123,28 @@ export function setTelegramUser(user: TelegramAuthUser) {
 export function clearTelegramUser() {
   window.localStorage.removeItem(TELEGRAM_USER_STORAGE_KEY);
   notifyAuthChanged();
+}
+
+function parseStoredDate(raw: string | null): string | null {
+  if (!raw) {
+    return null;
+  }
+  try {
+    const parsed = JSON.parse(raw);
+    return typeof parsed === "string" && /^\d{4}-\d{2}-\d{2}$/.test(parsed)
+      ? parsed
+      : null;
+  } catch {
+    return /^\d{4}-\d{2}-\d{2}$/.test(raw) ? raw : null;
+  }
+}
+
+export function getShareSentDate(): string | null {
+  return parseStoredDate(window.localStorage.getItem(SHARE_SENT_DATE_STORAGE_KEY));
+}
+
+export function setShareSentDate(date: string) {
+  window.localStorage.setItem(SHARE_SENT_DATE_STORAGE_KEY, JSON.stringify(date));
 }
 
 export function formatTelegramDisplayName(user: TelegramAuthUser): string {

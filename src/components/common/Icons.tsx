@@ -88,6 +88,25 @@ export function MinusIcon(props: React.ComponentProps<"svg">) {
   );
 }
 
+export function CheckIcon(props: React.ComponentProps<"svg">) {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+      {...props}
+    >
+      <path d="M5 12.6 9.6 17.2 19 7.6" />
+    </svg>
+  );
+}
+
 export function ShareIcon(props: React.ComponentProps<"svg">) {
   return (
     <svg
