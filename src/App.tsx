@@ -27,9 +27,8 @@ function App() {
           height: '100dvh',
           display: 'flex',
           flexDirection: 'column',
-          bgcolor: 'background.default',
+          bgcolor: 'transparent',
           overflow: 'hidden',
-          transition: 'background-color 1s ease',
         }}
       >
         <Box

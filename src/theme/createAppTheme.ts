@@ -73,10 +73,13 @@ export function createAppTheme(mode: PaletteMode, colors: ThemeColors): Theme {
     components: {
       MuiCssBaseline: {
         styleOverrides: {
+          html: {
+            backgroundColor: 'transparent',
+          },
           body: {
-            backgroundColor: surface.default,
+            backgroundColor: 'transparent',
             color: surface.text,
-            transition: 'background-color 1s ease, color 1s ease',
+            transition: 'color 1s ease',
           },
         },
       },
@@ -226,7 +229,7 @@ export function applyThemeCssVars(mode: PaletteMode, colors: ThemeColors) {
 
   const themeMeta = document.querySelector('meta[name="theme-color"]');
   if (themeMeta) {
-    themeMeta.setAttribute('content', 'transparent');
+    themeMeta.setAttribute('content', 'rgba(0,0,0,0)');
   }
 }
 
