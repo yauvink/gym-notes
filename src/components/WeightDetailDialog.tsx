@@ -221,11 +221,15 @@ function WeightDetailDialog({
               borderBottom: '0.5px solid var(--glass-border)',
               position: 'sticky',
               top: 0,
-              bgcolor: 'var(--glass-bg-strong)',
+              bgcolor: 'var(--glass-bg)',
+              backdropFilter: 'blur(20px) saturate(180%)',
+              WebkitBackdropFilter: 'blur(20px) saturate(180%)',
               zIndex: 1,
             }}
           >
-            <Box>Date</Box>
+            <Box>
+              {tableData.length === 1 ? '1 record for this period' : `${tableData.length} records for this period`}
+            </Box>
             <Box>Weight</Box>
             <Box />
           </Box>
