@@ -26,7 +26,12 @@ import WeightChart from "./WeightChart";
 import StatCard from "./common/StatCard";
 import { useThemeSettings } from "../theme";
 import { withAlpha } from "../theme/colorUtils";
-import { notifyError, notifyLarge, notifyPending, notifyShort } from "../utils/notify";
+import {
+  notifyError,
+  notifyLarge,
+  notifyPending,
+  notifyShort,
+} from "../utils/notify";
 import { useConfirm } from "../providers/ConfirmProvider";
 import { ShareIcon } from "./common/Icons";
 import chatImage from "../assets/images/chat.png";
@@ -127,7 +132,10 @@ function Schedule() {
       return;
     }
 
-    const toastId = notifyPending("Sending to Chat…", "Waiting for a response.");
+    const toastId = notifyPending(
+      "Sending to Chat…",
+      "Waiting for a response.",
+    );
 
     try {
       const response = await fetch("TODO_CHANGE_FOR_REAL_URL", {
@@ -215,7 +223,7 @@ function Schedule() {
           label="Sober days"
           value={soberDays.total}
           valueSuffix={
-            soberDays.real !== null ? `Real: ${soberDays.real}` : undefined
+            soberDays.real !== null ? `(Real: ${soberDays.real})` : undefined
           }
           accent={colors.secondary}
           flex="0 0 calc(40% - 5px)"

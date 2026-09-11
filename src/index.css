@@ -1,47 +1,47 @@
 @property --bg-default {
-  syntax: '<color>';
+  syntax: "<color>";
   inherits: true;
   initial-value: #0a0c0e;
 }
 
 @property --bg-paper {
-  syntax: '<color>';
+  syntax: "<color>";
   inherits: true;
   initial-value: #14181c;
 }
 
 @property --bg-elevated {
-  syntax: '<color>';
+  syntax: "<color>";
   inherits: true;
   initial-value: #1c2228;
 }
 
 @property --text-primary {
-  syntax: '<color>';
+  syntax: "<color>";
   inherits: true;
   initial-value: #f2f4f5;
 }
 
 @property --text-muted {
-  syntax: '<color>';
+  syntax: "<color>";
   inherits: true;
   initial-value: #8b939c;
 }
 
 @property --border-subtle {
-  syntax: '<color>';
+  syntax: "<color>";
   inherits: true;
   initial-value: rgba(255, 255, 255, 0.08);
 }
 
 @property --color-primary {
-  syntax: '<color>';
+  syntax: "<color>";
   inherits: true;
   initial-value: #ffb020;
 }
 
 @property --color-secondary {
-  syntax: '<color>';
+  syntax: "<color>";
   inherits: true;
   initial-value: #ff6a2b;
 }
@@ -65,7 +65,9 @@ body {
   margin: 0;
   height: 100%;
   overflow: hidden;
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Segoe UI', sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display",
+    "Segoe UI", sans-serif;
   font-size: 16px;
   line-height: 1.45;
   letter-spacing: -0.015em;
@@ -78,7 +80,7 @@ body {
   touch-action: manipulation;
   overscroll-behavior: none;
   background: transparent;
-  color: var(--text-primary, #F2F4F5);
+  color: var(--text-primary, #f2f4f5);
   transition: color 1s ease;
 }
 
@@ -96,15 +98,15 @@ video {
 
 input,
 textarea,
-[contenteditable='true'] {
+[contenteditable="true"] {
   -webkit-user-select: text;
   user-select: text;
   touch-action: auto;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family:
+    source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
 }
 
 @keyframes tabIn {
@@ -128,7 +130,6 @@ code {
   transition: background-color 1s ease;
 }
 
-
 .tab-panel::-webkit-scrollbar {
   display: none;
 }
@@ -138,7 +139,9 @@ code {
   backdrop-filter: blur(28px) saturate(180%);
   -webkit-backdrop-filter: blur(28px) saturate(180%);
   border: 0.5px solid var(--glass-border);
-  box-shadow: var(--glass-shadow), inset 0 1px 0 var(--glass-highlight);
+  box-shadow:
+    var(--glass-shadow),
+    inset 0 1px 0 var(--glass-highlight);
   border-radius: 22px;
 }
 
@@ -206,7 +209,7 @@ code {
 
 .lg-tab svg,
 .lg-tab span {
-  transform: scale(1);
+  transform: scale(0.9);
   transform-origin: center;
   transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -251,7 +254,10 @@ code {
 @media (prefers-reduced-motion: no-preference) {
   #root .MuiBox-root,
   #root .MuiTypography-root {
-    transition: background-color 1s ease, color 1s ease, border-color 1s ease;
+    transition:
+      background-color 1s ease,
+      color 1s ease,
+      border-color 1s ease;
   }
 }
 
@@ -266,7 +272,7 @@ code {
   overflow: hidden;
 }
 .loader::after {
-  content: '';
+  content: "";
   position: absolute;
   left: 0;
   top: -50%;
@@ -278,7 +284,7 @@ code {
   animation: eyeShade 3s infinite;
 }
 .loader::before {
-  content: '';
+  content: "";
   position: absolute;
   left: 20px;
   bottom: 15px;
@@ -290,25 +296,57 @@ code {
   animation: eyeMove 3s infinite;
 }
 @keyframes eyeShade {
-  0%   { transform: translateY(0)}
-  20%   { transform: translateY(5px)}
-  40% , 50%   { transform: translateY(-5px)}
-  60%   { transform: translateY( -8px)}
-  75%   { transform: translateY( 5px)}
-  100%   { transform: translateY(10px)}
+  0% {
+    transform: translateY(0);
+  }
+  20% {
+    transform: translateY(5px);
+  }
+  40%,
+  50% {
+    transform: translateY(-5px);
+  }
+  60% {
+    transform: translateY(-8px);
+  }
+  75% {
+    transform: translateY(5px);
+  }
+  100% {
+    transform: translateY(10px);
+  }
 }
 @keyframes eyeMove {
-  0%   { transform: translate(0 , 0)}
-  20%   { transform: translate(0px , 5px)}
-  40% , 50%   { transform: translate(0px , -5px)}
-  60%   { transform: translate(-10px , -5px)}
-  75%   { transform: translate(-20px , 5px)}
-  100%   { transform: translate(0 , 10px)}
+  0% {
+    transform: translate(0, 0);
+  }
+  20% {
+    transform: translate(0px, 5px);
+  }
+  40%,
+  50% {
+    transform: translate(0px, -5px);
+  }
+  60% {
+    transform: translate(-10px, -5px);
+  }
+  75% {
+    transform: translate(-20px, 5px);
+  }
+  100% {
+    transform: translate(0, 10px);
+  }
 }
 
 [data-sonner-toaster] {
   z-index: 20000 !important;
-  --width: min(320px, calc(100vw - 16px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px))) !important;
+  --width: min(
+    320px,
+    calc(
+      100vw - 16px - env(safe-area-inset-left, 0px) -
+        env(safe-area-inset-right, 0px)
+    )
+  ) !important;
   box-sizing: border-box;
 }
 
@@ -317,7 +355,10 @@ code {
     left: auto !important;
     right: var(--mobile-offset-right, 8px) !important;
     width: var(--width) !important;
-    max-width: calc(100vw - 16px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)) !important;
+    max-width: calc(
+      100vw - 16px - env(safe-area-inset-left, 0px) -
+        env(safe-area-inset-right, 0px)
+    ) !important;
   }
 
   [data-sonner-toaster] [data-sonner-toast] {
@@ -384,4 +425,16 @@ code {
   font-size: 13px !important;
   color: var(--text-muted) !important;
   margin-top: 4px;
+}
+
+[data-sonner-toast][data-type="error"].gn-toast [data-icon] {
+  color: #e85d4c;
+}
+
+[data-sonner-toast][data-type="error"].gn-toast--large [data-content] {
+  gap: 0 !important;
+}
+
+[data-sonner-toast][data-type="error"].gn-toast--large [data-description] {
+  margin-top: 0;
 }
