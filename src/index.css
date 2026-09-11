@@ -145,33 +145,26 @@ code {
   width: auto;
   max-width: 520px;
   margin: 0 auto;
-  isolation: isolate;
   border-radius: 999px;
-  overflow: hidden;
-  background: var(--tabbar-bg);
+  background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.18);
   box-shadow:
     inset 0 1px 1px rgba(255, 255, 255, 0.42),
     inset 0 -1px 1px rgba(255, 255, 255, 0.12),
     0 10px 28px -16px rgba(0, 0, 0, 0.45);
-  backdrop-filter: blur(16px) saturate(180%) brightness(1.08);
-  -webkit-backdrop-filter: blur(16px) saturate(180%) brightness(1.08);
 }
 
-.lg-tabbar-filter {
+.lg-tabbar-blur {
   position: absolute;
-  width: 0;
-  height: 0;
-}
-
-.lg-tabbar-glass {
-  position: absolute;
-  inset: -36px 0;
+  inset: 0;
   z-index: 0;
+  border-radius: inherit;
+  background: var(--tabbar-bg);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
   pointer-events: none;
-  background: inherit;
-  filter: url(#lg-tabbar-refract);
-  opacity: 0.55;
 }
 
 .lg-tabbar-items {
@@ -220,8 +213,6 @@ code {
 .lg-tab.is-selected {
   color: var(--color-primary);
   background: var(--tabbar-selected);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
 }
 
 .lg-tab.is-selected svg {
@@ -232,18 +223,7 @@ code {
   transform: scale(1.1);
 }
 
-@supports (backdrop-filter: url(#lg-tabbar-refract)) {
-  .lg-tabbar {
-    backdrop-filter: blur(6px) saturate(170%) url(#lg-tabbar-refract);
-    -webkit-backdrop-filter: blur(6px) saturate(170%) url(#lg-tabbar-refract);
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .lg-tabbar-glass {
-    filter: none;
-  }
-
   .lg-tab svg,
   .lg-tab span {
     transition: none;
@@ -252,7 +232,7 @@ code {
 
 @media (prefers-reduced-transparency: reduce) {
   .glass-surface,
-  .lg-tabbar,
+  .lg-tabbar-blur,
   .MuiPaper-root,
   .MuiDialog-paper,
   .MuiAccordion-root {

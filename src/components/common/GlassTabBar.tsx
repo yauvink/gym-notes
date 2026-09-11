@@ -17,14 +17,7 @@ function GlassTabBar({
 }) {
   return (
     <nav className="lg-tabbar" aria-label="Main">
-      <svg className="lg-tabbar-filter" aria-hidden focusable="false">
-        <filter id="lg-tabbar-refract" x="-8%" y="-20%" width="116%" height="140%">
-          <feTurbulence type="fractalNoise" baseFrequency="0.008 0.012" numOctaves="2" seed="7" result="n" />
-          <feGaussianBlur in="n" stdDeviation="1.2" result="blurred" />
-          <feDisplacementMap in="SourceGraphic" in2="blurred" scale="14" xChannelSelector="R" yChannelSelector="G" />
-        </filter>
-      </svg>
-      <span className="lg-tabbar-glass" aria-hidden />
+      <span className="lg-tabbar-blur" aria-hidden />
       <Box className="lg-tabbar-items">
         {TABS.map((tab, index) => {
           const selected = value === index;

@@ -80,7 +80,7 @@ function WeightWheelPicker({
         />
       </IconButton>
 
-      <Box sx={{ position: 'relative', width: '100%', maxWidth: 220 }}>
+      <Box sx={{ position: 'relative', width: '100%', maxWidth: 220, overflow: 'hidden' }}>
         <Box
           aria-hidden
           sx={{
@@ -121,12 +121,10 @@ function WeightWheelPicker({
             zIndex: 1,
             height: ITEM_HEIGHT * VISIBLE,
             overflowY: 'auto',
+            overflowX: 'hidden',
             scrollSnapType: 'y mandatory',
-            WebkitOverflowScrolling: 'touch',
             scrollbarWidth: 'none',
             '&::-webkit-scrollbar': { display: 'none' },
-            maskImage:
-              'linear-gradient(to bottom, transparent, #000 18%, #000 82%, transparent)',
           }}
         >
           <Box sx={{ height: ITEM_HEIGHT * 2 }} />
@@ -144,26 +142,58 @@ function WeightWheelPicker({
                   scrollSnapAlign: 'center',
                   cursor: 'pointer',
                   userSelect: 'none',
+                  WebkitUserSelect: 'none',
                 }}
               >
-                <Typography
+                <Box
+                  component="span"
                   sx={{
-                    fontSize: selected ? 28 : 18,
+                    fontSize: 22,
                     fontWeight: selected ? 700 : 560,
-                    letterSpacing: selected ? '-0.04em' : '-0.02em',
+                    letterSpacing: '-0.03em',
                     color: selected ? 'text.primary' : 'text.secondary',
-                    opacity: selected ? 1 : 0.45,
+                    opacity: selected ? 1 : 0.4,
                     fontVariantNumeric: 'tabular-nums',
-                    transition: 'font-size 120ms ease, opacity 120ms ease, color 120ms ease',
+                    transform: selected ? 'scale(1.22)' : 'scale(1)',
+                    transformOrigin: 'center',
+                    backfaceVisibility: 'hidden',
+                    WebkitBackfaceVisibility: 'hidden',
+                    transition: 'transform 120ms ease, opacity 120ms ease',
                   }}
                 >
                   {item.toFixed(1)}
-                </Typography>
+                </Box>
               </Box>
             );
           })}
           <Box sx={{ height: ITEM_HEIGHT * 2 }} />
         </Box>
+        <Box
+          aria-hidden
+          sx={{
+            pointerEvents: 'none',
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            top: 0,
+            height: ITEM_HEIGHT * 1.6,
+            zIndex: 2,
+            background: 'linear-gradient(to bottom, var(--glass-bg-strong), transparent)',
+          }}
+        />
+        <Box
+          aria-hidden
+          sx={{
+            pointerEvents: 'none',
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            bottom: 0,
+            height: ITEM_HEIGHT * 1.6,
+            zIndex: 2,
+            background: 'linear-gradient(to top, var(--glass-bg-strong), transparent)',
+          }}
+        />
         <Typography
           sx={{
             position: 'absolute',
