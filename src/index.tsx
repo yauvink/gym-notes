@@ -7,6 +7,12 @@ import reportWebVitals from './reportWebVitals';
 import AppProvider from './providers/AppProvider';
 import ConfirmProvider from './providers/ConfirmProvider';
 import { ThemeSettingsProvider } from './theme';
+import packageJson from '../package.json';
+
+console.log(
+  `%cGym Notes v${packageJson.version}`,
+  'color: #FF2BD6; font-weight: 800; font-size: 14px;',
+);
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
