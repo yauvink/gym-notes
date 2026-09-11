@@ -161,6 +161,7 @@ function Schedule() {
         disableFuture
         readOnly
         showDaysOutsideCurrentMonth
+        className="glass-surface"
         onMonthChange={(newMonth) => {
           setViewedYear(Number(newMonth.format('YYYY')));
         }}
@@ -171,14 +172,11 @@ function Schedule() {
           maxHeight: 'none',
           '--PickerDay-size': '48px',
           '--PickerDay-horizontalMargin': '0px',
-          bgcolor: 'background.paper',
-          borderRadius: 1,
-          border: '1px solid',
-          borderColor: 'divider',
           p: '4px 2px 6px',
           '&.MuiDateCalendar-root': {
             width: '100%',
             maxWidth: 'none',
+            backgroundColor: 'transparent',
           },
           '& .MuiDateCalendar-viewTransitionContainer, & .MuiDayCalendar-root, & .MuiDayCalendar-monthContainer': {
             width: '100%',
@@ -272,12 +270,9 @@ function Schedule() {
           >
             {selectedDayData.workout ? (
               <Box
+                className="glass-surface"
                 sx={{
                   p: 1.5,
-                  borderRadius: 1,
-                  bgcolor: 'background.paper',
-                  border: '1px solid',
-                  borderColor: 'divider',
                 }}
               >
                 <Box
@@ -375,12 +370,9 @@ function Schedule() {
               </Box>
             ) : (
               <Box
+                className="glass-surface"
                 sx={{
                   p: 1.5,
-                  borderRadius: 1,
-                  bgcolor: 'background.paper',
-                  border: '1px solid',
-                  borderColor: 'divider',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',

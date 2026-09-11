@@ -145,16 +145,13 @@ function WeightChart() {
 
   return (
     <Box
+      className="glass-surface"
       sx={{
         maxWidth: '500px',
         width: '100%',
         position: 'relative',
         mt: 0,
         p: '8px 10px',
-        borderRadius: 1,
-        bgcolor: 'background.paper',
-        border: '1px solid',
-        borderColor: 'divider',
       }}
     >
       <Box

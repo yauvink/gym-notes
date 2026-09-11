@@ -51,23 +51,24 @@ export function createAppTheme(mode: PaletteMode, colors: ThemeColors): Theme {
       divider: surface.divider,
     },
     typography: {
-      fontFamily: '"Manrope", "Segoe UI", sans-serif',
+      fontFamily:
+        '-apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", sans-serif',
       fontSize: 16,
-      h1: { fontFamily: '"Oswald", "Manrope", sans-serif', fontWeight: 700, fontSize: '2rem' },
-      h2: { fontFamily: '"Oswald", "Manrope", sans-serif', fontWeight: 700, fontSize: '1.6rem' },
-      h3: { fontFamily: '"Oswald", "Manrope", sans-serif', fontWeight: 700, fontSize: '1.35rem' },
-      body1: { fontSize: '1rem', lineHeight: 1.5 },
-      body2: { fontSize: '0.9375rem', lineHeight: 1.45 },
-      caption: { fontSize: '0.8125rem', lineHeight: 1.35 },
+      h1: { fontWeight: 700, fontSize: '2rem', letterSpacing: '-0.03em' },
+      h2: { fontWeight: 700, fontSize: '1.55rem', letterSpacing: '-0.025em' },
+      h3: { fontWeight: 650, fontSize: '1.28rem', letterSpacing: '-0.02em' },
+      body1: { fontSize: '1rem', lineHeight: 1.45, letterSpacing: '-0.015em' },
+      body2: { fontSize: '0.9375rem', lineHeight: 1.4, letterSpacing: '-0.01em' },
+      caption: { fontSize: '0.78rem', lineHeight: 1.3, letterSpacing: '-0.01em' },
       button: {
         textTransform: 'none',
-        fontWeight: 700,
+        fontWeight: 600,
         fontSize: '0.9375rem',
-        letterSpacing: 0.2,
+        letterSpacing: '-0.01em',
       },
     },
     shape: {
-      borderRadius: 12,
+      borderRadius: 22,
     },
     components: {
       MuiCssBaseline: {
@@ -82,20 +83,26 @@ export function createAppTheme(mode: PaletteMode, colors: ThemeColors): Theme {
       MuiButton: {
         styleOverrides: {
           root: {
-            borderRadius: 12,
-            paddingInline: 16,
-            minHeight: 44,
+            borderRadius: 999,
+            paddingInline: 18,
+            minHeight: 46,
             boxShadow: 'none',
+            overflow: 'hidden',
+            backgroundImage: 'none',
+            isolation: 'isolate',
           },
           contained: {
+            boxShadow: 'none',
             '&:hover': {
               boxShadow: 'none',
             },
           },
           outlined: {
-            borderWidth: 1.5,
+            borderWidth: 0.5,
+            backgroundColor: 'var(--bg-paper)',
             '&:hover': {
-              borderWidth: 1.5,
+              borderWidth: 0.5,
+              backgroundColor: 'var(--bg-paper)',
             },
           },
         },
@@ -104,6 +111,11 @@ export function createAppTheme(mode: PaletteMode, colors: ThemeColors): Theme {
         styleOverrides: {
           root: {
             backgroundImage: 'none',
+            backgroundColor: 'var(--glass-bg-strong)',
+            backdropFilter: 'blur(28px) saturate(180%)',
+            WebkitBackdropFilter: 'blur(28px) saturate(180%)',
+            border: '0.5px solid var(--glass-border)',
+            boxShadow: 'var(--glass-shadow)',
             transition: 'background-color 1s ease, border-color 1s ease, color 1s ease',
           },
         },
@@ -111,10 +123,12 @@ export function createAppTheme(mode: PaletteMode, colors: ThemeColors): Theme {
       MuiAccordion: {
         styleOverrides: {
           root: {
-            backgroundColor: surface.paper,
+            backgroundColor: 'var(--glass-bg-strong)',
             backgroundImage: 'none',
-            boxShadow: 'none',
-            border: `1px solid ${surface.divider}`,
+            boxShadow: 'var(--glass-shadow)',
+            border: '0.5px solid var(--glass-border)',
+            backdropFilter: 'blur(24px) saturate(170%)',
+            overflow: 'hidden',
             transition: 'background-color 1s ease, border-color 1s ease, color 1s ease',
             '&:before': { display: 'none' },
             '&.Mui-expanded': {
@@ -137,8 +151,13 @@ export function createAppTheme(mode: PaletteMode, colors: ThemeColors): Theme {
         styleOverrides: {
           paper: {
             backgroundImage: 'none',
-            backgroundColor: surface.paper,
-            border: `1px solid ${surface.divider}`,
+            backgroundColor: 'var(--glass-bg-strong)',
+            backdropFilter: 'blur(40px) saturate(190%)',
+            WebkitBackdropFilter: 'blur(40px) saturate(190%)',
+            border: '0.5px solid var(--glass-border)',
+            boxShadow: 'var(--glass-shadow-lg)',
+            borderRadius: 28,
+            overflow: 'hidden',
             transition: 'background-color 1s ease, border-color 1s ease, color 1s ease',
           },
         },
@@ -146,37 +165,28 @@ export function createAppTheme(mode: PaletteMode, colors: ThemeColors): Theme {
       MuiAlert: {
         styleOverrides: {
           root: {
-            borderRadius: 12,
-          },
-        },
-      },
-      MuiBottomNavigation: {
-        styleOverrides: {
-          root: {
-            backgroundColor: surface.paper,
-            borderTop: `1px solid ${surface.divider}`,
-            transition: 'background-color 1s ease, border-color 1s ease',
-          },
-        },
-      },
-      MuiBottomNavigationAction: {
-        styleOverrides: {
-          root: {
-            color: surface.muted,
-            transition: 'color 220ms ease, background-color 220ms ease',
-            '& .MuiTouchRipple-child': {
-              backgroundColor: colors.primary,
-            },
-            '&.Mui-selected': {
-              color: colors.primary,
-            },
+            borderRadius: 18,
+            border: '0.5px solid var(--glass-border)',
+            backdropFilter: 'blur(16px)',
           },
         },
       },
       MuiOutlinedInput: {
         styleOverrides: {
           root: {
-            backgroundColor: mode === 'dark' ? surface.elevated : surface.paper,
+            borderRadius: 16,
+            backgroundColor: 'var(--glass-bg)',
+            backdropFilter: 'blur(16px)',
+          },
+          notchedOutline: {
+            borderColor: 'var(--glass-border)',
+          },
+        },
+      },
+      MuiIconButton: {
+        styleOverrides: {
+          root: {
+            borderRadius: 999,
           },
         },
       },
@@ -202,6 +212,17 @@ export function applyThemeCssVars(mode: PaletteMode, colors: ThemeColors) {
   root.style.setProperty('--border-subtle', surface.divider);
   root.style.setProperty('--color-primary-soft', withAlpha(colors.primary, 0.18));
   root.style.setProperty('--color-secondary-soft', withAlpha(colors.secondary, 0.18));
+
+  const isDark = mode === 'dark';
+  root.style.setProperty('--glass-bg', isDark ? 'rgba(28, 34, 40, 0.52)' : 'rgba(255, 255, 255, 0.58)');
+  root.style.setProperty('--glass-bg-strong', isDark ? 'rgba(22, 26, 32, 0.72)' : 'rgba(255, 255, 255, 0.78)');
+  root.style.setProperty('--glass-border', isDark ? 'rgba(255, 255, 255, 0.16)' : 'rgba(255, 255, 255, 0.72)');
+  root.style.setProperty('--glass-highlight', isDark ? 'rgba(255, 255, 255, 0.18)' : 'rgba(255, 255, 255, 0.92)');
+  root.style.setProperty('--glass-shadow', isDark ? '0 10px 32px rgba(0, 0, 0, 0.38)' : '0 10px 28px rgba(16, 24, 40, 0.08)');
+  root.style.setProperty('--glass-shadow-lg', isDark ? '0 24px 60px rgba(0, 0, 0, 0.5)' : '0 20px 50px rgba(16, 24, 40, 0.14)');
+  root.style.setProperty('--tabbar-bg', isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.42)');
+  root.style.setProperty('--tabbar-selected', isDark ? 'rgba(255, 255, 255, 0.16)' : 'rgba(255, 255, 255, 0.72)');
+  root.style.setProperty('--tabbar-ink', isDark ? 'rgba(232, 236, 240, 0.78)' : 'rgba(17, 20, 24, 0.78)');
 
   const themeMeta = document.querySelector('meta[name="theme-color"]');
   if (themeMeta) {

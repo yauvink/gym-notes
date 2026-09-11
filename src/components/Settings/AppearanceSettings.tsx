@@ -98,15 +98,12 @@ function AppearanceSettings() {
       </Box>
 
       <Box
+        className="glass-surface"
         sx={{
           display: 'flex',
           flexDirection: 'column',
           gap: 2,
           p: 2,
-          borderRadius: 1,
-          bgcolor: 'background.paper',
-          border: '1px solid',
-          borderColor: 'divider',
         }}
       >
         <Typography sx={{ fontWeight: 800, fontSize: 16 }}>Accent colors</Typography>

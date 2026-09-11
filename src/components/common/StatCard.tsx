@@ -19,14 +19,11 @@ function StatCard({
   return (
     <Box
       onClick={onClick}
+      className="glass-surface"
       sx={{
         flex: 1,
         minWidth: 0,
-        p: '8px 20px',
-        borderRadius: 1,
-        bgcolor: 'background.paper',
-        border: '1px solid',
-        borderColor: 'divider',
+        p: '10px 18px 12px',
         cursor: onClick ? 'pointer' : 'default',
         position: 'relative',
         overflow: 'hidden',
@@ -34,7 +31,7 @@ function StatCard({
           content: '""',
           position: 'absolute',
           inset: 0,
-          background: `linear-gradient(160deg, ${accent}33, transparent 55%)`,
+          background: `linear-gradient(160deg, ${accent}2E, transparent 58%)`,
           pointerEvents: 'none',
         },
       }}
@@ -54,9 +51,9 @@ function StatCard({
       >
         <Typography
           sx={{
-            fontFamily: '"Oswald", "Manrope", sans-serif',
             fontSize: 28,
             fontWeight: 700,
+            letterSpacing: '-0.04em',
             lineHeight: 1,
             color: accent,
           }}

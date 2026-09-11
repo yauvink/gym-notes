@@ -131,15 +131,7 @@ function Settings() {
 
       <Box sx={{ width: '100%', maxWidth: 420, mt: 3 }}>
         <Typography sx={{ fontWeight: 800, mb: 1.5, fontSize: 20 }}>Defaults</Typography>
-        <Box
-          sx={{
-            p: 2,
-            borderRadius: 1,
-            bgcolor: 'background.paper',
-            border: '1px solid',
-            borderColor: 'divider',
-          }}
-        >
+        <Box className="glass-surface" sx={{ p: 2 }}>
           <Typography sx={{ margin: '0 0 10px', fontSize: 16 }}>Default weight:</Typography>
           <NumberField.Root
             className={styles.Field}
@@ -200,7 +192,7 @@ function Settings() {
           display: 'flex',
           flexDirection: 'column',
           gap: '12px',
-          margin: '28px 0 0',
+          margin: '28px 0 48px',
           width: '100%',
           maxWidth: 420,
         }}

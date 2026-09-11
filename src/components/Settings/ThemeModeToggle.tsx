@@ -53,7 +53,10 @@ function ThemeModeToggle() {
         height: 52,
         p: '4px',
         borderRadius: 999,
-        bgcolor: isDark ? 'rgba(255,255,255,0.08)' : '#E6E6EA',
+        bgcolor: 'var(--glass-bg)',
+        border: '0.5px solid var(--glass-border)',
+        boxShadow: 'inset 0 1px 0 var(--glass-highlight)',
+        backdropFilter: 'blur(20px)',
         transition: 'background-color 1s ease',
       }}
     >
@@ -65,10 +68,9 @@ function ThemeModeToggle() {
           width: 'calc((100% - 8px) / 3)',
           left: `calc(4px + ${selectedIndex} * ((100% - 8px) / 3))`,
           borderRadius: 999,
-          bgcolor: isDark ? '#2A3036' : '#FFFFFF',
-          border: '1px solid',
-          borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)',
-          boxShadow: isDark ? '0 1px 4px rgba(0,0,0,0.35)' : '0 1px 3px rgba(0,0,0,0.08)',
+          bgcolor: 'var(--tabbar-selected)',
+          border: '0.5px solid var(--glass-border)',
+          boxShadow: '0 4px 14px rgba(0,0,0,0.08), inset 0 1px 0 var(--glass-highlight)',
           transition: 'left 200ms ease, background-color 1s ease, border-color 1s ease, box-shadow 1s ease',
           pointerEvents: 'none',
         }}

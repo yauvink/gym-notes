@@ -110,6 +110,10 @@ function WeightDetailDialog({
             justifyContent: 'space-around',
             alignItems: 'center',
             px: 0.5,
+            py: 0.4,
+            borderRadius: 999,
+            bgcolor: 'var(--glass-bg)',
+            border: '0.5px solid var(--glass-border)',
           }}
         >
           {PERIODS.map((item) => {
