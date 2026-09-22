@@ -1,17 +1,20 @@
 {
   "files": {
     "main.css": "/gym-notes/static/css/main.d47b3797.css",
-    "main.js": "/gym-notes/static/js/main.6ba6a93a.js",
+    "main.js": "/gym-notes/static/js/main.e35c23df.js",
     "static/js/453.1dcc7e68.chunk.js": "/gym-notes/static/js/453.1dcc7e68.chunk.js",
     "static/media/chat.png": "/gym-notes/static/media/chat.d4c7c667e17a6c27ed42.png",
+    "static/media/workout-chest.png": "/gym-notes/static/media/workout-chest.2cacedd1431bbd4194c5.png",
+    "static/media/workout-back.png": "/gym-notes/static/media/workout-back.5b16c9d588eec497fa75.png",
+    "static/media/workout-legs.png": "/gym-notes/static/media/workout-legs.ee4130731414679964c7.png",
     "service-worker.js": "/gym-notes/service-worker.js",
     "index.html": "/gym-notes/index.html",
     "main.d47b3797.css.map": "/gym-notes/static/css/main.d47b3797.css.map",
-    "main.6ba6a93a.js.map": "/gym-notes/static/js/main.6ba6a93a.js.map",
+    "main.e35c23df.js.map": "/gym-notes/static/js/main.e35c23df.js.map",
     "453.1dcc7e68.chunk.js.map": "/gym-notes/static/js/453.1dcc7e68.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.d47b3797.css",
-    "static/js/main.6ba6a93a.js"
+    "static/js/main.e35c23df.js"
   ]
 }
