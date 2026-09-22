@@ -1,12 +1,13 @@
-import { Box, Button, Dialog, TextField } from '@mui/material';
+import { Box, Button, Dialog, IconButton, TextField, Typography } from '@mui/material';
 import { useCallback, useMemo, useState } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
-import { ExerciseType, WorkoutType } from '../../providers/AppProvider/AppProvider';
+import { ExerciseType, WorkoutIconId, WorkoutType } from '../../providers/AppProvider/AppProvider';
 import { useAppContext } from '../../providers/AppProvider/AppProvider.hook';
 import Exercise from './Exercise';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { notifyShort } from '../../utils/notify';
 import { useConfirm } from '../../providers/ConfirmProvider';
+import { isWorkoutIconId, WORKOUT_ICON_IDS, WorkoutIcon } from './workoutIcons';
 
 function EditWorkoutDialog({
   closeDialog,
@@ -19,6 +20,10 @@ function EditWorkoutDialog({
   const confirm = useConfirm();
   const editInitialData = workouts.find((el) => el.id === editTrainingId);
   const [workoutName, setWorkoutName] = useState(editInitialData?.name ?? '');
+  const [workoutIcon, setWorkoutIcon] = useState<WorkoutIconId | undefined>(() => {
+    const initialIcon = editInitialData?.icon;
+    return isWorkoutIconId(initialIcon) ? initialIcon : undefined;
+  });
   const INITIAL_WORKOUT_DATA: ExerciseType = {
     exercise_id: '',
     sets: [],
@@ -26,29 +31,37 @@ function EditWorkoutDialog({
   const [exercises, setExercises] = useState<ExerciseType[]>(editInitialData?.exercises ?? [INITIAL_WORKOUT_DATA]);
   const [expandedId, setExpandedId] = useState('');
   const handleSaveTraining = useCallback(() => {
+    const withIcon = (workout: WorkoutType): WorkoutType => {
+      const { icon: _removed, ...rest } = workout;
+      if (workoutIcon) {
+        return { ...rest, icon: workoutIcon };
+      }
+      return rest;
+    };
+
     const newWorkouts: WorkoutType[] = editTrainingId
       ? workouts.map((el) => {
           if (el.id === editTrainingId) {
-            return {
+            return withIcon({
               ...el,
               name: workoutName,
               exercises,
-            };
+            });
           }
           return el;
         })
       : [
           ...workouts,
-          {
+          withIcon({
             id: crypto.randomUUID(),
             name: workoutName,
             exercises,
-          },
+          }),
         ];
     setWorkouts(newWorkouts);
     notifyShort(editTrainingId ? 'Workout updated' : 'Workout added');
     closeDialog();
-  }, [setWorkouts, workouts, workoutName, exercises, closeDialog, editTrainingId]);
+  }, [setWorkouts, workouts, workoutName, workoutIcon, exercises, closeDialog, editTrainingId]);
 
   const handleAddExercise = () => {
     setExercises((prev) => [...prev, INITIAL_WORKOUT_DATA]);
@@ -163,6 +176,44 @@ function EditWorkoutDialog({
             value={workoutName}
             onChange={(e) => setWorkoutName(e.target.value)}
           ></TextField>
+        </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '8px',
+          }}
+        >
+          <Typography sx={{ fontSize: 14, fontWeight: 600 }}>Icon</Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            {WORKOUT_ICON_IDS.map((id) => {
+              const selected = workoutIcon === id;
+              return (
+                <IconButton
+                  key={id}
+                  aria-label={id}
+                  aria-pressed={selected}
+                  onClick={() => setWorkoutIcon(selected ? undefined : id)}
+                  sx={{
+                    width: 44,
+                    height: 44,
+                    border: '1px solid',
+                    borderColor: selected ? 'primary.main' : 'divider',
+                    borderRadius: '12px',
+                    color: selected ? 'primary.main' : 'text.secondary',
+                    bgcolor: selected ? 'action.selected' : 'transparent',
+                  }}
+                >
+                  <WorkoutIcon icon={id} size={28} />
+                </IconButton>
+              );
+            })}
+            {workoutIcon && (
+              <Button size="small" color="secondary" onClick={() => setWorkoutIcon(undefined)}>
+                Remove icon
+              </Button>
+            )}
+          </Box>
         </Box>
         <Box
           sx={{

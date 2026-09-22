@@ -17,6 +17,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import dayjs, { Dayjs } from "dayjs";
 import { useAppContext } from "../providers/AppProvider/AppProvider.hook";
 import { UserTrainingDayType } from "../providers/AppProvider/AppProvider";
+import { isWorkoutIconId, WorkoutIcon } from "./Workouts/workoutIcons";
 import {
   calcTrainingTotalWeight,
   getExerciseColorById,
@@ -114,6 +115,9 @@ function Schedule() {
 
   const isTrainingDay = (date: Dayjs) =>
     userTrainingDays.some((t) => dayjs(t.date).isSame(date, "day"));
+
+  const getTrainingDay = (date: Dayjs) =>
+    userTrainingDays.find((t) => dayjs(t.date).isSame(date, "day"));
 
   const handleCloseAddTrainDayDialog = () => {
     setSelectedWorkoutId("");
@@ -430,6 +434,9 @@ function Schedule() {
             margin: 0,
             padding: "0 4px",
           },
+          "& .MuiDayCalendar-weekContainer": {
+            marginBottom: "2px",
+          },
           "& .MuiDayCalendar-weekDayLabel": {
             width: 48,
             height: 22,
@@ -438,15 +445,14 @@ function Schedule() {
             margin: 0,
           },
           "& .MuiDayCalendar-slideTransition": {
-            minHeight: 288,
+            minHeight: 300,
           },
           "& .MuiPickersDay-root": {
             width: 48,
             height: 48,
-            fontSize: 16,
             fontWeight: 600,
             margin: 0,
-            borderRadius: "16px",
+            borderRadius: "8px",
           },
           "& .MuiYearCalendar-root, & .MuiMonthCalendar-root": {
             width: "100%",
@@ -454,7 +460,11 @@ function Schedule() {
         }}
         slots={{
           day: (props) => {
-            const isTraining = isTrainingDay(props.day);
+            const trainingDay = getTrainingDay(props.day);
+            const isTraining = Boolean(trainingDay);
+            const workoutIcon = isWorkoutIconId(trainingDay?.workout?.icon)
+              ? trainingDay?.workout?.icon
+              : undefined;
 
             return (
               <PickersDay
@@ -465,13 +475,23 @@ function Schedule() {
                 sx={{
                   width: 48,
                   height: 48,
-                  fontSize: 16,
-                  backgroundColor: isTraining ? colors.primary : "transparent",
+                  fontSize: isTraining ? (workoutIcon ? 10 : 12) : 16,
+                  backgroundColor: isTraining
+                    ? withAlpha(colors.primary, 0.7)
+                    : "transparent",
                   color: isTraining ? "primary.contrastText" : undefined,
                   fontWeight: isTraining ? 700 : 600,
-                  borderRadius: "16px",
+                  borderRadius: "8px",
+                  ...(workoutIcon && {
+                    position: "relative",
+                    alignItems: "flex-start",
+                    justifyContent: "flex-start",
+                    pt: "5px",
+                    pl: "7px",
+                    lineHeight: 1,
+                  }),
                   "&.MuiPickersDay-today": {
-                    borderRadius: "16px",
+                    borderRadius: "8px",
                   },
                   "&.Mui-selected": {
                     backgroundColor: colors.secondary,
@@ -481,7 +501,26 @@ function Schedule() {
                     },
                   },
                 }}
-              />
+              >
+                {workoutIcon ? (
+                  <>
+                    {props.day.date()}
+                    <Box
+                      component="span"
+                      sx={{
+                        position: "absolute",
+                        right: 5,
+                        bottom: 4,
+                        display: "flex",
+                        lineHeight: 1,
+                        fontSize: 16,
+                      }}
+                    >
+                      <WorkoutIcon icon={workoutIcon} size={27} />
+                    </Box>
+                  </>
+                ) : undefined}
+              </PickersDay>
             );
           },
         }}
@@ -687,7 +726,12 @@ function Schedule() {
             >
               {workouts.map((el, i) => (
                 <MenuItem key={i} value={el.id}>
-                  {el.name}
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    {isWorkoutIconId(el.icon) && (
+                      <WorkoutIcon icon={el.icon} size={22} />
+                    )}
+                    {el.name}
+                  </Box>
                 </MenuItem>
               ))}
             </Select>

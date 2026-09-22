@@ -47,10 +47,13 @@ export type ExerciseType = {
   sets: Array<SetType>;
 };
 
+export type WorkoutIconId = 'legs' | 'back' | 'chest';
+
 export type WorkoutType = {
   id: string;
   name: string;
   exercises: ExerciseType[];
+  icon?: WorkoutIconId;
 };
 
 export type UserTrainingDayType = {
